@@ -1,0 +1,15 @@
+model:
+  package: graphql
+  filename: ./pkg/graphql/models_gen.go
+client:
+  package: graphql
+  filename: ./pkg/graphql/client_gen.go
+models:
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  Date:
+    model: github.com/99designs/gqlgen/graphql.Time
+schema:
+  - "./graphql/schema/*.graphql"
+query:
+  - "./graphql/query/*.graphql"
