@@ -34,7 +34,7 @@ type Query struct {
 	Nodes                                    []Node                             "json:\"nodes\" graphql:\"nodes\""
 	Organization                             *Organization                      "json:\"organization\" graphql:\"organization\""
 	RateLimit                                *RateLimit                         "json:\"rateLimit\" graphql:\"rateLimit\""
-	Relay                                    **Query                            "json:\"relay\" graphql:\"relay\""
+	Relay                                    *Query                             "json:\"relay\" graphql:\"relay\""
 	Repository                               *Repository                        "json:\"repository\" graphql:\"repository\""
 	RepositoryOwner                          RepositoryOwner                    "json:\"repositoryOwner\" graphql:\"repositoryOwner\""
 	Resource                                 UniformResourceLocatable           "json:\"resource\" graphql:\"resource\""
@@ -218,60 +218,56 @@ type Mutation struct {
 	UpdateTopics                                                *UpdateTopicsPayload                                                "json:\"updateTopics\" graphql:\"updateTopics\""
 	VerifyVerifiableDomain                                      *VerifyVerifiableDomainPayload                                      "json:\"verifyVerifiableDomain\" graphql:\"verifyVerifiableDomain\""
 }
-type GetRepositories struct {
+type Repositories struct {
 	Organization *struct {
 		Repositories struct {
-			Edges []*struct {
-				Node *struct {
-					ID          string  "json:\"id\" graphql:\"id\""
-					Name        string  "json:\"name\" graphql:\"name\""
-					Description *string "json:\"description\" graphql:\"description\""
-					CreatedAt   string  "json:\"createdAt\" graphql:\"createdAt\""
-					UpdatedAt   string  "json:\"updatedAt\" graphql:\"updatedAt\""
-					PushedAt    *string "json:\"pushedAt\" graphql:\"pushedAt\""
-				} "json:\"node\" graphql:\"node\""
-			} "json:\"edges\" graphql:\"edges\""
 			PageInfo struct {
 				HasNextPage bool    "json:\"hasNextPage\" graphql:\"hasNextPage\""
 				EndCursor   *string "json:\"endCursor\" graphql:\"endCursor\""
 			} "json:\"pageInfo\" graphql:\"pageInfo\""
 			TotalCount int64 "json:\"totalCount\" graphql:\"totalCount\""
+			Nodes      []*struct {
+				Name        string  "json:\"name\" graphql:\"name\""
+				ID          string  "json:\"id\" graphql:\"id\""
+				Description *string "json:\"description\" graphql:\"description\""
+				CreatedAt   string  "json:\"createdAt\" graphql:\"createdAt\""
+				PushedAt    *string "json:\"pushedAt\" graphql:\"pushedAt\""
+				UpdatedAt   string  "json:\"updatedAt\" graphql:\"updatedAt\""
+			} "json:\"nodes\" graphql:\"nodes\""
 		} "json:\"repositories\" graphql:\"repositories\""
 	} "json:\"organization\" graphql:\"organization\""
 }
 
-const GetRepositoriesDocument = `query get_repositories ($number_of_repos: Int!, $login_name: String!, $after: String) {
+const RepositoriesDocument = `query repositories ($number_of_repos: Int!, $login_name: String!, $after: String) {
 	organization(login: $login_name) {
 		repositories(first: $number_of_repos, orderBy: {field:CREATED_AT,direction:DESC}, after: $after) {
-			edges {
-				node {
-					id
-					name
-					description
-					createdAt
-					updatedAt
-					pushedAt
-				}
-			}
 			pageInfo {
 				hasNextPage
 				endCursor
 			}
 			totalCount
+			nodes {
+				name
+				id
+				description
+				createdAt
+				pushedAt
+				updatedAt
+			}
 		}
 	}
 }
 `
 
-func (c *Client) GetRepositories(ctx context.Context, numberOfRepos int64, loginName string, after *string, httpRequestOptions ...client.HTTPRequestOption) (*GetRepositories, error) {
+func (c *Client) Repositories(ctx context.Context, numberOfRepos int64, loginName string, after *string, httpRequestOptions ...client.HTTPRequestOption) (*Repositories, error) {
 	vars := map[string]interface{}{
 		"number_of_repos": numberOfRepos,
 		"login_name":      loginName,
 		"after":           after,
 	}
 
-	var res GetRepositories
-	if err := c.Client.Post(ctx, "get_repositories", GetRepositoriesDocument, &res, vars, httpRequestOptions...); err != nil {
+	var res Repositories
+	if err := c.Client.Post(ctx, "repositories", RepositoriesDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 

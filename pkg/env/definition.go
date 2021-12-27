@@ -7,4 +7,5 @@ type AppEnv struct {
 type GitHub struct {
 	GraphQLURL  string `envconfig:"GITHUB_GRAPHQL_URL"`
 	AccessToken string `envconfig:"GITHUB_ACCESS_TOKEN"`
+	LoginUser   string `envconfig:"GITHUB_LOGIN_USER"`
 }
