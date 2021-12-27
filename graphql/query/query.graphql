@@ -1,0 +1,21 @@
+query get_repositories($number_of_repos: Int!, $login_name: String!, $after: String) {
+    organization(login: $login_name) {
+        repositories(first: $number_of_repos, orderBy: {field: CREATED_AT, direction: DESC}, after: $after) {
+            edges {
+                node {
+                    id
+                    name
+                    description
+                    createdAt
+                    updatedAt
+                    pushedAt
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            totalCount
+        }
+    }
+}

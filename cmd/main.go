@@ -7,10 +7,13 @@ import (
 	"github.com/shinnosuke-K/github-dev-insight/pkg/env"
 )
 
-func _main() error {
+func init() {
 	if err := env.Load(); err != nil {
-		return fmt.Errorf("failed to load env config. %w", err)
+		panic(fmt.Sprintf("failed to load env config. %s", err))
 	}
+}
+
+func _main() error {
 	return nil
 }
 
