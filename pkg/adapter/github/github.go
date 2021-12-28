@@ -1,4 +1,4 @@
-package adapter
+package github
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 )
 
 type GitHub interface {
-	GetRepositories(ctx context.Context, params *GetRepositoriesParams) (entity.Repositories, error)
+	GetRepositories(ctx context.Context, params *GetRepositoriesParams) ([]*entity.Repository, error)
 }
 
 type GetRepositoriesParams struct {
