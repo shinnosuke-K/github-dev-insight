@@ -6,6 +6,8 @@ require (
 	github.com/99designs/gqlgen v0.14.0 // indirect
 	github.com/Yamashou/gqlgenc v0.0.2 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/aws/aws-sdk-go v1.42.25 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
