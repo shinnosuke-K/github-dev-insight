@@ -13,7 +13,7 @@ type DataStore interface {
 }
 
 type Repository interface {
-	Create(ctx context.Context, ent ...*entity.Repository) error
+	Create(ctx context.Context, ent ...entity.Repository) error
 }
 
 type dataStore struct {

@@ -35,9 +35,9 @@ func NewGraphQL(cfg Config) (github.GitHub, error) {
 }
 
 // GetRepositories は指定したユーザに紐づくリポジトリ一覧を取得する
-func (c *Client) GetRepositories(ctx context.Context, params *github.GetRepositoriesParams) ([]*entity.Repository, error) {
+func (c *Client) GetRepositories(ctx context.Context, params *github.GetRepositoriesParams) ([]entity.Repository, error) {
 	var (
-		res   = entity.Repositories{}
+		res   []entity.Repository
 		after *string
 		total = 10
 	)
@@ -47,7 +47,7 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 			return nil, fmt.Errorf("failed to get repositories. %w", err)
 		}
 		for _, n := range repos.Organization.Repositories.Nodes {
-			res = append(res, &entity.Repository{
+			res = append(res, entity.Repository{
 				ID:          entity.RepositoryID(id.Generate()),
 				GitHubID:    n.ID,
 				Owner:       params.UserName,
