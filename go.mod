@@ -3,15 +3,24 @@ module github.com/shinnosuke-K/github-dev-insight
 go 1.17
 
 require (
+	entgo.io/ent v0.9.1 // indirect
 	github.com/99designs/gqlgen v0.14.0 // indirect
 	github.com/Yamashou/gqlgenc v0.0.2 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/aws/aws-sdk-go v1.42.25 // indirect
+	github.com/go-bindata/go-bindata v1.0.1-0.20190711162640-ee3c2418e368 // indirect
+	github.com/go-openapi/inflect v0.19.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
+	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/xid v1.3.0 // indirect
+	github.com/spf13/cobra v1.1.3 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
