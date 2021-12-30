@@ -233,9 +233,63 @@ type Repositories struct {
 				CreatedAt   string  "json:\"createdAt\" graphql:\"createdAt\""
 				PushedAt    *string "json:\"pushedAt\" graphql:\"pushedAt\""
 				UpdatedAt   string  "json:\"updatedAt\" graphql:\"updatedAt\""
+				Issues      struct {
+					TotalCount int64 "json:\"totalCount\" graphql:\"totalCount\""
+				} "json:\"issues\" graphql:\"issues\""
+				PullRequests struct {
+					TotalCount int64 "json:\"totalCount\" graphql:\"totalCount\""
+				} "json:\"pullRequests\" graphql:\"pullRequests\""
 			} "json:\"nodes\" graphql:\"nodes\""
 		} "json:\"repositories\" graphql:\"repositories\""
 	} "json:\"organization\" graphql:\"organization\""
+}
+type PullRequests struct {
+	Node *struct {
+		PullRequests struct {
+			Nodes []*struct {
+				ClosedAt  *string "json:\"closedAt\" graphql:\"closedAt\""
+				CreatedAt string  "json:\"createdAt\" graphql:\"createdAt\""
+				ID        string  "json:\"id\" graphql:\"id\""
+				MergedAt  *string "json:\"mergedAt\" graphql:\"mergedAt\""
+				Title     string  "json:\"title\" graphql:\"title\""
+				UpdatedAt string  "json:\"updatedAt\" graphql:\"updatedAt\""
+				Commits   struct {
+					TotalCount int64 "json:\"totalCount\" graphql:\"totalCount\""
+				} "json:\"commits\" graphql:\"commits\""
+			} "json:\"nodes\" graphql:\"nodes\""
+		} "json:\"pullRequests\" graphql:\"pullRequests\""
+	} "json:\"node\" graphql:\"node\""
+}
+type Commits struct {
+	Node *struct {
+		Commits struct {
+			PageInfo struct {
+				HasNextPage bool    "json:\"hasNextPage\" graphql:\"hasNextPage\""
+				EndCursor   *string "json:\"endCursor\" graphql:\"endCursor\""
+			} "json:\"pageInfo\" graphql:\"pageInfo\""
+			Nodes []*struct {
+				Commit struct {
+					CommittedDate string "json:\"committedDate\" graphql:\"committedDate\""
+					Message       string "json:\"message\" graphql:\"message\""
+					ID            string "json:\"id\" graphql:\"id\""
+				} "json:\"commit\" graphql:\"commit\""
+			} "json:\"nodes\" graphql:\"nodes\""
+		} "json:\"commits\" graphql:\"commits\""
+	} "json:\"node\" graphql:\"node\""
+}
+type Issues struct {
+	Node *struct {
+		Issues struct {
+			Nodes []*struct {
+				ClosedAt     *string "json:\"closedAt\" graphql:\"closedAt\""
+				ID           string  "json:\"id\" graphql:\"id\""
+				LastEditedAt *string "json:\"lastEditedAt\" graphql:\"lastEditedAt\""
+				Title        string  "json:\"title\" graphql:\"title\""
+				UpdatedAt    string  "json:\"updatedAt\" graphql:\"updatedAt\""
+				CreatedAt    string  "json:\"createdAt\" graphql:\"createdAt\""
+			} "json:\"nodes\" graphql:\"nodes\""
+		} "json:\"issues\" graphql:\"issues\""
+	} "json:\"node\" graphql:\"node\""
 }
 
 const RepositoriesDocument = `query repositories ($number_of_repos: Int!, $login_name: String!, $after: String) {
@@ -253,6 +307,12 @@ const RepositoriesDocument = `query repositories ($number_of_repos: Int!, $login
 				createdAt
 				pushedAt
 				updatedAt
+				issues {
+					totalCount
+				}
+				pullRequests {
+					totalCount
+				}
 			}
 		}
 	}
@@ -268,6 +328,111 @@ func (c *Client) Repositories(ctx context.Context, numberOfRepos int64, loginNam
 
 	var res Repositories
 	if err := c.Client.Post(ctx, "repositories", RepositoriesDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const PullRequestsDocument = `query pullRequests ($number_of_pr: Int!, $repo_id: ID!, $after: String) {
+	node(id: $repo_id) {
+		... on Repository {
+			pullRequests(after: $after, first: $number_of_pr) {
+				nodes {
+					closedAt
+					createdAt
+					id
+					mergedAt
+					title
+					updatedAt
+					commits {
+						totalCount
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) PullRequests(ctx context.Context, numberOfPr int64, repoID string, after *string, httpRequestOptions ...client.HTTPRequestOption) (*PullRequests, error) {
+	vars := map[string]interface{}{
+		"number_of_pr": numberOfPr,
+		"repo_id":      repoID,
+		"after":        after,
+	}
+
+	var res PullRequests
+	if err := c.Client.Post(ctx, "pullRequests", PullRequestsDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CommitsDocument = `query commits ($number_of_commits: Int!, $pr_id: ID!, $after: String) {
+	node(id: $pr_id) {
+		... on PullRequest {
+			commits(after: $after, first: $number_of_commits) {
+				pageInfo {
+					hasNextPage
+					endCursor
+				}
+				nodes {
+					commit {
+						committedDate
+						message
+						id
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) Commits(ctx context.Context, numberOfCommits int64, prID string, after *string, httpRequestOptions ...client.HTTPRequestOption) (*Commits, error) {
+	vars := map[string]interface{}{
+		"number_of_commits": numberOfCommits,
+		"pr_id":             prID,
+		"after":             after,
+	}
+
+	var res Commits
+	if err := c.Client.Post(ctx, "commits", CommitsDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const IssuesDocument = `query issues ($number_of_issues: Int!, $repo_id: ID!, $after: String) {
+	node(id: $repo_id) {
+		... on Repository {
+			issues(after: $after, first: $number_of_issues) {
+				nodes {
+					closedAt
+					id
+					lastEditedAt
+					title
+					updatedAt
+					createdAt
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) Issues(ctx context.Context, numberOfIssues int64, repoID string, after *string, httpRequestOptions ...client.HTTPRequestOption) (*Issues, error) {
+	vars := map[string]interface{}{
+		"number_of_issues": numberOfIssues,
+		"repo_id":          repoID,
+		"after":            after,
+	}
+
+	var res Issues
+	if err := c.Client.Post(ctx, "issues", IssuesDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 

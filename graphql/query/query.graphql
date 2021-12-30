@@ -13,6 +13,69 @@ query repositories($number_of_repos: Int!, $login_name: String!, $after: String)
                 createdAt
                 pushedAt
                 updatedAt
+                issues {
+                    totalCount
+                }
+                pullRequests {
+                    totalCount
+                }
+            }
+        }
+    }
+}
+
+query pullRequests($number_of_pr: Int!, $repo_id: ID!, $after: String) {
+    node(id: $repo_id) {
+        ... on Repository {
+            pullRequests(after: $after, first: $number_of_pr) {
+                nodes {
+                    closedAt
+                    createdAt
+                    id
+                    mergedAt
+                    title
+                    updatedAt
+                    commits {
+                        totalCount
+                    }
+                }
+            }
+        }
+    }
+}
+
+query commits($number_of_commits: Int!, $pr_id: ID!, $after: String) {
+    node(id: $pr_id) {
+        ... on PullRequest {
+            commits(after: $after, first: $number_of_commits) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+                nodes {
+                    commit {
+                        committedDate
+                        message
+                        id
+                    }
+                }
+            }
+        }
+    }
+}
+
+query issues($number_of_issues: Int!, $repo_id: ID!, $after: String) {
+    node(id: $repo_id) {
+        ... on Repository {
+            issues(after: $after, first: $number_of_issues) {
+                nodes {
+                    closedAt
+                    id
+                    lastEditedAt
+                    title
+                    updatedAt
+                    createdAt
+                }
             }
         }
     }
