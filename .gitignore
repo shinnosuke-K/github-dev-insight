@@ -16,3 +16,4 @@
 .env
 .DS_Store
 docker/mysql/data/*
+docker/dynamodb/*
