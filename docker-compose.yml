@@ -9,3 +9,15 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
+  mysql:
+    image: "mysql:8"
+    container_name: github-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "github"
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./docker/mysql/my.conf:/etc/mysql/conf.d/docker.cnf
+      - ./docker/mysql/data:/var/lib/mysql
+    ports:
+      - 3306:3306
