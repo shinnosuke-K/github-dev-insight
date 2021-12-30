@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // PullRequest holds the schema definition for the PullRequest entity.
@@ -17,7 +16,6 @@ type PullRequest struct {
 // Fields of the PullRequest.
 func (PullRequest) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New()).Unique(),
 		field.String("repository_id").MaxLen(255).NotEmpty(),
 		field.String("github_id").MaxLen(255).NotEmpty(),
 		field.String("title").MaxLen(255).NotEmpty(),
