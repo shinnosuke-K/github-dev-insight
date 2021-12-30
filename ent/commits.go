@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 )
 
-// Commit is the model entity for the Commit schema.
-type Commit struct {
+// Commits is the model entity for the Commits schema.
+type Commits struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -28,13 +28,13 @@ type Commit struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the CommitQuery when eager-loading is set.
-	Edges                CommitEdges `json:"edges"`
+	// The values are being populated by the CommitsQuery when eager-loading is set.
+	Edges                CommitsEdges `json:"edges"`
 	pull_request_commits *int
 }
 
-// CommitEdges holds the relations/edges for other nodes in the graph.
-type CommitEdges struct {
+// CommitsEdges holds the relations/edges for other nodes in the graph.
+type CommitsEdges struct {
 	// PullRequests holds the value of the pull_requests edge.
 	PullRequests *PullRequest `json:"pull_requests,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -44,7 +44,7 @@ type CommitEdges struct {
 
 // PullRequestsOrErr returns the PullRequests value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e CommitEdges) PullRequestsOrErr() (*PullRequest, error) {
+func (e CommitsEdges) PullRequestsOrErr() (*PullRequest, error) {
 	if e.loadedTypes[0] {
 		if e.PullRequests == nil {
 			// The edge pull_requests was loaded in eager-loading,
@@ -57,70 +57,70 @@ func (e CommitEdges) PullRequestsOrErr() (*PullRequest, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Commit) scanValues(columns []string) ([]interface{}, error) {
+func (*Commits) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case commit.FieldID:
+		case commits.FieldID:
 			values[i] = new(sql.NullInt64)
-		case commit.FieldPullrequestID, commit.FieldGithubID, commit.FieldMessage:
+		case commits.FieldPullrequestID, commits.FieldGithubID, commits.FieldMessage:
 			values[i] = new(sql.NullString)
-		case commit.FieldCommittedAt, commit.FieldCreatedAt:
+		case commits.FieldCommittedAt, commits.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case commit.ForeignKeys[0]: // pull_request_commits
+		case commits.ForeignKeys[0]: // pull_request_commits
 			values[i] = new(sql.NullInt64)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type Commit", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type Commits", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Commit fields.
-func (c *Commit) assignValues(columns []string, values []interface{}) error {
+// to the Commits fields.
+func (c *Commits) assignValues(columns []string, values []interface{}) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case commit.FieldID:
+		case commits.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			c.ID = int(value.Int64)
-		case commit.FieldPullrequestID:
+		case commits.FieldPullrequestID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field pullrequest_id", values[i])
 			} else if value.Valid {
 				c.PullrequestID = value.String
 			}
-		case commit.FieldGithubID:
+		case commits.FieldGithubID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field github_id", values[i])
 			} else if value.Valid {
 				c.GithubID = value.String
 			}
-		case commit.FieldMessage:
+		case commits.FieldMessage:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field message", values[i])
 			} else if value.Valid {
 				c.Message = value.String
 			}
-		case commit.FieldCommittedAt:
+		case commits.FieldCommittedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field committed_at", values[i])
 			} else if value.Valid {
 				c.CommittedAt = value.Time
 			}
-		case commit.FieldCreatedAt:
+		case commits.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				c.CreatedAt = value.Time
 			}
-		case commit.ForeignKeys[0]:
+		case commits.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field pull_request_commits", value)
 			} else if value.Valid {
@@ -132,33 +132,33 @@ func (c *Commit) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// QueryPullRequests queries the "pull_requests" edge of the Commit entity.
-func (c *Commit) QueryPullRequests() *PullRequestQuery {
-	return (&CommitClient{config: c.config}).QueryPullRequests(c)
+// QueryPullRequests queries the "pull_requests" edge of the Commits entity.
+func (c *Commits) QueryPullRequests() *PullRequestQuery {
+	return (&CommitsClient{config: c.config}).QueryPullRequests(c)
 }
 
-// Update returns a builder for updating this Commit.
-// Note that you need to call Commit.Unwrap() before calling this method if this Commit
+// Update returns a builder for updating this Commits.
+// Note that you need to call Commits.Unwrap() before calling this method if this Commits
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (c *Commit) Update() *CommitUpdateOne {
-	return (&CommitClient{config: c.config}).UpdateOne(c)
+func (c *Commits) Update() *CommitsUpdateOne {
+	return (&CommitsClient{config: c.config}).UpdateOne(c)
 }
 
-// Unwrap unwraps the Commit entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Commits entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (c *Commit) Unwrap() *Commit {
+func (c *Commits) Unwrap() *Commits {
 	tx, ok := c.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Commit is not a transactional entity")
+		panic("ent: Commits is not a transactional entity")
 	}
 	c.config.driver = tx.drv
 	return c
 }
 
 // String implements the fmt.Stringer.
-func (c *Commit) String() string {
+func (c *Commits) String() string {
 	var builder strings.Builder
-	builder.WriteString("Commit(")
+	builder.WriteString("Commits(")
 	builder.WriteString(fmt.Sprintf("id=%v", c.ID))
 	builder.WriteString(", pullrequest_id=")
 	builder.WriteString(c.PullrequestID)
@@ -174,10 +174,10 @@ func (c *Commit) String() string {
 	return builder.String()
 }
 
-// Commits is a parsable slice of Commit.
-type Commits []*Commit
+// CommitsSlice is a parsable slice of Commits.
+type CommitsSlice []*Commits
 
-func (c Commits) config(cfg config) {
+func (c CommitsSlice) config(cfg config) {
 	for _i := range c {
 		c[_i].config = cfg
 	}

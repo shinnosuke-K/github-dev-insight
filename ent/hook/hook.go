@@ -9,15 +9,15 @@ import (
 	"github.com/shinnosuke-K/github-dev-insight/ent"
 )
 
-// The CommitFunc type is an adapter to allow the use of ordinary
-// function as Commit mutator.
-type CommitFunc func(context.Context, *ent.CommitMutation) (ent.Value, error)
+// The CommitsFunc type is an adapter to allow the use of ordinary
+// function as Commits mutator.
+type CommitsFunc func(context.Context, *ent.CommitsMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f CommitFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.CommitMutation)
+func (f CommitsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CommitsMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommitMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommitsMutation", m)
 	}
 	return f(ctx, mv)
 }

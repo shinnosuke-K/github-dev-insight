@@ -3,6 +3,7 @@ package env
 type AppEnv struct {
 	GitHub *GitHub
 	AWS    *AWS
+	RDB    *RDB
 }
 
 type GitHub struct {
@@ -16,4 +17,13 @@ type AWS struct {
 	AccessToken     string `envconfig:"AWS_ACCESS_TOKEN" default:"fake"`
 	Region          string `envconfig:"AWS_REGION" default:"ap-northeast-1"`
 	EndPoint        string `envconfig:"AWS_END_POINT" default:"http://localhost:8000"`
+}
+
+type RDB struct {
+	Driver   string `envconfig:"RDB_DRIVER"`
+	User     string `envconfig:"RDB_USER"`
+	Password string `envconfig:"RDB_PASSWORD"`
+	Host     string `envconfig:"RDB_HOST"`
+	Port     string `envconfig:"RDB_PORT"`
+	Name     string `envconfig:"RDB_NAME"`
 }

@@ -6,8 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Commit is the predicate function for commit builders.
-type Commit func(*sql.Selector)
+// Commits is the predicate function for commits builders.
+type Commits func(*sql.Selector)
 
 // Issue is the predicate function for issue builders.
 type Issue func(*sql.Selector)

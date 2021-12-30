@@ -35,8 +35,8 @@ const (
 	Table = "pull_requests"
 	// CommitsTable is the table that holds the commits relation/edge.
 	CommitsTable = "commits"
-	// CommitsInverseTable is the table name for the Commit entity.
-	// It exists in this package in order to avoid circular dependency with the "commit" package.
+	// CommitsInverseTable is the table name for the Commits entity.
+	// It exists in this package in order to avoid circular dependency with the "commits" package.
 	CommitsInverseTable = "commits"
 	// CommitsColumn is the table column denoting the commits relation/edge.
 	CommitsColumn = "pull_request_commits"

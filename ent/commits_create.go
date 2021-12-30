@@ -10,43 +10,43 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 )
 
-// CommitCreate is the builder for creating a Commit entity.
-type CommitCreate struct {
+// CommitsCreate is the builder for creating a Commits entity.
+type CommitsCreate struct {
 	config
-	mutation *CommitMutation
+	mutation *CommitsMutation
 	hooks    []Hook
 }
 
 // SetPullrequestID sets the "pullrequest_id" field.
-func (cc *CommitCreate) SetPullrequestID(s string) *CommitCreate {
+func (cc *CommitsCreate) SetPullrequestID(s string) *CommitsCreate {
 	cc.mutation.SetPullrequestID(s)
 	return cc
 }
 
 // SetGithubID sets the "github_id" field.
-func (cc *CommitCreate) SetGithubID(s string) *CommitCreate {
+func (cc *CommitsCreate) SetGithubID(s string) *CommitsCreate {
 	cc.mutation.SetGithubID(s)
 	return cc
 }
 
 // SetMessage sets the "message" field.
-func (cc *CommitCreate) SetMessage(s string) *CommitCreate {
+func (cc *CommitsCreate) SetMessage(s string) *CommitsCreate {
 	cc.mutation.SetMessage(s)
 	return cc
 }
 
 // SetCommittedAt sets the "committed_at" field.
-func (cc *CommitCreate) SetCommittedAt(t time.Time) *CommitCreate {
+func (cc *CommitsCreate) SetCommittedAt(t time.Time) *CommitsCreate {
 	cc.mutation.SetCommittedAt(t)
 	return cc
 }
 
 // SetNillableCommittedAt sets the "committed_at" field if the given value is not nil.
-func (cc *CommitCreate) SetNillableCommittedAt(t *time.Time) *CommitCreate {
+func (cc *CommitsCreate) SetNillableCommittedAt(t *time.Time) *CommitsCreate {
 	if t != nil {
 		cc.SetCommittedAt(*t)
 	}
@@ -54,13 +54,13 @@ func (cc *CommitCreate) SetNillableCommittedAt(t *time.Time) *CommitCreate {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (cc *CommitCreate) SetCreatedAt(t time.Time) *CommitCreate {
+func (cc *CommitsCreate) SetCreatedAt(t time.Time) *CommitsCreate {
 	cc.mutation.SetCreatedAt(t)
 	return cc
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cc *CommitCreate) SetNillableCreatedAt(t *time.Time) *CommitCreate {
+func (cc *CommitsCreate) SetNillableCreatedAt(t *time.Time) *CommitsCreate {
 	if t != nil {
 		cc.SetCreatedAt(*t)
 	}
@@ -68,13 +68,13 @@ func (cc *CommitCreate) SetNillableCreatedAt(t *time.Time) *CommitCreate {
 }
 
 // SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID.
-func (cc *CommitCreate) SetPullRequestsID(id int) *CommitCreate {
+func (cc *CommitsCreate) SetPullRequestsID(id int) *CommitsCreate {
 	cc.mutation.SetPullRequestsID(id)
 	return cc
 }
 
 // SetNillablePullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID if the given value is not nil.
-func (cc *CommitCreate) SetNillablePullRequestsID(id *int) *CommitCreate {
+func (cc *CommitsCreate) SetNillablePullRequestsID(id *int) *CommitsCreate {
 	if id != nil {
 		cc = cc.SetPullRequestsID(*id)
 	}
@@ -82,20 +82,20 @@ func (cc *CommitCreate) SetNillablePullRequestsID(id *int) *CommitCreate {
 }
 
 // SetPullRequests sets the "pull_requests" edge to the PullRequest entity.
-func (cc *CommitCreate) SetPullRequests(p *PullRequest) *CommitCreate {
+func (cc *CommitsCreate) SetPullRequests(p *PullRequest) *CommitsCreate {
 	return cc.SetPullRequestsID(p.ID)
 }
 
-// Mutation returns the CommitMutation object of the builder.
-func (cc *CommitCreate) Mutation() *CommitMutation {
+// Mutation returns the CommitsMutation object of the builder.
+func (cc *CommitsCreate) Mutation() *CommitsMutation {
 	return cc.mutation
 }
 
-// Save creates the Commit in the database.
-func (cc *CommitCreate) Save(ctx context.Context) (*Commit, error) {
+// Save creates the Commits in the database.
+func (cc *CommitsCreate) Save(ctx context.Context) (*Commits, error) {
 	var (
 		err  error
-		node *Commit
+		node *Commits
 	)
 	cc.defaults()
 	if len(cc.hooks) == 0 {
@@ -105,7 +105,7 @@ func (cc *CommitCreate) Save(ctx context.Context) (*Commit, error) {
 		node, err = cc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CommitMutation)
+			mutation, ok := m.(*CommitsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -134,7 +134,7 @@ func (cc *CommitCreate) Save(ctx context.Context) (*Commit, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (cc *CommitCreate) SaveX(ctx context.Context) *Commit {
+func (cc *CommitsCreate) SaveX(ctx context.Context) *Commits {
 	v, err := cc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -143,37 +143,37 @@ func (cc *CommitCreate) SaveX(ctx context.Context) *Commit {
 }
 
 // Exec executes the query.
-func (cc *CommitCreate) Exec(ctx context.Context) error {
+func (cc *CommitsCreate) Exec(ctx context.Context) error {
 	_, err := cc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cc *CommitCreate) ExecX(ctx context.Context) {
+func (cc *CommitsCreate) ExecX(ctx context.Context) {
 	if err := cc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (cc *CommitCreate) defaults() {
+func (cc *CommitsCreate) defaults() {
 	if _, ok := cc.mutation.CommittedAt(); !ok {
-		v := commit.DefaultCommittedAt()
+		v := commits.DefaultCommittedAt()
 		cc.mutation.SetCommittedAt(v)
 	}
 	if _, ok := cc.mutation.CreatedAt(); !ok {
-		v := commit.DefaultCreatedAt()
+		v := commits.DefaultCreatedAt()
 		cc.mutation.SetCreatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cc *CommitCreate) check() error {
+func (cc *CommitsCreate) check() error {
 	if _, ok := cc.mutation.PullrequestID(); !ok {
 		return &ValidationError{Name: "pullrequest_id", err: errors.New(`ent: missing required field "pullrequest_id"`)}
 	}
 	if v, ok := cc.mutation.PullrequestID(); ok {
-		if err := commit.PullrequestIDValidator(v); err != nil {
+		if err := commits.PullrequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "pullrequest_id", err: fmt.Errorf(`ent: validator failed for field "pullrequest_id": %w`, err)}
 		}
 	}
@@ -181,7 +181,7 @@ func (cc *CommitCreate) check() error {
 		return &ValidationError{Name: "github_id", err: errors.New(`ent: missing required field "github_id"`)}
 	}
 	if v, ok := cc.mutation.GithubID(); ok {
-		if err := commit.GithubIDValidator(v); err != nil {
+		if err := commits.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf(`ent: validator failed for field "github_id": %w`, err)}
 		}
 	}
@@ -197,7 +197,7 @@ func (cc *CommitCreate) check() error {
 	return nil
 }
 
-func (cc *CommitCreate) sqlSave(ctx context.Context) (*Commit, error) {
+func (cc *CommitsCreate) sqlSave(ctx context.Context) (*Commits, error) {
 	_node, _spec := cc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -210,14 +210,14 @@ func (cc *CommitCreate) sqlSave(ctx context.Context) (*Commit, error) {
 	return _node, nil
 }
 
-func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
+func (cc *CommitsCreate) createSpec() (*Commits, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Commit{config: cc.config}
+		_node = &Commits{config: cc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: commit.Table,
+			Table: commits.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: commit.FieldID,
+				Column: commits.FieldID,
 			},
 		}
 	)
@@ -225,7 +225,7 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldPullrequestID,
+			Column: commits.FieldPullrequestID,
 		})
 		_node.PullrequestID = value
 	}
@@ -233,7 +233,7 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldGithubID,
+			Column: commits.FieldGithubID,
 		})
 		_node.GithubID = value
 	}
@@ -241,7 +241,7 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldMessage,
+			Column: commits.FieldMessage,
 		})
 		_node.Message = value
 	}
@@ -249,7 +249,7 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCommittedAt,
+			Column: commits.FieldCommittedAt,
 		})
 		_node.CommittedAt = value
 	}
@@ -257,7 +257,7 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCreatedAt,
+			Column: commits.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
 	}
@@ -265,8 +265,8 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commit.PullRequestsTable,
-			Columns: []string{commit.PullRequestsColumn},
+			Table:   commits.PullRequestsTable,
+			Columns: []string{commits.PullRequestsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -284,23 +284,23 @@ func (cc *CommitCreate) createSpec() (*Commit, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
-// CommitCreateBulk is the builder for creating many Commit entities in bulk.
-type CommitCreateBulk struct {
+// CommitsCreateBulk is the builder for creating many Commits entities in bulk.
+type CommitsCreateBulk struct {
 	config
-	builders []*CommitCreate
+	builders []*CommitsCreate
 }
 
-// Save creates the Commit entities in the database.
-func (ccb *CommitCreateBulk) Save(ctx context.Context) ([]*Commit, error) {
+// Save creates the Commits entities in the database.
+func (ccb *CommitsCreateBulk) Save(ctx context.Context) ([]*Commits, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
-	nodes := make([]*Commit, len(ccb.builders))
+	nodes := make([]*Commits, len(ccb.builders))
 	mutators := make([]Mutator, len(ccb.builders))
 	for i := range ccb.builders {
 		func(i int, root context.Context) {
 			builder := ccb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*CommitMutation)
+				mutation, ok := m.(*CommitsMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -347,7 +347,7 @@ func (ccb *CommitCreateBulk) Save(ctx context.Context) ([]*Commit, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ccb *CommitCreateBulk) SaveX(ctx context.Context) []*Commit {
+func (ccb *CommitsCreateBulk) SaveX(ctx context.Context) []*Commits {
 	v, err := ccb.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -356,13 +356,13 @@ func (ccb *CommitCreateBulk) SaveX(ctx context.Context) []*Commit {
 }
 
 // Exec executes the query.
-func (ccb *CommitCreateBulk) Exec(ctx context.Context) error {
+func (ccb *CommitsCreateBulk) Exec(ctx context.Context) error {
 	_, err := ccb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ccb *CommitCreateBulk) ExecX(ctx context.Context) {
+func (ccb *CommitsCreateBulk) ExecX(ctx context.Context) {
 	if err := ccb.Exec(ctx); err != nil {
 		panic(err)
 	}

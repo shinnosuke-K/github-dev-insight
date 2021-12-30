@@ -875,7 +875,7 @@ func HasCommits() predicate.PullRequest {
 }
 
 // HasCommitsWith applies the HasEdge predicate on the "commits" edge with a given conditions (other predicates).
-func HasCommitsWith(preds ...predicate.Commit) predicate.PullRequest {
+func HasCommitsWith(preds ...predicate.Commits) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

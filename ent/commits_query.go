@@ -11,20 +11,20 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 )
 
-// CommitQuery is the builder for querying Commit entities.
-type CommitQuery struct {
+// CommitsQuery is the builder for querying Commits entities.
+type CommitsQuery struct {
 	config
 	limit      *int
 	offset     *int
 	unique     *bool
 	order      []OrderFunc
 	fields     []string
-	predicates []predicate.Commit
+	predicates []predicate.Commits
 	// eager-loading edges.
 	withPullRequests *PullRequestQuery
 	withFKs          bool
@@ -33,39 +33,39 @@ type CommitQuery struct {
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the CommitQuery builder.
-func (cq *CommitQuery) Where(ps ...predicate.Commit) *CommitQuery {
+// Where adds a new predicate for the CommitsQuery builder.
+func (cq *CommitsQuery) Where(ps ...predicate.Commits) *CommitsQuery {
 	cq.predicates = append(cq.predicates, ps...)
 	return cq
 }
 
 // Limit adds a limit step to the query.
-func (cq *CommitQuery) Limit(limit int) *CommitQuery {
+func (cq *CommitsQuery) Limit(limit int) *CommitsQuery {
 	cq.limit = &limit
 	return cq
 }
 
 // Offset adds an offset step to the query.
-func (cq *CommitQuery) Offset(offset int) *CommitQuery {
+func (cq *CommitsQuery) Offset(offset int) *CommitsQuery {
 	cq.offset = &offset
 	return cq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (cq *CommitQuery) Unique(unique bool) *CommitQuery {
+func (cq *CommitsQuery) Unique(unique bool) *CommitsQuery {
 	cq.unique = &unique
 	return cq
 }
 
 // Order adds an order step to the query.
-func (cq *CommitQuery) Order(o ...OrderFunc) *CommitQuery {
+func (cq *CommitsQuery) Order(o ...OrderFunc) *CommitsQuery {
 	cq.order = append(cq.order, o...)
 	return cq
 }
 
 // QueryPullRequests chains the current query on the "pull_requests" edge.
-func (cq *CommitQuery) QueryPullRequests() *PullRequestQuery {
+func (cq *CommitsQuery) QueryPullRequests() *PullRequestQuery {
 	query := &PullRequestQuery{config: cq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -76,9 +76,9 @@ func (cq *CommitQuery) QueryPullRequests() *PullRequestQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(commit.Table, commit.FieldID, selector),
+			sqlgraph.From(commits.Table, commits.FieldID, selector),
 			sqlgraph.To(pullrequest.Table, pullrequest.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, commit.PullRequestsTable, commit.PullRequestsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestsTable, commits.PullRequestsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -86,21 +86,21 @@ func (cq *CommitQuery) QueryPullRequests() *PullRequestQuery {
 	return query
 }
 
-// First returns the first Commit entity from the query.
-// Returns a *NotFoundError when no Commit was found.
-func (cq *CommitQuery) First(ctx context.Context) (*Commit, error) {
+// First returns the first Commits entity from the query.
+// Returns a *NotFoundError when no Commits was found.
+func (cq *CommitsQuery) First(ctx context.Context) (*Commits, error) {
 	nodes, err := cq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{commit.Label}
+		return nil, &NotFoundError{commits.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (cq *CommitQuery) FirstX(ctx context.Context) *Commit {
+func (cq *CommitsQuery) FirstX(ctx context.Context) *Commits {
 	node, err := cq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -108,22 +108,22 @@ func (cq *CommitQuery) FirstX(ctx context.Context) *Commit {
 	return node
 }
 
-// FirstID returns the first Commit ID from the query.
-// Returns a *NotFoundError when no Commit ID was found.
-func (cq *CommitQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first Commits ID from the query.
+// Returns a *NotFoundError when no Commits ID was found.
+func (cq *CommitsQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = cq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (cq *CommitQuery) FirstIDX(ctx context.Context) int {
+func (cq *CommitsQuery) FirstIDX(ctx context.Context) int {
 	id, err := cq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -131,10 +131,10 @@ func (cq *CommitQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Commit entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Commit entity is not found.
-// Returns a *NotFoundError when no Commit entities are found.
-func (cq *CommitQuery) Only(ctx context.Context) (*Commit, error) {
+// Only returns a single Commits entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when exactly one Commits entity is not found.
+// Returns a *NotFoundError when no Commits entities are found.
+func (cq *CommitsQuery) Only(ctx context.Context) (*Commits, error) {
 	nodes, err := cq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -143,14 +143,14 @@ func (cq *CommitQuery) Only(ctx context.Context) (*Commit, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{commit.Label}
+		return nil, &NotFoundError{commits.Label}
 	default:
-		return nil, &NotSingularError{commit.Label}
+		return nil, &NotSingularError{commits.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (cq *CommitQuery) OnlyX(ctx context.Context) *Commit {
+func (cq *CommitsQuery) OnlyX(ctx context.Context) *Commits {
 	node, err := cq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -158,10 +158,10 @@ func (cq *CommitQuery) OnlyX(ctx context.Context) *Commit {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Commit ID in the query.
-// Returns a *NotSingularError when exactly one Commit ID is not found.
+// OnlyID is like Only, but returns the only Commits ID in the query.
+// Returns a *NotSingularError when exactly one Commits ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (cq *CommitQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (cq *CommitsQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = cq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -170,15 +170,15 @@ func (cq *CommitQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = &NotSingularError{commit.Label}
+		err = &NotSingularError{commits.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (cq *CommitQuery) OnlyIDX(ctx context.Context) int {
+func (cq *CommitsQuery) OnlyIDX(ctx context.Context) int {
 	id, err := cq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -186,8 +186,8 @@ func (cq *CommitQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Commits.
-func (cq *CommitQuery) All(ctx context.Context) ([]*Commit, error) {
+// All executes the query and returns a list of CommitsSlice.
+func (cq *CommitsQuery) All(ctx context.Context) ([]*Commits, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func (cq *CommitQuery) All(ctx context.Context) ([]*Commit, error) {
 }
 
 // AllX is like All, but panics if an error occurs.
-func (cq *CommitQuery) AllX(ctx context.Context) []*Commit {
+func (cq *CommitsQuery) AllX(ctx context.Context) []*Commits {
 	nodes, err := cq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -203,17 +203,17 @@ func (cq *CommitQuery) AllX(ctx context.Context) []*Commit {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Commit IDs.
-func (cq *CommitQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of Commits IDs.
+func (cq *CommitsQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := cq.Select(commit.FieldID).Scan(ctx, &ids); err != nil {
+	if err := cq.Select(commits.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (cq *CommitQuery) IDsX(ctx context.Context) []int {
+func (cq *CommitsQuery) IDsX(ctx context.Context) []int {
 	ids, err := cq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -222,7 +222,7 @@ func (cq *CommitQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (cq *CommitQuery) Count(ctx context.Context) (int, error) {
+func (cq *CommitsQuery) Count(ctx context.Context) (int, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -230,7 +230,7 @@ func (cq *CommitQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (cq *CommitQuery) CountX(ctx context.Context) int {
+func (cq *CommitsQuery) CountX(ctx context.Context) int {
 	count, err := cq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -239,7 +239,7 @@ func (cq *CommitQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (cq *CommitQuery) Exist(ctx context.Context) (bool, error) {
+func (cq *CommitsQuery) Exist(ctx context.Context) (bool, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -247,7 +247,7 @@ func (cq *CommitQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (cq *CommitQuery) ExistX(ctx context.Context) bool {
+func (cq *CommitsQuery) ExistX(ctx context.Context) bool {
 	exist, err := cq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -255,18 +255,18 @@ func (cq *CommitQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the CommitQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the CommitsQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (cq *CommitQuery) Clone() *CommitQuery {
+func (cq *CommitsQuery) Clone() *CommitsQuery {
 	if cq == nil {
 		return nil
 	}
-	return &CommitQuery{
+	return &CommitsQuery{
 		config:           cq.config,
 		limit:            cq.limit,
 		offset:           cq.offset,
 		order:            append([]OrderFunc{}, cq.order...),
-		predicates:       append([]predicate.Commit{}, cq.predicates...),
+		predicates:       append([]predicate.Commits{}, cq.predicates...),
 		withPullRequests: cq.withPullRequests.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
@@ -276,7 +276,7 @@ func (cq *CommitQuery) Clone() *CommitQuery {
 
 // WithPullRequests tells the query-builder to eager-load the nodes that are connected to
 // the "pull_requests" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *CommitQuery) WithPullRequests(opts ...func(*PullRequestQuery)) *CommitQuery {
+func (cq *CommitsQuery) WithPullRequests(opts ...func(*PullRequestQuery)) *CommitsQuery {
 	query := &PullRequestQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
@@ -295,13 +295,13 @@ func (cq *CommitQuery) WithPullRequests(opts ...func(*PullRequestQuery)) *Commit
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Commit.Query().
-//		GroupBy(commit.FieldPullrequestID).
+//	client.Commits.Query().
+//		GroupBy(commits.FieldPullrequestID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
-func (cq *CommitQuery) GroupBy(field string, fields ...string) *CommitGroupBy {
-	group := &CommitGroupBy{config: cq.config}
+func (cq *CommitsQuery) GroupBy(field string, fields ...string) *CommitsGroupBy {
+	group := &CommitsGroupBy{config: cq.config}
 	group.fields = append([]string{field}, fields...)
 	group.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -321,18 +321,18 @@ func (cq *CommitQuery) GroupBy(field string, fields ...string) *CommitGroupBy {
 //		PullrequestID string `json:"pullrequest_id,omitempty"`
 //	}
 //
-//	client.Commit.Query().
-//		Select(commit.FieldPullrequestID).
+//	client.Commits.Query().
+//		Select(commits.FieldPullrequestID).
 //		Scan(ctx, &v)
 //
-func (cq *CommitQuery) Select(fields ...string) *CommitSelect {
+func (cq *CommitsQuery) Select(fields ...string) *CommitsSelect {
 	cq.fields = append(cq.fields, fields...)
-	return &CommitSelect{CommitQuery: cq}
+	return &CommitsSelect{CommitsQuery: cq}
 }
 
-func (cq *CommitQuery) prepareQuery(ctx context.Context) error {
+func (cq *CommitsQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range cq.fields {
-		if !commit.ValidColumn(f) {
+		if !commits.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -346,9 +346,9 @@ func (cq *CommitQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (cq *CommitQuery) sqlAll(ctx context.Context) ([]*Commit, error) {
+func (cq *CommitsQuery) sqlAll(ctx context.Context) ([]*Commits, error) {
 	var (
-		nodes       = []*Commit{}
+		nodes       = []*Commits{}
 		withFKs     = cq.withFKs
 		_spec       = cq.querySpec()
 		loadedTypes = [1]bool{
@@ -359,10 +359,10 @@ func (cq *CommitQuery) sqlAll(ctx context.Context) ([]*Commit, error) {
 		withFKs = true
 	}
 	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, commit.ForeignKeys...)
+		_spec.Node.Columns = append(_spec.Node.Columns, commits.ForeignKeys...)
 	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
-		node := &Commit{config: cq.config}
+		node := &Commits{config: cq.config}
 		nodes = append(nodes, node)
 		return node.scanValues(columns)
 	}
@@ -383,7 +383,7 @@ func (cq *CommitQuery) sqlAll(ctx context.Context) ([]*Commit, error) {
 
 	if query := cq.withPullRequests; query != nil {
 		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Commit)
+		nodeids := make(map[int][]*Commits)
 		for i := range nodes {
 			if nodes[i].pull_request_commits == nil {
 				continue
@@ -413,12 +413,12 @@ func (cq *CommitQuery) sqlAll(ctx context.Context) ([]*Commit, error) {
 	return nodes, nil
 }
 
-func (cq *CommitQuery) sqlCount(ctx context.Context) (int, error) {
+func (cq *CommitsQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cq.querySpec()
 	return sqlgraph.CountNodes(ctx, cq.driver, _spec)
 }
 
-func (cq *CommitQuery) sqlExist(ctx context.Context) (bool, error) {
+func (cq *CommitsQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := cq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("ent: check existence: %w", err)
@@ -426,14 +426,14 @@ func (cq *CommitQuery) sqlExist(ctx context.Context) (bool, error) {
 	return n > 0, nil
 }
 
-func (cq *CommitQuery) querySpec() *sqlgraph.QuerySpec {
+func (cq *CommitsQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   commit.Table,
-			Columns: commit.Columns,
+			Table:   commits.Table,
+			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: commit.FieldID,
+				Column: commits.FieldID,
 			},
 		},
 		From:   cq.sql,
@@ -444,9 +444,9 @@ func (cq *CommitQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := cq.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, commit.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, commits.FieldID)
 		for i := range fields {
-			if fields[i] != commit.FieldID {
+			if fields[i] != commits.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -474,12 +474,12 @@ func (cq *CommitQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (cq *CommitQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (cq *CommitsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(cq.driver.Dialect())
-	t1 := builder.Table(commit.Table)
+	t1 := builder.Table(commits.Table)
 	columns := cq.fields
 	if len(columns) == 0 {
-		columns = commit.Columns
+		columns = commits.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if cq.sql != nil {
@@ -503,8 +503,8 @@ func (cq *CommitQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// CommitGroupBy is the group-by builder for Commit entities.
-type CommitGroupBy struct {
+// CommitsGroupBy is the group-by builder for Commits entities.
+type CommitsGroupBy struct {
 	config
 	fields []string
 	fns    []AggregateFunc
@@ -514,13 +514,13 @@ type CommitGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (cgb *CommitGroupBy) Aggregate(fns ...AggregateFunc) *CommitGroupBy {
+func (cgb *CommitsGroupBy) Aggregate(fns ...AggregateFunc) *CommitsGroupBy {
 	cgb.fns = append(cgb.fns, fns...)
 	return cgb
 }
 
 // Scan applies the group-by query and scans the result into the given value.
-func (cgb *CommitGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (cgb *CommitsGroupBy) Scan(ctx context.Context, v interface{}) error {
 	query, err := cgb.path(ctx)
 	if err != nil {
 		return err
@@ -530,7 +530,7 @@ func (cgb *CommitGroupBy) Scan(ctx context.Context, v interface{}) error {
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (cgb *CommitGroupBy) ScanX(ctx context.Context, v interface{}) {
+func (cgb *CommitsGroupBy) ScanX(ctx context.Context, v interface{}) {
 	if err := cgb.Scan(ctx, v); err != nil {
 		panic(err)
 	}
@@ -538,9 +538,9 @@ func (cgb *CommitGroupBy) ScanX(ctx context.Context, v interface{}) {
 
 // Strings returns list of strings from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Strings(ctx context.Context) ([]string, error) {
+func (cgb *CommitsGroupBy) Strings(ctx context.Context) ([]string, error) {
 	if len(cgb.fields) > 1 {
-		return nil, errors.New("ent: CommitGroupBy.Strings is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: CommitsGroupBy.Strings is not achievable when grouping more than 1 field")
 	}
 	var v []string
 	if err := cgb.Scan(ctx, &v); err != nil {
@@ -550,7 +550,7 @@ func (cgb *CommitGroupBy) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (cgb *CommitGroupBy) StringsX(ctx context.Context) []string {
+func (cgb *CommitsGroupBy) StringsX(ctx context.Context) []string {
 	v, err := cgb.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -560,7 +560,7 @@ func (cgb *CommitGroupBy) StringsX(ctx context.Context) []string {
 
 // String returns a single string from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) String(ctx context.Context) (_ string, err error) {
+func (cgb *CommitsGroupBy) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = cgb.Strings(ctx); err != nil {
 		return
@@ -569,15 +569,15 @@ func (cgb *CommitGroupBy) String(ctx context.Context) (_ string, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitGroupBy.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsGroupBy.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (cgb *CommitGroupBy) StringX(ctx context.Context) string {
+func (cgb *CommitsGroupBy) StringX(ctx context.Context) string {
 	v, err := cgb.String(ctx)
 	if err != nil {
 		panic(err)
@@ -587,9 +587,9 @@ func (cgb *CommitGroupBy) StringX(ctx context.Context) string {
 
 // Ints returns list of ints from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Ints(ctx context.Context) ([]int, error) {
+func (cgb *CommitsGroupBy) Ints(ctx context.Context) ([]int, error) {
 	if len(cgb.fields) > 1 {
-		return nil, errors.New("ent: CommitGroupBy.Ints is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: CommitsGroupBy.Ints is not achievable when grouping more than 1 field")
 	}
 	var v []int
 	if err := cgb.Scan(ctx, &v); err != nil {
@@ -599,7 +599,7 @@ func (cgb *CommitGroupBy) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (cgb *CommitGroupBy) IntsX(ctx context.Context) []int {
+func (cgb *CommitsGroupBy) IntsX(ctx context.Context) []int {
 	v, err := cgb.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -609,7 +609,7 @@ func (cgb *CommitGroupBy) IntsX(ctx context.Context) []int {
 
 // Int returns a single int from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Int(ctx context.Context) (_ int, err error) {
+func (cgb *CommitsGroupBy) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = cgb.Ints(ctx); err != nil {
 		return
@@ -618,15 +618,15 @@ func (cgb *CommitGroupBy) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitGroupBy.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsGroupBy.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (cgb *CommitGroupBy) IntX(ctx context.Context) int {
+func (cgb *CommitsGroupBy) IntX(ctx context.Context) int {
 	v, err := cgb.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -636,9 +636,9 @@ func (cgb *CommitGroupBy) IntX(ctx context.Context) int {
 
 // Float64s returns list of float64s from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Float64s(ctx context.Context) ([]float64, error) {
+func (cgb *CommitsGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 	if len(cgb.fields) > 1 {
-		return nil, errors.New("ent: CommitGroupBy.Float64s is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: CommitsGroupBy.Float64s is not achievable when grouping more than 1 field")
 	}
 	var v []float64
 	if err := cgb.Scan(ctx, &v); err != nil {
@@ -648,7 +648,7 @@ func (cgb *CommitGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (cgb *CommitGroupBy) Float64sX(ctx context.Context) []float64 {
+func (cgb *CommitsGroupBy) Float64sX(ctx context.Context) []float64 {
 	v, err := cgb.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -658,7 +658,7 @@ func (cgb *CommitGroupBy) Float64sX(ctx context.Context) []float64 {
 
 // Float64 returns a single float64 from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Float64(ctx context.Context) (_ float64, err error) {
+func (cgb *CommitsGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = cgb.Float64s(ctx); err != nil {
 		return
@@ -667,15 +667,15 @@ func (cgb *CommitGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitGroupBy.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsGroupBy.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (cgb *CommitGroupBy) Float64X(ctx context.Context) float64 {
+func (cgb *CommitsGroupBy) Float64X(ctx context.Context) float64 {
 	v, err := cgb.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -685,9 +685,9 @@ func (cgb *CommitGroupBy) Float64X(ctx context.Context) float64 {
 
 // Bools returns list of bools from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Bools(ctx context.Context) ([]bool, error) {
+func (cgb *CommitsGroupBy) Bools(ctx context.Context) ([]bool, error) {
 	if len(cgb.fields) > 1 {
-		return nil, errors.New("ent: CommitGroupBy.Bools is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: CommitsGroupBy.Bools is not achievable when grouping more than 1 field")
 	}
 	var v []bool
 	if err := cgb.Scan(ctx, &v); err != nil {
@@ -697,7 +697,7 @@ func (cgb *CommitGroupBy) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (cgb *CommitGroupBy) BoolsX(ctx context.Context) []bool {
+func (cgb *CommitsGroupBy) BoolsX(ctx context.Context) []bool {
 	v, err := cgb.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -707,7 +707,7 @@ func (cgb *CommitGroupBy) BoolsX(ctx context.Context) []bool {
 
 // Bool returns a single bool from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (cgb *CommitGroupBy) Bool(ctx context.Context) (_ bool, err error) {
+func (cgb *CommitsGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = cgb.Bools(ctx); err != nil {
 		return
@@ -716,15 +716,15 @@ func (cgb *CommitGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitGroupBy.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsGroupBy.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (cgb *CommitGroupBy) BoolX(ctx context.Context) bool {
+func (cgb *CommitsGroupBy) BoolX(ctx context.Context) bool {
 	v, err := cgb.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -732,9 +732,9 @@ func (cgb *CommitGroupBy) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (cgb *CommitGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (cgb *CommitsGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range cgb.fields {
-		if !commit.ValidColumn(f) {
+		if !commits.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}
@@ -751,7 +751,7 @@ func (cgb *CommitGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	return sql.ScanSlice(rows, v)
 }
 
-func (cgb *CommitGroupBy) sqlQuery() *sql.Selector {
+func (cgb *CommitsGroupBy) sqlQuery() *sql.Selector {
 	selector := cgb.sql.Select()
 	aggregation := make([]string, 0, len(cgb.fns))
 	for _, fn := range cgb.fns {
@@ -772,33 +772,33 @@ func (cgb *CommitGroupBy) sqlQuery() *sql.Selector {
 	return selector.GroupBy(selector.Columns(cgb.fields...)...)
 }
 
-// CommitSelect is the builder for selecting fields of Commit entities.
-type CommitSelect struct {
-	*CommitQuery
+// CommitsSelect is the builder for selecting fields of Commits entities.
+type CommitsSelect struct {
+	*CommitsQuery
 	// intermediate query (i.e. traversal path).
 	sql *sql.Selector
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (cs *CommitSelect) Scan(ctx context.Context, v interface{}) error {
+func (cs *CommitsSelect) Scan(ctx context.Context, v interface{}) error {
 	if err := cs.prepareQuery(ctx); err != nil {
 		return err
 	}
-	cs.sql = cs.CommitQuery.sqlQuery(ctx)
+	cs.sql = cs.CommitsQuery.sqlQuery(ctx)
 	return cs.sqlScan(ctx, v)
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (cs *CommitSelect) ScanX(ctx context.Context, v interface{}) {
+func (cs *CommitsSelect) ScanX(ctx context.Context, v interface{}) {
 	if err := cs.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Strings(ctx context.Context) ([]string, error) {
+func (cs *CommitsSelect) Strings(ctx context.Context) ([]string, error) {
 	if len(cs.fields) > 1 {
-		return nil, errors.New("ent: CommitSelect.Strings is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: CommitsSelect.Strings is not achievable when selecting more than 1 field")
 	}
 	var v []string
 	if err := cs.Scan(ctx, &v); err != nil {
@@ -808,7 +808,7 @@ func (cs *CommitSelect) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (cs *CommitSelect) StringsX(ctx context.Context) []string {
+func (cs *CommitsSelect) StringsX(ctx context.Context) []string {
 	v, err := cs.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -817,7 +817,7 @@ func (cs *CommitSelect) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) String(ctx context.Context) (_ string, err error) {
+func (cs *CommitsSelect) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = cs.Strings(ctx); err != nil {
 		return
@@ -826,15 +826,15 @@ func (cs *CommitSelect) String(ctx context.Context) (_ string, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitSelect.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsSelect.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (cs *CommitSelect) StringX(ctx context.Context) string {
+func (cs *CommitsSelect) StringX(ctx context.Context) string {
 	v, err := cs.String(ctx)
 	if err != nil {
 		panic(err)
@@ -843,9 +843,9 @@ func (cs *CommitSelect) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Ints(ctx context.Context) ([]int, error) {
+func (cs *CommitsSelect) Ints(ctx context.Context) ([]int, error) {
 	if len(cs.fields) > 1 {
-		return nil, errors.New("ent: CommitSelect.Ints is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: CommitsSelect.Ints is not achievable when selecting more than 1 field")
 	}
 	var v []int
 	if err := cs.Scan(ctx, &v); err != nil {
@@ -855,7 +855,7 @@ func (cs *CommitSelect) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (cs *CommitSelect) IntsX(ctx context.Context) []int {
+func (cs *CommitsSelect) IntsX(ctx context.Context) []int {
 	v, err := cs.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -864,7 +864,7 @@ func (cs *CommitSelect) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Int(ctx context.Context) (_ int, err error) {
+func (cs *CommitsSelect) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = cs.Ints(ctx); err != nil {
 		return
@@ -873,15 +873,15 @@ func (cs *CommitSelect) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitSelect.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsSelect.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (cs *CommitSelect) IntX(ctx context.Context) int {
+func (cs *CommitsSelect) IntX(ctx context.Context) int {
 	v, err := cs.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -890,9 +890,9 @@ func (cs *CommitSelect) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Float64s(ctx context.Context) ([]float64, error) {
+func (cs *CommitsSelect) Float64s(ctx context.Context) ([]float64, error) {
 	if len(cs.fields) > 1 {
-		return nil, errors.New("ent: CommitSelect.Float64s is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: CommitsSelect.Float64s is not achievable when selecting more than 1 field")
 	}
 	var v []float64
 	if err := cs.Scan(ctx, &v); err != nil {
@@ -902,7 +902,7 @@ func (cs *CommitSelect) Float64s(ctx context.Context) ([]float64, error) {
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (cs *CommitSelect) Float64sX(ctx context.Context) []float64 {
+func (cs *CommitsSelect) Float64sX(ctx context.Context) []float64 {
 	v, err := cs.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -911,7 +911,7 @@ func (cs *CommitSelect) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Float64(ctx context.Context) (_ float64, err error) {
+func (cs *CommitsSelect) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = cs.Float64s(ctx); err != nil {
 		return
@@ -920,15 +920,15 @@ func (cs *CommitSelect) Float64(ctx context.Context) (_ float64, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitSelect.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsSelect.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (cs *CommitSelect) Float64X(ctx context.Context) float64 {
+func (cs *CommitsSelect) Float64X(ctx context.Context) float64 {
 	v, err := cs.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -937,9 +937,9 @@ func (cs *CommitSelect) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Bools(ctx context.Context) ([]bool, error) {
+func (cs *CommitsSelect) Bools(ctx context.Context) ([]bool, error) {
 	if len(cs.fields) > 1 {
-		return nil, errors.New("ent: CommitSelect.Bools is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: CommitsSelect.Bools is not achievable when selecting more than 1 field")
 	}
 	var v []bool
 	if err := cs.Scan(ctx, &v); err != nil {
@@ -949,7 +949,7 @@ func (cs *CommitSelect) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (cs *CommitSelect) BoolsX(ctx context.Context) []bool {
+func (cs *CommitsSelect) BoolsX(ctx context.Context) []bool {
 	v, err := cs.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -958,7 +958,7 @@ func (cs *CommitSelect) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from a selector. It is only allowed when selecting one field.
-func (cs *CommitSelect) Bool(ctx context.Context) (_ bool, err error) {
+func (cs *CommitsSelect) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = cs.Bools(ctx); err != nil {
 		return
@@ -967,15 +967,15 @@ func (cs *CommitSelect) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{commit.Label}
+		err = &NotFoundError{commits.Label}
 	default:
-		err = fmt.Errorf("ent: CommitSelect.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: CommitsSelect.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (cs *CommitSelect) BoolX(ctx context.Context) bool {
+func (cs *CommitsSelect) BoolX(ctx context.Context) bool {
 	v, err := cs.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -983,7 +983,7 @@ func (cs *CommitSelect) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (cs *CommitSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (cs *CommitsSelect) sqlScan(ctx context.Context, v interface{}) error {
 	rows := &sql.Rows{}
 	query, args := cs.sql.Query()
 	if err := cs.driver.Query(ctx, query, args, rows); err != nil {

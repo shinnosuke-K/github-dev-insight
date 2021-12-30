@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -26,14 +26,14 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeCommit      = "Commit"
+	TypeCommits     = "Commits"
 	TypeIssue       = "Issue"
 	TypePullRequest = "PullRequest"
 	TypeRepository  = "Repository"
 )
 
-// CommitMutation represents an operation that mutates the Commit nodes in the graph.
-type CommitMutation struct {
+// CommitsMutation represents an operation that mutates the Commits nodes in the graph.
+type CommitsMutation struct {
 	config
 	op                   Op
 	typ                  string
@@ -47,21 +47,21 @@ type CommitMutation struct {
 	pull_requests        *int
 	clearedpull_requests bool
 	done                 bool
-	oldValue             func(context.Context) (*Commit, error)
-	predicates           []predicate.Commit
+	oldValue             func(context.Context) (*Commits, error)
+	predicates           []predicate.Commits
 }
 
-var _ ent.Mutation = (*CommitMutation)(nil)
+var _ ent.Mutation = (*CommitsMutation)(nil)
 
-// commitOption allows management of the mutation configuration using functional options.
-type commitOption func(*CommitMutation)
+// commitsOption allows management of the mutation configuration using functional options.
+type commitsOption func(*CommitsMutation)
 
-// newCommitMutation creates new mutation for the Commit entity.
-func newCommitMutation(c config, op Op, opts ...commitOption) *CommitMutation {
-	m := &CommitMutation{
+// newCommitsMutation creates new mutation for the Commits entity.
+func newCommitsMutation(c config, op Op, opts ...commitsOption) *CommitsMutation {
+	m := &CommitsMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeCommit,
+		typ:           TypeCommits,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -70,20 +70,20 @@ func newCommitMutation(c config, op Op, opts ...commitOption) *CommitMutation {
 	return m
 }
 
-// withCommitID sets the ID field of the mutation.
-func withCommitID(id int) commitOption {
-	return func(m *CommitMutation) {
+// withCommitsID sets the ID field of the mutation.
+func withCommitsID(id int) commitsOption {
+	return func(m *CommitsMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Commit
+			value *Commits
 		)
-		m.oldValue = func(ctx context.Context) (*Commit, error) {
+		m.oldValue = func(ctx context.Context) (*Commits, error) {
 			once.Do(func() {
 				if m.done {
 					err = fmt.Errorf("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Commit.Get(ctx, id)
+					value, err = m.Client().Commits.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -92,10 +92,10 @@ func withCommitID(id int) commitOption {
 	}
 }
 
-// withCommit sets the old Commit of the mutation.
-func withCommit(node *Commit) commitOption {
-	return func(m *CommitMutation) {
-		m.oldValue = func(context.Context) (*Commit, error) {
+// withCommits sets the old Commits of the mutation.
+func withCommits(node *Commits) commitsOption {
+	return func(m *CommitsMutation) {
+		m.oldValue = func(context.Context) (*Commits, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -104,7 +104,7 @@ func withCommit(node *Commit) commitOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m CommitMutation) Client() *Client {
+func (m CommitsMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -112,7 +112,7 @@ func (m CommitMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m CommitMutation) Tx() (*Tx, error) {
+func (m CommitsMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
 	}
@@ -123,7 +123,7 @@ func (m CommitMutation) Tx() (*Tx, error) {
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CommitMutation) ID() (id int, exists bool) {
+func (m *CommitsMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -131,12 +131,12 @@ func (m *CommitMutation) ID() (id int, exists bool) {
 }
 
 // SetPullrequestID sets the "pullrequest_id" field.
-func (m *CommitMutation) SetPullrequestID(s string) {
+func (m *CommitsMutation) SetPullrequestID(s string) {
 	m.pullrequest_id = &s
 }
 
 // PullrequestID returns the value of the "pullrequest_id" field in the mutation.
-func (m *CommitMutation) PullrequestID() (r string, exists bool) {
+func (m *CommitsMutation) PullrequestID() (r string, exists bool) {
 	v := m.pullrequest_id
 	if v == nil {
 		return
@@ -144,10 +144,10 @@ func (m *CommitMutation) PullrequestID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldPullrequestID returns the old "pullrequest_id" field's value of the Commit entity.
-// If the Commit object wasn't provided to the builder, the object is fetched from the database.
+// OldPullrequestID returns the old "pullrequest_id" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitMutation) OldPullrequestID(ctx context.Context) (v string, err error) {
+func (m *CommitsMutation) OldPullrequestID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPullrequestID is only allowed on UpdateOne operations")
 	}
@@ -162,17 +162,17 @@ func (m *CommitMutation) OldPullrequestID(ctx context.Context) (v string, err er
 }
 
 // ResetPullrequestID resets all changes to the "pullrequest_id" field.
-func (m *CommitMutation) ResetPullrequestID() {
+func (m *CommitsMutation) ResetPullrequestID() {
 	m.pullrequest_id = nil
 }
 
 // SetGithubID sets the "github_id" field.
-func (m *CommitMutation) SetGithubID(s string) {
+func (m *CommitsMutation) SetGithubID(s string) {
 	m.github_id = &s
 }
 
 // GithubID returns the value of the "github_id" field in the mutation.
-func (m *CommitMutation) GithubID() (r string, exists bool) {
+func (m *CommitsMutation) GithubID() (r string, exists bool) {
 	v := m.github_id
 	if v == nil {
 		return
@@ -180,10 +180,10 @@ func (m *CommitMutation) GithubID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldGithubID returns the old "github_id" field's value of the Commit entity.
-// If the Commit object wasn't provided to the builder, the object is fetched from the database.
+// OldGithubID returns the old "github_id" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitMutation) OldGithubID(ctx context.Context) (v string, err error) {
+func (m *CommitsMutation) OldGithubID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldGithubID is only allowed on UpdateOne operations")
 	}
@@ -198,17 +198,17 @@ func (m *CommitMutation) OldGithubID(ctx context.Context) (v string, err error) 
 }
 
 // ResetGithubID resets all changes to the "github_id" field.
-func (m *CommitMutation) ResetGithubID() {
+func (m *CommitsMutation) ResetGithubID() {
 	m.github_id = nil
 }
 
 // SetMessage sets the "message" field.
-func (m *CommitMutation) SetMessage(s string) {
+func (m *CommitsMutation) SetMessage(s string) {
 	m.message = &s
 }
 
 // Message returns the value of the "message" field in the mutation.
-func (m *CommitMutation) Message() (r string, exists bool) {
+func (m *CommitsMutation) Message() (r string, exists bool) {
 	v := m.message
 	if v == nil {
 		return
@@ -216,10 +216,10 @@ func (m *CommitMutation) Message() (r string, exists bool) {
 	return *v, true
 }
 
-// OldMessage returns the old "message" field's value of the Commit entity.
-// If the Commit object wasn't provided to the builder, the object is fetched from the database.
+// OldMessage returns the old "message" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitMutation) OldMessage(ctx context.Context) (v string, err error) {
+func (m *CommitsMutation) OldMessage(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldMessage is only allowed on UpdateOne operations")
 	}
@@ -234,17 +234,17 @@ func (m *CommitMutation) OldMessage(ctx context.Context) (v string, err error) {
 }
 
 // ResetMessage resets all changes to the "message" field.
-func (m *CommitMutation) ResetMessage() {
+func (m *CommitsMutation) ResetMessage() {
 	m.message = nil
 }
 
 // SetCommittedAt sets the "committed_at" field.
-func (m *CommitMutation) SetCommittedAt(t time.Time) {
+func (m *CommitsMutation) SetCommittedAt(t time.Time) {
 	m.committed_at = &t
 }
 
 // CommittedAt returns the value of the "committed_at" field in the mutation.
-func (m *CommitMutation) CommittedAt() (r time.Time, exists bool) {
+func (m *CommitsMutation) CommittedAt() (r time.Time, exists bool) {
 	v := m.committed_at
 	if v == nil {
 		return
@@ -252,10 +252,10 @@ func (m *CommitMutation) CommittedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCommittedAt returns the old "committed_at" field's value of the Commit entity.
-// If the Commit object wasn't provided to the builder, the object is fetched from the database.
+// OldCommittedAt returns the old "committed_at" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitMutation) OldCommittedAt(ctx context.Context) (v time.Time, err error) {
+func (m *CommitsMutation) OldCommittedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCommittedAt is only allowed on UpdateOne operations")
 	}
@@ -270,17 +270,17 @@ func (m *CommitMutation) OldCommittedAt(ctx context.Context) (v time.Time, err e
 }
 
 // ResetCommittedAt resets all changes to the "committed_at" field.
-func (m *CommitMutation) ResetCommittedAt() {
+func (m *CommitsMutation) ResetCommittedAt() {
 	m.committed_at = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *CommitMutation) SetCreatedAt(t time.Time) {
+func (m *CommitsMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *CommitMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *CommitsMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -288,10 +288,10 @@ func (m *CommitMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Commit entity.
-// If the Commit object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *CommitsMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -306,27 +306,27 @@ func (m *CommitMutation) OldCreatedAt(ctx context.Context) (v time.Time, err err
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *CommitMutation) ResetCreatedAt() {
+func (m *CommitsMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
 // SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by id.
-func (m *CommitMutation) SetPullRequestsID(id int) {
+func (m *CommitsMutation) SetPullRequestsID(id int) {
 	m.pull_requests = &id
 }
 
 // ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (m *CommitMutation) ClearPullRequests() {
+func (m *CommitsMutation) ClearPullRequests() {
 	m.clearedpull_requests = true
 }
 
 // PullRequestsCleared reports if the "pull_requests" edge to the PullRequest entity was cleared.
-func (m *CommitMutation) PullRequestsCleared() bool {
+func (m *CommitsMutation) PullRequestsCleared() bool {
 	return m.clearedpull_requests
 }
 
 // PullRequestsID returns the "pull_requests" edge ID in the mutation.
-func (m *CommitMutation) PullRequestsID() (id int, exists bool) {
+func (m *CommitsMutation) PullRequestsID() (id int, exists bool) {
 	if m.pull_requests != nil {
 		return *m.pull_requests, true
 	}
@@ -336,7 +336,7 @@ func (m *CommitMutation) PullRequestsID() (id int, exists bool) {
 // PullRequestsIDs returns the "pull_requests" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // PullRequestsID instead. It exists only for internal usage by the builders.
-func (m *CommitMutation) PullRequestsIDs() (ids []int) {
+func (m *CommitsMutation) PullRequestsIDs() (ids []int) {
 	if id := m.pull_requests; id != nil {
 		ids = append(ids, *id)
 	}
@@ -344,45 +344,45 @@ func (m *CommitMutation) PullRequestsIDs() (ids []int) {
 }
 
 // ResetPullRequests resets all changes to the "pull_requests" edge.
-func (m *CommitMutation) ResetPullRequests() {
+func (m *CommitsMutation) ResetPullRequests() {
 	m.pull_requests = nil
 	m.clearedpull_requests = false
 }
 
-// Where appends a list predicates to the CommitMutation builder.
-func (m *CommitMutation) Where(ps ...predicate.Commit) {
+// Where appends a list predicates to the CommitsMutation builder.
+func (m *CommitsMutation) Where(ps ...predicate.Commits) {
 	m.predicates = append(m.predicates, ps...)
 }
 
 // Op returns the operation name.
-func (m *CommitMutation) Op() Op {
+func (m *CommitsMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (Commit).
-func (m *CommitMutation) Type() string {
+// Type returns the node type of this mutation (Commits).
+func (m *CommitsMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *CommitMutation) Fields() []string {
+func (m *CommitsMutation) Fields() []string {
 	fields := make([]string, 0, 5)
 	if m.pullrequest_id != nil {
-		fields = append(fields, commit.FieldPullrequestID)
+		fields = append(fields, commits.FieldPullrequestID)
 	}
 	if m.github_id != nil {
-		fields = append(fields, commit.FieldGithubID)
+		fields = append(fields, commits.FieldGithubID)
 	}
 	if m.message != nil {
-		fields = append(fields, commit.FieldMessage)
+		fields = append(fields, commits.FieldMessage)
 	}
 	if m.committed_at != nil {
-		fields = append(fields, commit.FieldCommittedAt)
+		fields = append(fields, commits.FieldCommittedAt)
 	}
 	if m.created_at != nil {
-		fields = append(fields, commit.FieldCreatedAt)
+		fields = append(fields, commits.FieldCreatedAt)
 	}
 	return fields
 }
@@ -390,17 +390,17 @@ func (m *CommitMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *CommitMutation) Field(name string) (ent.Value, bool) {
+func (m *CommitsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case commit.FieldPullrequestID:
+	case commits.FieldPullrequestID:
 		return m.PullrequestID()
-	case commit.FieldGithubID:
+	case commits.FieldGithubID:
 		return m.GithubID()
-	case commit.FieldMessage:
+	case commits.FieldMessage:
 		return m.Message()
-	case commit.FieldCommittedAt:
+	case commits.FieldCommittedAt:
 		return m.CommittedAt()
-	case commit.FieldCreatedAt:
+	case commits.FieldCreatedAt:
 		return m.CreatedAt()
 	}
 	return nil, false
@@ -409,56 +409,56 @@ func (m *CommitMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *CommitMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *CommitsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case commit.FieldPullrequestID:
+	case commits.FieldPullrequestID:
 		return m.OldPullrequestID(ctx)
-	case commit.FieldGithubID:
+	case commits.FieldGithubID:
 		return m.OldGithubID(ctx)
-	case commit.FieldMessage:
+	case commits.FieldMessage:
 		return m.OldMessage(ctx)
-	case commit.FieldCommittedAt:
+	case commits.FieldCommittedAt:
 		return m.OldCommittedAt(ctx)
-	case commit.FieldCreatedAt:
+	case commits.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
-	return nil, fmt.Errorf("unknown Commit field %s", name)
+	return nil, fmt.Errorf("unknown Commits field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *CommitMutation) SetField(name string, value ent.Value) error {
+func (m *CommitsMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case commit.FieldPullrequestID:
+	case commits.FieldPullrequestID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPullrequestID(v)
 		return nil
-	case commit.FieldGithubID:
+	case commits.FieldGithubID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGithubID(v)
 		return nil
-	case commit.FieldMessage:
+	case commits.FieldMessage:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMessage(v)
 		return nil
-	case commit.FieldCommittedAt:
+	case commits.FieldCommittedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCommittedAt(v)
 		return nil
-	case commit.FieldCreatedAt:
+	case commits.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -466,87 +466,87 @@ func (m *CommitMutation) SetField(name string, value ent.Value) error {
 		m.SetCreatedAt(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Commit field %s", name)
+	return fmt.Errorf("unknown Commits field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *CommitMutation) AddedFields() []string {
+func (m *CommitsMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *CommitMutation) AddedField(name string) (ent.Value, bool) {
+func (m *CommitsMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *CommitMutation) AddField(name string, value ent.Value) error {
+func (m *CommitsMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown Commit numeric field %s", name)
+	return fmt.Errorf("unknown Commits numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *CommitMutation) ClearedFields() []string {
+func (m *CommitsMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *CommitMutation) FieldCleared(name string) bool {
+func (m *CommitsMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *CommitMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Commit nullable field %s", name)
+func (m *CommitsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Commits nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *CommitMutation) ResetField(name string) error {
+func (m *CommitsMutation) ResetField(name string) error {
 	switch name {
-	case commit.FieldPullrequestID:
+	case commits.FieldPullrequestID:
 		m.ResetPullrequestID()
 		return nil
-	case commit.FieldGithubID:
+	case commits.FieldGithubID:
 		m.ResetGithubID()
 		return nil
-	case commit.FieldMessage:
+	case commits.FieldMessage:
 		m.ResetMessage()
 		return nil
-	case commit.FieldCommittedAt:
+	case commits.FieldCommittedAt:
 		m.ResetCommittedAt()
 		return nil
-	case commit.FieldCreatedAt:
+	case commits.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
 	}
-	return fmt.Errorf("unknown Commit field %s", name)
+	return fmt.Errorf("unknown Commits field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *CommitMutation) AddedEdges() []string {
+func (m *CommitsMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.pull_requests != nil {
-		edges = append(edges, commit.EdgePullRequests)
+		edges = append(edges, commits.EdgePullRequests)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *CommitMutation) AddedIDs(name string) []ent.Value {
+func (m *CommitsMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case commit.EdgePullRequests:
+	case commits.EdgePullRequests:
 		if id := m.pull_requests; id != nil {
 			return []ent.Value{*id}
 		}
@@ -555,33 +555,33 @@ func (m *CommitMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *CommitMutation) RemovedEdges() []string {
+func (m *CommitsMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *CommitMutation) RemovedIDs(name string) []ent.Value {
+func (m *CommitsMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *CommitMutation) ClearedEdges() []string {
+func (m *CommitsMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.clearedpull_requests {
-		edges = append(edges, commit.EdgePullRequests)
+		edges = append(edges, commits.EdgePullRequests)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *CommitMutation) EdgeCleared(name string) bool {
+func (m *CommitsMutation) EdgeCleared(name string) bool {
 	switch name {
-	case commit.EdgePullRequests:
+	case commits.EdgePullRequests:
 		return m.clearedpull_requests
 	}
 	return false
@@ -589,24 +589,24 @@ func (m *CommitMutation) EdgeCleared(name string) bool {
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *CommitMutation) ClearEdge(name string) error {
+func (m *CommitsMutation) ClearEdge(name string) error {
 	switch name {
-	case commit.EdgePullRequests:
+	case commits.EdgePullRequests:
 		m.ClearPullRequests()
 		return nil
 	}
-	return fmt.Errorf("unknown Commit unique edge %s", name)
+	return fmt.Errorf("unknown Commits unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *CommitMutation) ResetEdge(name string) error {
+func (m *CommitsMutation) ResetEdge(name string) error {
 	switch name {
-	case commit.EdgePullRequests:
+	case commits.EdgePullRequests:
 		m.ResetPullRequests()
 		return nil
 	}
-	return fmt.Errorf("unknown Commit edge %s", name)
+	return fmt.Errorf("unknown Commits edge %s", name)
 }
 
 // IssueMutation represents an operation that mutates the Issue nodes in the graph.
@@ -1707,7 +1707,7 @@ func (m *PullRequestMutation) ResetMergedAt() {
 	m.merged_at = nil
 }
 
-// AddCommitIDs adds the "commits" edge to the Commit entity by ids.
+// AddCommitIDs adds the "commits" edge to the Commits entity by ids.
 func (m *PullRequestMutation) AddCommitIDs(ids ...int) {
 	if m.commits == nil {
 		m.commits = make(map[int]struct{})
@@ -1717,17 +1717,17 @@ func (m *PullRequestMutation) AddCommitIDs(ids ...int) {
 	}
 }
 
-// ClearCommits clears the "commits" edge to the Commit entity.
+// ClearCommits clears the "commits" edge to the Commits entity.
 func (m *PullRequestMutation) ClearCommits() {
 	m.clearedcommits = true
 }
 
-// CommitsCleared reports if the "commits" edge to the Commit entity was cleared.
+// CommitsCleared reports if the "commits" edge to the Commits entity was cleared.
 func (m *PullRequestMutation) CommitsCleared() bool {
 	return m.clearedcommits
 }
 
-// RemoveCommitIDs removes the "commits" edge to the Commit entity by IDs.
+// RemoveCommitIDs removes the "commits" edge to the Commits entity by IDs.
 func (m *PullRequestMutation) RemoveCommitIDs(ids ...int) {
 	if m.removedcommits == nil {
 		m.removedcommits = make(map[int]struct{})
@@ -1738,7 +1738,7 @@ func (m *PullRequestMutation) RemoveCommitIDs(ids ...int) {
 	}
 }
 
-// RemovedCommits returns the removed IDs of the "commits" edge to the Commit entity.
+// RemovedCommits returns the removed IDs of the "commits" edge to the Commits entity.
 func (m *PullRequestMutation) RemovedCommitsIDs() (ids []int) {
 	for id := range m.removedcommits {
 		ids = append(ids, id)

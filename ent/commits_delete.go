@@ -9,25 +9,25 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 )
 
-// CommitDelete is the builder for deleting a Commit entity.
-type CommitDelete struct {
+// CommitsDelete is the builder for deleting a Commits entity.
+type CommitsDelete struct {
 	config
 	hooks    []Hook
-	mutation *CommitMutation
+	mutation *CommitsMutation
 }
 
-// Where appends a list predicates to the CommitDelete builder.
-func (cd *CommitDelete) Where(ps ...predicate.Commit) *CommitDelete {
+// Where appends a list predicates to the CommitsDelete builder.
+func (cd *CommitsDelete) Where(ps ...predicate.Commits) *CommitsDelete {
 	cd.mutation.Where(ps...)
 	return cd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (cd *CommitDelete) Exec(ctx context.Context) (int, error) {
+func (cd *CommitsDelete) Exec(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -36,7 +36,7 @@ func (cd *CommitDelete) Exec(ctx context.Context) (int, error) {
 		affected, err = cd.sqlExec(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CommitMutation)
+			mutation, ok := m.(*CommitsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -59,7 +59,7 @@ func (cd *CommitDelete) Exec(ctx context.Context) (int, error) {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cd *CommitDelete) ExecX(ctx context.Context) int {
+func (cd *CommitsDelete) ExecX(ctx context.Context) int {
 	n, err := cd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -67,13 +67,13 @@ func (cd *CommitDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (cd *CommitDelete) sqlExec(ctx context.Context) (int, error) {
+func (cd *CommitsDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: commit.Table,
+			Table: commits.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: commit.FieldID,
+				Column: commits.FieldID,
 			},
 		},
 	}
@@ -87,25 +87,25 @@ func (cd *CommitDelete) sqlExec(ctx context.Context) (int, error) {
 	return sqlgraph.DeleteNodes(ctx, cd.driver, _spec)
 }
 
-// CommitDeleteOne is the builder for deleting a single Commit entity.
-type CommitDeleteOne struct {
-	cd *CommitDelete
+// CommitsDeleteOne is the builder for deleting a single Commits entity.
+type CommitsDeleteOne struct {
+	cd *CommitsDelete
 }
 
 // Exec executes the deletion query.
-func (cdo *CommitDeleteOne) Exec(ctx context.Context) error {
+func (cdo *CommitsDeleteOne) Exec(ctx context.Context) error {
 	n, err := cdo.cd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{commit.Label}
+		return &NotFoundError{commits.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cdo *CommitDeleteOne) ExecX(ctx context.Context) {
+func (cdo *CommitsDeleteOne) ExecX(ctx context.Context) {
 	cdo.cd.ExecX(ctx)
 }
