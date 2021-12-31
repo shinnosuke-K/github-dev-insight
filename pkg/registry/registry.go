@@ -14,3 +14,11 @@ func RegisterRepositoryService() (service.RepositoryService, error) {
 	}
 	return service.NewRepositoryService(ad), nil
 }
+
+func RegisterPullRequestService() (service.PullRequestService, error) {
+	ad, err := adapter.NewAdapter()
+	if err != nil {
+		return nil, fmt.Errorf("faild to create adapter. %w", err)
+	}
+	return service.NewPullRequestService(ad), nil
+}
