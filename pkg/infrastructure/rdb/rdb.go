@@ -5,6 +5,8 @@ import (
 
 	"github.com/shinnosuke-K/github-dev-insight/ent"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb/client"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
@@ -21,9 +23,9 @@ func (c *Config) dataSourceName() string {
 }
 
 func NewRDB(cfg Config) (*client.Client, error) {
-	c, err := ent.Open(cfg.Driver, cfg.dataSourceName(), ent.Debug())
+	db, err := ent.Open(cfg.Driver, cfg.dataSourceName(), ent.Debug())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open rdb. %w", err)
 	}
-	return &client.Client{DB: c}, nil
+	return &client.Client{Client: db}, nil
 }
