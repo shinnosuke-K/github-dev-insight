@@ -52,6 +52,8 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 				GitHubID:    n.ID,
 				Owner:       params.UserName,
 				Name:        n.Name,
+				TotalIssue:  n.Issues.TotalCount,
+				TotalPR:     n.PullRequests.TotalCount,
 				Description: strconvert.StringOrDefault(n.Description),
 				CreatedAt:   strconvert.ToTime(n.CreatedAt),
 				UpdatedAt:   strconvert.ToTime(n.UpdatedAt),
