@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -135,8 +136,8 @@ func (prq *PullRequestQuery) FirstX(ctx context.Context) *PullRequest {
 
 // FirstID returns the first PullRequest ID from the query.
 // Returns a *NotFoundError when no PullRequest ID was found.
-func (prq *PullRequestQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (prq *PullRequestQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = prq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -148,7 +149,7 @@ func (prq *PullRequestQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (prq *PullRequestQuery) FirstIDX(ctx context.Context) int {
+func (prq *PullRequestQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := prq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -186,8 +187,8 @@ func (prq *PullRequestQuery) OnlyX(ctx context.Context) *PullRequest {
 // OnlyID is like Only, but returns the only PullRequest ID in the query.
 // Returns a *NotSingularError when exactly one PullRequest ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (prq *PullRequestQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (prq *PullRequestQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = prq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -203,7 +204,7 @@ func (prq *PullRequestQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (prq *PullRequestQuery) OnlyIDX(ctx context.Context) int {
+func (prq *PullRequestQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := prq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -229,8 +230,8 @@ func (prq *PullRequestQuery) AllX(ctx context.Context) []*PullRequest {
 }
 
 // IDs executes the query and returns a list of PullRequest IDs.
-func (prq *PullRequestQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (prq *PullRequestQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := prq.Select(pullrequest.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -238,7 +239,7 @@ func (prq *PullRequestQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (prq *PullRequestQuery) IDsX(ctx context.Context) []int {
+func (prq *PullRequestQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := prq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -328,12 +329,12 @@ func (prq *PullRequestQuery) WithRepository(opts ...func(*RepositoryQuery)) *Pul
 // Example:
 //
 //	var v []struct {
-//		RepositoryID string `json:"repository_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.PullRequest.Query().
-//		GroupBy(pullrequest.FieldRepositoryID).
+//		GroupBy(pullrequest.FieldGithubID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -355,11 +356,11 @@ func (prq *PullRequestQuery) GroupBy(field string, fields ...string) *PullReques
 // Example:
 //
 //	var v []struct {
-//		RepositoryID string `json:"repository_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //	}
 //
 //	client.PullRequest.Query().
-//		Select(pullrequest.FieldRepositoryID).
+//		Select(pullrequest.FieldGithubID).
 //		Scan(ctx, &v)
 //
 func (prq *PullRequestQuery) Select(fields ...string) *PullRequestSelect {
@@ -421,7 +422,7 @@ func (prq *PullRequestQuery) sqlAll(ctx context.Context) ([]*PullRequest, error)
 
 	if query := prq.withCommits; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*PullRequest)
+		nodeids := make(map[uuid.UUID]*PullRequest)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
@@ -436,26 +437,26 @@ func (prq *PullRequestQuery) sqlAll(ctx context.Context) ([]*PullRequest, error)
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.pull_request_commits
+			fk := n.pull_request_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "pull_request_commits" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "pull_request_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "pull_request_commits" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "pull_request_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Commits = append(node.Edges.Commits, n)
 		}
 	}
 
 	if query := prq.withRepository; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*PullRequest)
+		ids := make([]uuid.UUID, 0, len(nodes))
+		nodeids := make(map[uuid.UUID][]*PullRequest)
 		for i := range nodes {
-			if nodes[i].repository_pull_requests == nil {
+			if nodes[i].repository_id == nil {
 				continue
 			}
-			fk := *nodes[i].repository_pull_requests
+			fk := *nodes[i].repository_id
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -469,7 +470,7 @@ func (prq *PullRequestQuery) sqlAll(ctx context.Context) ([]*PullRequest, error)
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "repository_pull_requests" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "repository_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Repository = n
@@ -499,7 +500,7 @@ func (prq *PullRequestQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   pullrequest.Table,
 			Columns: pullrequest.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pullrequest.FieldID,
 			},
 		},

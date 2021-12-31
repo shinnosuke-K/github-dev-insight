@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 )
@@ -19,12 +20,6 @@ type IssueCreate struct {
 	config
 	mutation *IssueMutation
 	hooks    []Hook
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (ic *IssueCreate) SetRepositoryID(s string) *IssueCreate {
-	ic.mutation.SetRepositoryID(s)
-	return ic
 }
 
 // SetGithubID sets the "github_id" field.
@@ -95,14 +90,20 @@ func (ic *IssueCreate) SetNillableClosedAt(t *time.Time) *IssueCreate {
 	return ic
 }
 
+// SetID sets the "id" field.
+func (ic *IssueCreate) SetID(u uuid.UUID) *IssueCreate {
+	ic.mutation.SetID(u)
+	return ic
+}
+
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (ic *IssueCreate) SetRepositoryID(id int) *IssueCreate {
+func (ic *IssueCreate) SetRepositoryID(id uuid.UUID) *IssueCreate {
 	ic.mutation.SetRepositoryID(id)
 	return ic
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (ic *IssueCreate) SetNillableRepositoryID(id *int) *IssueCreate {
+func (ic *IssueCreate) SetNillableRepositoryID(id *uuid.UUID) *IssueCreate {
 	if id != nil {
 		ic = ic.SetRepositoryID(*id)
 	}
@@ -201,18 +202,14 @@ func (ic *IssueCreate) defaults() {
 		v := issue.DefaultClosedAt()
 		ic.mutation.SetClosedAt(v)
 	}
+	if _, ok := ic.mutation.ID(); !ok {
+		v := issue.DefaultID()
+		ic.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ic *IssueCreate) check() error {
-	if _, ok := ic.mutation.RepositoryID(); !ok {
-		return &ValidationError{Name: "repository_id", err: errors.New(`ent: missing required field "repository_id"`)}
-	}
-	if v, ok := ic.mutation.RepositoryID(); ok {
-		if err := issue.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf(`ent: validator failed for field "repository_id": %w`, err)}
-		}
-	}
 	if _, ok := ic.mutation.GithubID(); !ok {
 		return &ValidationError{Name: "github_id", err: errors.New(`ent: missing required field "github_id"`)}
 	}
@@ -252,8 +249,9 @@ func (ic *IssueCreate) sqlSave(ctx context.Context) (*Issue, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -263,18 +261,14 @@ func (ic *IssueCreate) createSpec() (*Issue, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: issue.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: issue.FieldID,
 			},
 		}
 	)
-	if value, ok := ic.mutation.RepositoryID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: issue.FieldRepositoryID,
-		})
-		_node.RepositoryID = value
+	if id, ok := ic.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
 	}
 	if value, ok := ic.mutation.GithubID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -333,7 +327,7 @@ func (ic *IssueCreate) createSpec() (*Issue, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -341,7 +335,7 @@ func (ic *IssueCreate) createSpec() (*Issue, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.repository_issues = &nodes[0]
+		_node.repository_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -389,10 +383,6 @@ func (icb *IssueCreateBulk) Save(ctx context.Context) ([]*Issue, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

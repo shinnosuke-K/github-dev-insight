@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -134,8 +135,8 @@ func (rq *RepositoryQuery) FirstX(ctx context.Context) *Repository {
 
 // FirstID returns the first Repository ID from the query.
 // Returns a *NotFoundError when no Repository ID was found.
-func (rq *RepositoryQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (rq *RepositoryQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = rq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -147,7 +148,7 @@ func (rq *RepositoryQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (rq *RepositoryQuery) FirstIDX(ctx context.Context) int {
+func (rq *RepositoryQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := rq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -185,8 +186,8 @@ func (rq *RepositoryQuery) OnlyX(ctx context.Context) *Repository {
 // OnlyID is like Only, but returns the only Repository ID in the query.
 // Returns a *NotSingularError when exactly one Repository ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (rq *RepositoryQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (rq *RepositoryQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = rq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -202,7 +203,7 @@ func (rq *RepositoryQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (rq *RepositoryQuery) OnlyIDX(ctx context.Context) int {
+func (rq *RepositoryQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := rq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -228,8 +229,8 @@ func (rq *RepositoryQuery) AllX(ctx context.Context) []*Repository {
 }
 
 // IDs executes the query and returns a list of Repository IDs.
-func (rq *RepositoryQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (rq *RepositoryQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := rq.Select(repository.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -237,7 +238,7 @@ func (rq *RepositoryQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (rq *RepositoryQuery) IDsX(ctx context.Context) []int {
+func (rq *RepositoryQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := rq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -413,7 +414,7 @@ func (rq *RepositoryQuery) sqlAll(ctx context.Context) ([]*Repository, error) {
 
 	if query := rq.withPullRequests; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Repository)
+		nodeids := make(map[uuid.UUID]*Repository)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
@@ -428,13 +429,13 @@ func (rq *RepositoryQuery) sqlAll(ctx context.Context) ([]*Repository, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.repository_pull_requests
+			fk := n.repository_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "repository_pull_requests" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "repository_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "repository_pull_requests" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "repository_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.PullRequests = append(node.Edges.PullRequests, n)
 		}
@@ -442,7 +443,7 @@ func (rq *RepositoryQuery) sqlAll(ctx context.Context) ([]*Repository, error) {
 
 	if query := rq.withIssues; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Repository)
+		nodeids := make(map[uuid.UUID]*Repository)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
@@ -457,13 +458,13 @@ func (rq *RepositoryQuery) sqlAll(ctx context.Context) ([]*Repository, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.repository_issues
+			fk := n.repository_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "repository_issues" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "repository_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "repository_issues" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "repository_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Issues = append(node.Edges.Issues, n)
 		}
@@ -491,7 +492,7 @@ func (rq *RepositoryQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   repository.Table,
 			Columns: repository.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: repository.FieldID,
 			},
 		},

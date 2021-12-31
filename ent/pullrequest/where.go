@@ -7,32 +7,33 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.PullRequest {
+func ID(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.PullRequest {
+func IDEQ(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.PullRequest {
+func IDNEQ(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.PullRequest {
+func IDIn(ids ...uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -49,7 +50,7 @@ func IDIn(ids ...int) predicate.PullRequest {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.PullRequest {
+func IDNotIn(ids ...uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -66,37 +67,30 @@ func IDNotIn(ids ...int) predicate.PullRequest {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.PullRequest {
+func IDGT(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.PullRequest {
+func IDGTE(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.PullRequest {
+func IDLT(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.PullRequest {
+func IDLTE(id uuid.UUID) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
-	})
-}
-
-// RepositoryID applies equality check predicate on the "repository_id" field. It's identical to RepositoryIDEQ.
-func RepositoryID(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRepositoryID), v))
 	})
 }
 
@@ -146,117 +140,6 @@ func ClosedAt(v time.Time) predicate.PullRequest {
 func MergedAt(v time.Time) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMergedAt), v))
-	})
-}
-
-// RepositoryIDEQ applies the EQ predicate on the "repository_id" field.
-func RepositoryIDEQ(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDNEQ applies the NEQ predicate on the "repository_id" field.
-func RepositoryIDNEQ(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDIn applies the In predicate on the "repository_id" field.
-func RepositoryIDIn(vs ...string) predicate.PullRequest {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PullRequest(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldRepositoryID), v...))
-	})
-}
-
-// RepositoryIDNotIn applies the NotIn predicate on the "repository_id" field.
-func RepositoryIDNotIn(vs ...string) predicate.PullRequest {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PullRequest(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldRepositoryID), v...))
-	})
-}
-
-// RepositoryIDGT applies the GT predicate on the "repository_id" field.
-func RepositoryIDGT(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDGTE applies the GTE predicate on the "repository_id" field.
-func RepositoryIDGTE(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDLT applies the LT predicate on the "repository_id" field.
-func RepositoryIDLT(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDLTE applies the LTE predicate on the "repository_id" field.
-func RepositoryIDLTE(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDContains applies the Contains predicate on the "repository_id" field.
-func RepositoryIDContains(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDHasPrefix applies the HasPrefix predicate on the "repository_id" field.
-func RepositoryIDHasPrefix(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDHasSuffix applies the HasSuffix predicate on the "repository_id" field.
-func RepositoryIDHasSuffix(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDEqualFold applies the EqualFold predicate on the "repository_id" field.
-func RepositoryIDEqualFold(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldRepositoryID), v))
-	})
-}
-
-// RepositoryIDContainsFold applies the ContainsFold predicate on the "repository_id" field.
-func RepositoryIDContainsFold(v string) predicate.PullRequest {
-	return predicate.PullRequest(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldRepositoryID), v))
 	})
 }
 

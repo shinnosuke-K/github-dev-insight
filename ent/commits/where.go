@@ -7,32 +7,33 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.Commits {
+func ID(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.Commits {
+func IDEQ(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.Commits {
+func IDNEQ(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.Commits {
+func IDIn(ids ...uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -49,7 +50,7 @@ func IDIn(ids ...int) predicate.Commits {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.Commits {
+func IDNotIn(ids ...uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -66,37 +67,30 @@ func IDNotIn(ids ...int) predicate.Commits {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.Commits {
+func IDGT(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.Commits {
+func IDGTE(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.Commits {
+func IDLT(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.Commits {
+func IDLTE(id uuid.UUID) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
-	})
-}
-
-// PullrequestID applies equality check predicate on the "pullrequest_id" field. It's identical to PullrequestIDEQ.
-func PullrequestID(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPullrequestID), v))
 	})
 }
 
@@ -125,117 +119,6 @@ func CommittedAt(v time.Time) predicate.Commits {
 func CreatedAt(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
-	})
-}
-
-// PullrequestIDEQ applies the EQ predicate on the "pullrequest_id" field.
-func PullrequestIDEQ(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDNEQ applies the NEQ predicate on the "pullrequest_id" field.
-func PullrequestIDNEQ(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDIn applies the In predicate on the "pullrequest_id" field.
-func PullrequestIDIn(vs ...string) predicate.Commits {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Commits(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldPullrequestID), v...))
-	})
-}
-
-// PullrequestIDNotIn applies the NotIn predicate on the "pullrequest_id" field.
-func PullrequestIDNotIn(vs ...string) predicate.Commits {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Commits(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldPullrequestID), v...))
-	})
-}
-
-// PullrequestIDGT applies the GT predicate on the "pullrequest_id" field.
-func PullrequestIDGT(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDGTE applies the GTE predicate on the "pullrequest_id" field.
-func PullrequestIDGTE(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDLT applies the LT predicate on the "pullrequest_id" field.
-func PullrequestIDLT(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDLTE applies the LTE predicate on the "pullrequest_id" field.
-func PullrequestIDLTE(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDContains applies the Contains predicate on the "pullrequest_id" field.
-func PullrequestIDContains(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDHasPrefix applies the HasPrefix predicate on the "pullrequest_id" field.
-func PullrequestIDHasPrefix(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDHasSuffix applies the HasSuffix predicate on the "pullrequest_id" field.
-func PullrequestIDHasSuffix(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDEqualFold applies the EqualFold predicate on the "pullrequest_id" field.
-func PullrequestIDEqualFold(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPullrequestID), v))
-	})
-}
-
-// PullrequestIDContainsFold applies the ContainsFold predicate on the "pullrequest_id" field.
-func PullrequestIDContainsFold(v string) predicate.Commits {
-	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPullrequestID), v))
 	})
 }
 
@@ -613,25 +496,25 @@ func CreatedAtLTE(v time.Time) predicate.Commits {
 	})
 }
 
-// HasPullRequests applies the HasEdge predicate on the "pull_requests" edge.
-func HasPullRequests() predicate.Commits {
+// HasPullRequest applies the HasEdge predicate on the "pull_request" edge.
+func HasPullRequest() predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PullRequestsTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PullRequestsTable, PullRequestsColumn),
+			sqlgraph.To(PullRequestTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PullRequestTable, PullRequestColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPullRequestsWith applies the HasEdge predicate on the "pull_requests" edge with a given conditions (other predicates).
-func HasPullRequestsWith(preds ...predicate.PullRequest) predicate.Commits {
+// HasPullRequestWith applies the HasEdge predicate on the "pull_request" edge with a given conditions (other predicates).
+func HasPullRequestWith(preds ...predicate.PullRequest) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PullRequestsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PullRequestsTable, PullRequestsColumn),
+			sqlgraph.To(PullRequestInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PullRequestTable, PullRequestColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

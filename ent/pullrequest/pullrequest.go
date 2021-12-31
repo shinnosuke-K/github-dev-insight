@@ -4,6 +4,8 @@ package pullrequest
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,8 +13,6 @@ const (
 	Label = "pull_request"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldRepositoryID holds the string denoting the repository_id field in the database.
-	FieldRepositoryID = "repository_id"
 	// FieldGithubID holds the string denoting the github_id field in the database.
 	FieldGithubID = "github_id"
 	// FieldTitle holds the string denoting the title field in the database.
@@ -39,20 +39,19 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "commits" package.
 	CommitsInverseTable = "commits"
 	// CommitsColumn is the table column denoting the commits relation/edge.
-	CommitsColumn = "pull_request_commits"
+	CommitsColumn = "pull_request_id"
 	// RepositoryTable is the table that holds the repository relation/edge.
 	RepositoryTable = "pull_requests"
 	// RepositoryInverseTable is the table name for the Repository entity.
 	// It exists in this package in order to avoid circular dependency with the "repository" package.
 	RepositoryInverseTable = "repositories"
 	// RepositoryColumn is the table column denoting the repository relation/edge.
-	RepositoryColumn = "repository_pull_requests"
+	RepositoryColumn = "repository_id"
 )
 
 // Columns holds all SQL columns for pullrequest fields.
 var Columns = []string{
 	FieldID,
-	FieldRepositoryID,
 	FieldGithubID,
 	FieldTitle,
 	FieldTotalCommits,
@@ -65,7 +64,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "pull_requests"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"repository_pull_requests",
+	"repository_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -84,8 +83,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
-	RepositoryIDValidator func(string) error
 	// GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
 	GithubIDValidator func(string) error
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
@@ -102,4 +99,6 @@ var (
 	DefaultClosedAt func() time.Time
 	// DefaultMergedAt holds the default value on creation for the "merged_at" field.
 	DefaultMergedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

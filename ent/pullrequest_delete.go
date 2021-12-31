@@ -72,7 +72,7 @@ func (prd *PullRequestDelete) sqlExec(ctx context.Context) (int, error) {
 		Node: &sqlgraph.NodeSpec{
 			Table: pullrequest.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pullrequest.FieldID,
 			},
 		},

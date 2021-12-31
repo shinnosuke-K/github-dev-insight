@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -110,8 +111,8 @@ func (iq *IssueQuery) FirstX(ctx context.Context) *Issue {
 
 // FirstID returns the first Issue ID from the query.
 // Returns a *NotFoundError when no Issue ID was found.
-func (iq *IssueQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (iq *IssueQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = iq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -123,7 +124,7 @@ func (iq *IssueQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (iq *IssueQuery) FirstIDX(ctx context.Context) int {
+func (iq *IssueQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := iq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -161,8 +162,8 @@ func (iq *IssueQuery) OnlyX(ctx context.Context) *Issue {
 // OnlyID is like Only, but returns the only Issue ID in the query.
 // Returns a *NotSingularError when exactly one Issue ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (iq *IssueQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (iq *IssueQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = iq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -178,7 +179,7 @@ func (iq *IssueQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (iq *IssueQuery) OnlyIDX(ctx context.Context) int {
+func (iq *IssueQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := iq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,8 +205,8 @@ func (iq *IssueQuery) AllX(ctx context.Context) []*Issue {
 }
 
 // IDs executes the query and returns a list of Issue IDs.
-func (iq *IssueQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (iq *IssueQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := iq.Select(issue.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -213,7 +214,7 @@ func (iq *IssueQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (iq *IssueQuery) IDsX(ctx context.Context) []int {
+func (iq *IssueQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := iq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -291,12 +292,12 @@ func (iq *IssueQuery) WithRepository(opts ...func(*RepositoryQuery)) *IssueQuery
 // Example:
 //
 //	var v []struct {
-//		RepositoryID string `json:"repository_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Issue.Query().
-//		GroupBy(issue.FieldRepositoryID).
+//		GroupBy(issue.FieldGithubID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +319,11 @@ func (iq *IssueQuery) GroupBy(field string, fields ...string) *IssueGroupBy {
 // Example:
 //
 //	var v []struct {
-//		RepositoryID string `json:"repository_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //	}
 //
 //	client.Issue.Query().
-//		Select(issue.FieldRepositoryID).
+//		Select(issue.FieldGithubID).
 //		Scan(ctx, &v)
 //
 func (iq *IssueQuery) Select(fields ...string) *IssueSelect {
@@ -382,13 +383,13 @@ func (iq *IssueQuery) sqlAll(ctx context.Context) ([]*Issue, error) {
 	}
 
 	if query := iq.withRepository; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Issue)
+		ids := make([]uuid.UUID, 0, len(nodes))
+		nodeids := make(map[uuid.UUID][]*Issue)
 		for i := range nodes {
-			if nodes[i].repository_issues == nil {
+			if nodes[i].repository_id == nil {
 				continue
 			}
-			fk := *nodes[i].repository_issues
+			fk := *nodes[i].repository_id
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,7 +403,7 @@ func (iq *IssueQuery) sqlAll(ctx context.Context) ([]*Issue, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "repository_issues" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "repository_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Repository = n
@@ -432,7 +433,7 @@ func (iq *IssueQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   issue.Table,
 			Columns: issue.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: issue.FieldID,
 			},
 		},

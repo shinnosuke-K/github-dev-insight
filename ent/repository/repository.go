@@ -4,6 +4,8 @@ package repository
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -41,14 +43,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "pullrequest" package.
 	PullRequestsInverseTable = "pull_requests"
 	// PullRequestsColumn is the table column denoting the pull_requests relation/edge.
-	PullRequestsColumn = "repository_pull_requests"
+	PullRequestsColumn = "repository_id"
 	// IssuesTable is the table that holds the issues relation/edge.
 	IssuesTable = "issues"
 	// IssuesInverseTable is the table name for the Issue entity.
 	// It exists in this package in order to avoid circular dependency with the "issue" package.
 	IssuesInverseTable = "issues"
 	// IssuesColumn is the table column denoting the issues relation/edge.
-	IssuesColumn = "repository_issues"
+	IssuesColumn = "repository_id"
 )
 
 // Columns holds all SQL columns for repository fields.
@@ -96,4 +98,6 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// DefaultPushedAt holds the default value on creation for the "pushed_at" field.
 	DefaultPushedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

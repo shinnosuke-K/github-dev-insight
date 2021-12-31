@@ -10,13 +10,12 @@ import (
 var (
 	// CommitsColumns holds the columns for the "commits" table.
 	CommitsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "pullrequest_id", Type: field.TypeString, Size: 255},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "message", Type: field.TypeString, Size: 2147483647},
 		{Name: "committed_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "pull_request_commits", Type: field.TypeInt, Nullable: true},
+		{Name: "pull_request_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// CommitsTable holds the schema information for the "commits" table.
 	CommitsTable = &schema.Table{
@@ -26,7 +25,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "commits_pull_requests_commits",
-				Columns:    []*schema.Column{CommitsColumns[6]},
+				Columns:    []*schema.Column{CommitsColumns[5]},
 				RefColumns: []*schema.Column{PullRequestsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -34,15 +33,14 @@ var (
 	}
 	// IssuesColumns holds the columns for the "issues" table.
 	IssuesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "repository_id", Type: field.TypeString, Size: 255},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "last_edited_at", Type: field.TypeTime},
 		{Name: "closed_at", Type: field.TypeTime},
-		{Name: "repository_issues", Type: field.TypeInt, Nullable: true},
+		{Name: "repository_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// IssuesTable holds the schema information for the "issues" table.
 	IssuesTable = &schema.Table{
@@ -52,7 +50,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "issues_repositories_issues",
-				Columns:    []*schema.Column{IssuesColumns[8]},
+				Columns:    []*schema.Column{IssuesColumns[7]},
 				RefColumns: []*schema.Column{RepositoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -60,8 +58,7 @@ var (
 	}
 	// PullRequestsColumns holds the columns for the "pull_requests" table.
 	PullRequestsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "repository_id", Type: field.TypeString, Size: 255},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "total_commits", Type: field.TypeInt64, Default: 0},
@@ -69,7 +66,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "closed_at", Type: field.TypeTime},
 		{Name: "merged_at", Type: field.TypeTime},
-		{Name: "repository_pull_requests", Type: field.TypeInt, Nullable: true},
+		{Name: "repository_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// PullRequestsTable holds the schema information for the "pull_requests" table.
 	PullRequestsTable = &schema.Table{
@@ -79,7 +76,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pull_requests_repositories_pull_requests",
-				Columns:    []*schema.Column{PullRequestsColumns[9]},
+				Columns:    []*schema.Column{PullRequestsColumns[8]},
 				RefColumns: []*schema.Column{RepositoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -87,7 +84,7 @@ var (
 	}
 	// RepositoriesColumns holds the columns for the "repositories" table.
 	RepositoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "owner", Type: field.TypeString, Size: 255},
 		{Name: "name", Type: field.TypeString, Size: 255},

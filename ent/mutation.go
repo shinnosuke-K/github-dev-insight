@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
@@ -35,20 +36,19 @@ const (
 // CommitsMutation represents an operation that mutates the Commits nodes in the graph.
 type CommitsMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int
-	pullrequest_id       *string
-	github_id            *string
-	message              *string
-	committed_at         *time.Time
-	created_at           *time.Time
-	clearedFields        map[string]struct{}
-	pull_requests        *int
-	clearedpull_requests bool
-	done                 bool
-	oldValue             func(context.Context) (*Commits, error)
-	predicates           []predicate.Commits
+	op                  Op
+	typ                 string
+	id                  *uuid.UUID
+	github_id           *string
+	message             *string
+	committed_at        *time.Time
+	created_at          *time.Time
+	clearedFields       map[string]struct{}
+	pull_request        *uuid.UUID
+	clearedpull_request bool
+	done                bool
+	oldValue            func(context.Context) (*Commits, error)
+	predicates          []predicate.Commits
 }
 
 var _ ent.Mutation = (*CommitsMutation)(nil)
@@ -71,7 +71,7 @@ func newCommitsMutation(c config, op Op, opts ...commitsOption) *CommitsMutation
 }
 
 // withCommitsID sets the ID field of the mutation.
-func withCommitsID(id int) commitsOption {
+func withCommitsID(id uuid.UUID) commitsOption {
 	return func(m *CommitsMutation) {
 		var (
 			err   error
@@ -121,49 +121,19 @@ func (m CommitsMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Commits entities.
+func (m *CommitsMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CommitsMutation) ID() (id int, exists bool) {
+func (m *CommitsMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
 	return *m.id, true
-}
-
-// SetPullrequestID sets the "pullrequest_id" field.
-func (m *CommitsMutation) SetPullrequestID(s string) {
-	m.pullrequest_id = &s
-}
-
-// PullrequestID returns the value of the "pullrequest_id" field in the mutation.
-func (m *CommitsMutation) PullrequestID() (r string, exists bool) {
-	v := m.pullrequest_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPullrequestID returns the old "pullrequest_id" field's value of the Commits entity.
-// If the Commits object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitsMutation) OldPullrequestID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPullrequestID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPullrequestID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPullrequestID: %w", err)
-	}
-	return oldValue.PullrequestID, nil
-}
-
-// ResetPullrequestID resets all changes to the "pullrequest_id" field.
-func (m *CommitsMutation) ResetPullrequestID() {
-	m.pullrequest_id = nil
 }
 
 // SetGithubID sets the "github_id" field.
@@ -310,43 +280,43 @@ func (m *CommitsMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by id.
-func (m *CommitsMutation) SetPullRequestsID(id int) {
-	m.pull_requests = &id
+// SetPullRequestID sets the "pull_request" edge to the PullRequest entity by id.
+func (m *CommitsMutation) SetPullRequestID(id uuid.UUID) {
+	m.pull_request = &id
 }
 
-// ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (m *CommitsMutation) ClearPullRequests() {
-	m.clearedpull_requests = true
+// ClearPullRequest clears the "pull_request" edge to the PullRequest entity.
+func (m *CommitsMutation) ClearPullRequest() {
+	m.clearedpull_request = true
 }
 
-// PullRequestsCleared reports if the "pull_requests" edge to the PullRequest entity was cleared.
-func (m *CommitsMutation) PullRequestsCleared() bool {
-	return m.clearedpull_requests
+// PullRequestCleared reports if the "pull_request" edge to the PullRequest entity was cleared.
+func (m *CommitsMutation) PullRequestCleared() bool {
+	return m.clearedpull_request
 }
 
-// PullRequestsID returns the "pull_requests" edge ID in the mutation.
-func (m *CommitsMutation) PullRequestsID() (id int, exists bool) {
-	if m.pull_requests != nil {
-		return *m.pull_requests, true
+// PullRequestID returns the "pull_request" edge ID in the mutation.
+func (m *CommitsMutation) PullRequestID() (id uuid.UUID, exists bool) {
+	if m.pull_request != nil {
+		return *m.pull_request, true
 	}
 	return
 }
 
-// PullRequestsIDs returns the "pull_requests" edge IDs in the mutation.
+// PullRequestIDs returns the "pull_request" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// PullRequestsID instead. It exists only for internal usage by the builders.
-func (m *CommitsMutation) PullRequestsIDs() (ids []int) {
-	if id := m.pull_requests; id != nil {
+// PullRequestID instead. It exists only for internal usage by the builders.
+func (m *CommitsMutation) PullRequestIDs() (ids []uuid.UUID) {
+	if id := m.pull_request; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetPullRequests resets all changes to the "pull_requests" edge.
-func (m *CommitsMutation) ResetPullRequests() {
-	m.pull_requests = nil
-	m.clearedpull_requests = false
+// ResetPullRequest resets all changes to the "pull_request" edge.
+func (m *CommitsMutation) ResetPullRequest() {
+	m.pull_request = nil
+	m.clearedpull_request = false
 }
 
 // Where appends a list predicates to the CommitsMutation builder.
@@ -368,10 +338,7 @@ func (m *CommitsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommitsMutation) Fields() []string {
-	fields := make([]string, 0, 5)
-	if m.pullrequest_id != nil {
-		fields = append(fields, commits.FieldPullrequestID)
-	}
+	fields := make([]string, 0, 4)
 	if m.github_id != nil {
 		fields = append(fields, commits.FieldGithubID)
 	}
@@ -392,8 +359,6 @@ func (m *CommitsMutation) Fields() []string {
 // schema.
 func (m *CommitsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case commits.FieldPullrequestID:
-		return m.PullrequestID()
 	case commits.FieldGithubID:
 		return m.GithubID()
 	case commits.FieldMessage:
@@ -411,8 +376,6 @@ func (m *CommitsMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CommitsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case commits.FieldPullrequestID:
-		return m.OldPullrequestID(ctx)
 	case commits.FieldGithubID:
 		return m.OldGithubID(ctx)
 	case commits.FieldMessage:
@@ -430,13 +393,6 @@ func (m *CommitsMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *CommitsMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case commits.FieldPullrequestID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPullrequestID(v)
-		return nil
 	case commits.FieldGithubID:
 		v, ok := value.(string)
 		if !ok {
@@ -514,9 +470,6 @@ func (m *CommitsMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CommitsMutation) ResetField(name string) error {
 	switch name {
-	case commits.FieldPullrequestID:
-		m.ResetPullrequestID()
-		return nil
 	case commits.FieldGithubID:
 		m.ResetGithubID()
 		return nil
@@ -536,8 +489,8 @@ func (m *CommitsMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CommitsMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.pull_requests != nil {
-		edges = append(edges, commits.EdgePullRequests)
+	if m.pull_request != nil {
+		edges = append(edges, commits.EdgePullRequest)
 	}
 	return edges
 }
@@ -546,8 +499,8 @@ func (m *CommitsMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *CommitsMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case commits.EdgePullRequests:
-		if id := m.pull_requests; id != nil {
+	case commits.EdgePullRequest:
+		if id := m.pull_request; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -571,8 +524,8 @@ func (m *CommitsMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CommitsMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedpull_requests {
-		edges = append(edges, commits.EdgePullRequests)
+	if m.clearedpull_request {
+		edges = append(edges, commits.EdgePullRequest)
 	}
 	return edges
 }
@@ -581,8 +534,8 @@ func (m *CommitsMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *CommitsMutation) EdgeCleared(name string) bool {
 	switch name {
-	case commits.EdgePullRequests:
-		return m.clearedpull_requests
+	case commits.EdgePullRequest:
+		return m.clearedpull_request
 	}
 	return false
 }
@@ -591,8 +544,8 @@ func (m *CommitsMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *CommitsMutation) ClearEdge(name string) error {
 	switch name {
-	case commits.EdgePullRequests:
-		m.ClearPullRequests()
+	case commits.EdgePullRequest:
+		m.ClearPullRequest()
 		return nil
 	}
 	return fmt.Errorf("unknown Commits unique edge %s", name)
@@ -602,8 +555,8 @@ func (m *CommitsMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CommitsMutation) ResetEdge(name string) error {
 	switch name {
-	case commits.EdgePullRequests:
-		m.ResetPullRequests()
+	case commits.EdgePullRequest:
+		m.ResetPullRequest()
 		return nil
 	}
 	return fmt.Errorf("unknown Commits edge %s", name)
@@ -614,8 +567,7 @@ type IssueMutation struct {
 	config
 	op                Op
 	typ               string
-	id                *int
-	repository_id     *string
+	id                *uuid.UUID
 	github_id         *string
 	title             *string
 	created_at        *time.Time
@@ -623,7 +575,7 @@ type IssueMutation struct {
 	last_edited_at    *time.Time
 	closed_at         *time.Time
 	clearedFields     map[string]struct{}
-	repository        *int
+	repository        *uuid.UUID
 	clearedrepository bool
 	done              bool
 	oldValue          func(context.Context) (*Issue, error)
@@ -650,7 +602,7 @@ func newIssueMutation(c config, op Op, opts ...issueOption) *IssueMutation {
 }
 
 // withIssueID sets the ID field of the mutation.
-func withIssueID(id int) issueOption {
+func withIssueID(id uuid.UUID) issueOption {
 	return func(m *IssueMutation) {
 		var (
 			err   error
@@ -700,49 +652,19 @@ func (m IssueMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Issue entities.
+func (m *IssueMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *IssueMutation) ID() (id int, exists bool) {
+func (m *IssueMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
 	return *m.id, true
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (m *IssueMutation) SetRepositoryID(s string) {
-	m.repository_id = &s
-}
-
-// RepositoryID returns the value of the "repository_id" field in the mutation.
-func (m *IssueMutation) RepositoryID() (r string, exists bool) {
-	v := m.repository_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRepositoryID returns the old "repository_id" field's value of the Issue entity.
-// If the Issue object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *IssueMutation) OldRepositoryID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldRepositoryID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldRepositoryID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRepositoryID: %w", err)
-	}
-	return oldValue.RepositoryID, nil
-}
-
-// ResetRepositoryID resets all changes to the "repository_id" field.
-func (m *IssueMutation) ResetRepositoryID() {
-	m.repository_id = nil
 }
 
 // SetGithubID sets the "github_id" field.
@@ -962,7 +884,7 @@ func (m *IssueMutation) ResetClosedAt() {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by id.
-func (m *IssueMutation) SetRepositoryID(id int) {
+func (m *IssueMutation) SetRepositoryID(id uuid.UUID) {
 	m.repository = &id
 }
 
@@ -977,7 +899,7 @@ func (m *IssueMutation) RepositoryCleared() bool {
 }
 
 // RepositoryID returns the "repository" edge ID in the mutation.
-func (m *IssueMutation) RepositoryID() (id int, exists bool) {
+func (m *IssueMutation) RepositoryID() (id uuid.UUID, exists bool) {
 	if m.repository != nil {
 		return *m.repository, true
 	}
@@ -987,7 +909,7 @@ func (m *IssueMutation) RepositoryID() (id int, exists bool) {
 // RepositoryIDs returns the "repository" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // RepositoryID instead. It exists only for internal usage by the builders.
-func (m *IssueMutation) RepositoryIDs() (ids []int) {
+func (m *IssueMutation) RepositoryIDs() (ids []uuid.UUID) {
 	if id := m.repository; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1019,10 +941,7 @@ func (m *IssueMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IssueMutation) Fields() []string {
-	fields := make([]string, 0, 7)
-	if m.repository_id != nil {
-		fields = append(fields, issue.FieldRepositoryID)
-	}
+	fields := make([]string, 0, 6)
 	if m.github_id != nil {
 		fields = append(fields, issue.FieldGithubID)
 	}
@@ -1049,8 +968,6 @@ func (m *IssueMutation) Fields() []string {
 // schema.
 func (m *IssueMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case issue.FieldRepositoryID:
-		return m.RepositoryID()
 	case issue.FieldGithubID:
 		return m.GithubID()
 	case issue.FieldTitle:
@@ -1072,8 +989,6 @@ func (m *IssueMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *IssueMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case issue.FieldRepositoryID:
-		return m.OldRepositoryID(ctx)
 	case issue.FieldGithubID:
 		return m.OldGithubID(ctx)
 	case issue.FieldTitle:
@@ -1095,13 +1010,6 @@ func (m *IssueMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *IssueMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case issue.FieldRepositoryID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRepositoryID(v)
-		return nil
 	case issue.FieldGithubID:
 		v, ok := value.(string)
 		if !ok {
@@ -1193,9 +1101,6 @@ func (m *IssueMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *IssueMutation) ResetField(name string) error {
 	switch name {
-	case issue.FieldRepositoryID:
-		m.ResetRepositoryID()
-		return nil
 	case issue.FieldGithubID:
 		m.ResetGithubID()
 		return nil
@@ -1299,8 +1204,7 @@ type PullRequestMutation struct {
 	config
 	op                Op
 	typ               string
-	id                *int
-	repository_id     *string
+	id                *uuid.UUID
 	github_id         *string
 	title             *string
 	total_commits     *int64
@@ -1310,10 +1214,10 @@ type PullRequestMutation struct {
 	closed_at         *time.Time
 	merged_at         *time.Time
 	clearedFields     map[string]struct{}
-	commits           map[int]struct{}
-	removedcommits    map[int]struct{}
+	commits           map[uuid.UUID]struct{}
+	removedcommits    map[uuid.UUID]struct{}
 	clearedcommits    bool
-	repository        *int
+	repository        *uuid.UUID
 	clearedrepository bool
 	done              bool
 	oldValue          func(context.Context) (*PullRequest, error)
@@ -1340,7 +1244,7 @@ func newPullRequestMutation(c config, op Op, opts ...pullrequestOption) *PullReq
 }
 
 // withPullRequestID sets the ID field of the mutation.
-func withPullRequestID(id int) pullrequestOption {
+func withPullRequestID(id uuid.UUID) pullrequestOption {
 	return func(m *PullRequestMutation) {
 		var (
 			err   error
@@ -1390,49 +1294,19 @@ func (m PullRequestMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PullRequest entities.
+func (m *PullRequestMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PullRequestMutation) ID() (id int, exists bool) {
+func (m *PullRequestMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
 	return *m.id, true
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (m *PullRequestMutation) SetRepositoryID(s string) {
-	m.repository_id = &s
-}
-
-// RepositoryID returns the value of the "repository_id" field in the mutation.
-func (m *PullRequestMutation) RepositoryID() (r string, exists bool) {
-	v := m.repository_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRepositoryID returns the old "repository_id" field's value of the PullRequest entity.
-// If the PullRequest object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PullRequestMutation) OldRepositoryID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldRepositoryID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldRepositoryID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRepositoryID: %w", err)
-	}
-	return oldValue.RepositoryID, nil
-}
-
-// ResetRepositoryID resets all changes to the "repository_id" field.
-func (m *PullRequestMutation) ResetRepositoryID() {
-	m.repository_id = nil
 }
 
 // SetGithubID sets the "github_id" field.
@@ -1708,9 +1582,9 @@ func (m *PullRequestMutation) ResetMergedAt() {
 }
 
 // AddCommitIDs adds the "commits" edge to the Commits entity by ids.
-func (m *PullRequestMutation) AddCommitIDs(ids ...int) {
+func (m *PullRequestMutation) AddCommitIDs(ids ...uuid.UUID) {
 	if m.commits == nil {
-		m.commits = make(map[int]struct{})
+		m.commits = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.commits[ids[i]] = struct{}{}
@@ -1728,9 +1602,9 @@ func (m *PullRequestMutation) CommitsCleared() bool {
 }
 
 // RemoveCommitIDs removes the "commits" edge to the Commits entity by IDs.
-func (m *PullRequestMutation) RemoveCommitIDs(ids ...int) {
+func (m *PullRequestMutation) RemoveCommitIDs(ids ...uuid.UUID) {
 	if m.removedcommits == nil {
-		m.removedcommits = make(map[int]struct{})
+		m.removedcommits = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.commits, ids[i])
@@ -1739,7 +1613,7 @@ func (m *PullRequestMutation) RemoveCommitIDs(ids ...int) {
 }
 
 // RemovedCommits returns the removed IDs of the "commits" edge to the Commits entity.
-func (m *PullRequestMutation) RemovedCommitsIDs() (ids []int) {
+func (m *PullRequestMutation) RemovedCommitsIDs() (ids []uuid.UUID) {
 	for id := range m.removedcommits {
 		ids = append(ids, id)
 	}
@@ -1747,7 +1621,7 @@ func (m *PullRequestMutation) RemovedCommitsIDs() (ids []int) {
 }
 
 // CommitsIDs returns the "commits" edge IDs in the mutation.
-func (m *PullRequestMutation) CommitsIDs() (ids []int) {
+func (m *PullRequestMutation) CommitsIDs() (ids []uuid.UUID) {
 	for id := range m.commits {
 		ids = append(ids, id)
 	}
@@ -1762,7 +1636,7 @@ func (m *PullRequestMutation) ResetCommits() {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by id.
-func (m *PullRequestMutation) SetRepositoryID(id int) {
+func (m *PullRequestMutation) SetRepositoryID(id uuid.UUID) {
 	m.repository = &id
 }
 
@@ -1777,7 +1651,7 @@ func (m *PullRequestMutation) RepositoryCleared() bool {
 }
 
 // RepositoryID returns the "repository" edge ID in the mutation.
-func (m *PullRequestMutation) RepositoryID() (id int, exists bool) {
+func (m *PullRequestMutation) RepositoryID() (id uuid.UUID, exists bool) {
 	if m.repository != nil {
 		return *m.repository, true
 	}
@@ -1787,7 +1661,7 @@ func (m *PullRequestMutation) RepositoryID() (id int, exists bool) {
 // RepositoryIDs returns the "repository" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // RepositoryID instead. It exists only for internal usage by the builders.
-func (m *PullRequestMutation) RepositoryIDs() (ids []int) {
+func (m *PullRequestMutation) RepositoryIDs() (ids []uuid.UUID) {
 	if id := m.repository; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1819,10 +1693,7 @@ func (m *PullRequestMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PullRequestMutation) Fields() []string {
-	fields := make([]string, 0, 8)
-	if m.repository_id != nil {
-		fields = append(fields, pullrequest.FieldRepositoryID)
-	}
+	fields := make([]string, 0, 7)
 	if m.github_id != nil {
 		fields = append(fields, pullrequest.FieldGithubID)
 	}
@@ -1852,8 +1723,6 @@ func (m *PullRequestMutation) Fields() []string {
 // schema.
 func (m *PullRequestMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case pullrequest.FieldRepositoryID:
-		return m.RepositoryID()
 	case pullrequest.FieldGithubID:
 		return m.GithubID()
 	case pullrequest.FieldTitle:
@@ -1877,8 +1746,6 @@ func (m *PullRequestMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PullRequestMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case pullrequest.FieldRepositoryID:
-		return m.OldRepositoryID(ctx)
 	case pullrequest.FieldGithubID:
 		return m.OldGithubID(ctx)
 	case pullrequest.FieldTitle:
@@ -1902,13 +1769,6 @@ func (m *PullRequestMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *PullRequestMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case pullrequest.FieldRepositoryID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRepositoryID(v)
-		return nil
 	case pullrequest.FieldGithubID:
 		v, ok := value.(string)
 		if !ok {
@@ -2022,9 +1882,6 @@ func (m *PullRequestMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PullRequestMutation) ResetField(name string) error {
 	switch name {
-	case pullrequest.FieldRepositoryID:
-		m.ResetRepositoryID()
-		return nil
 	case pullrequest.FieldGithubID:
 		m.ResetGithubID()
 		return nil
@@ -2157,7 +2014,7 @@ type RepositoryMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int
+	id                   *uuid.UUID
 	github_id            *string
 	owner                *string
 	name                 *string
@@ -2170,11 +2027,11 @@ type RepositoryMutation struct {
 	updated_at           *time.Time
 	pushed_at            *time.Time
 	clearedFields        map[string]struct{}
-	pull_requests        map[int]struct{}
-	removedpull_requests map[int]struct{}
+	pull_requests        map[uuid.UUID]struct{}
+	removedpull_requests map[uuid.UUID]struct{}
 	clearedpull_requests bool
-	issues               map[int]struct{}
-	removedissues        map[int]struct{}
+	issues               map[uuid.UUID]struct{}
+	removedissues        map[uuid.UUID]struct{}
 	clearedissues        bool
 	done                 bool
 	oldValue             func(context.Context) (*Repository, error)
@@ -2201,7 +2058,7 @@ func newRepositoryMutation(c config, op Op, opts ...repositoryOption) *Repositor
 }
 
 // withRepositoryID sets the ID field of the mutation.
-func withRepositoryID(id int) repositoryOption {
+func withRepositoryID(id uuid.UUID) repositoryOption {
 	return func(m *RepositoryMutation) {
 		var (
 			err   error
@@ -2251,9 +2108,15 @@ func (m RepositoryMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Repository entities.
+func (m *RepositoryMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *RepositoryMutation) ID() (id int, exists bool) {
+func (m *RepositoryMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2638,9 +2501,9 @@ func (m *RepositoryMutation) ResetPushedAt() {
 }
 
 // AddPullRequestIDs adds the "pull_requests" edge to the PullRequest entity by ids.
-func (m *RepositoryMutation) AddPullRequestIDs(ids ...int) {
+func (m *RepositoryMutation) AddPullRequestIDs(ids ...uuid.UUID) {
 	if m.pull_requests == nil {
-		m.pull_requests = make(map[int]struct{})
+		m.pull_requests = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.pull_requests[ids[i]] = struct{}{}
@@ -2658,9 +2521,9 @@ func (m *RepositoryMutation) PullRequestsCleared() bool {
 }
 
 // RemovePullRequestIDs removes the "pull_requests" edge to the PullRequest entity by IDs.
-func (m *RepositoryMutation) RemovePullRequestIDs(ids ...int) {
+func (m *RepositoryMutation) RemovePullRequestIDs(ids ...uuid.UUID) {
 	if m.removedpull_requests == nil {
-		m.removedpull_requests = make(map[int]struct{})
+		m.removedpull_requests = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.pull_requests, ids[i])
@@ -2669,7 +2532,7 @@ func (m *RepositoryMutation) RemovePullRequestIDs(ids ...int) {
 }
 
 // RemovedPullRequests returns the removed IDs of the "pull_requests" edge to the PullRequest entity.
-func (m *RepositoryMutation) RemovedPullRequestsIDs() (ids []int) {
+func (m *RepositoryMutation) RemovedPullRequestsIDs() (ids []uuid.UUID) {
 	for id := range m.removedpull_requests {
 		ids = append(ids, id)
 	}
@@ -2677,7 +2540,7 @@ func (m *RepositoryMutation) RemovedPullRequestsIDs() (ids []int) {
 }
 
 // PullRequestsIDs returns the "pull_requests" edge IDs in the mutation.
-func (m *RepositoryMutation) PullRequestsIDs() (ids []int) {
+func (m *RepositoryMutation) PullRequestsIDs() (ids []uuid.UUID) {
 	for id := range m.pull_requests {
 		ids = append(ids, id)
 	}
@@ -2692,9 +2555,9 @@ func (m *RepositoryMutation) ResetPullRequests() {
 }
 
 // AddIssueIDs adds the "issues" edge to the Issue entity by ids.
-func (m *RepositoryMutation) AddIssueIDs(ids ...int) {
+func (m *RepositoryMutation) AddIssueIDs(ids ...uuid.UUID) {
 	if m.issues == nil {
-		m.issues = make(map[int]struct{})
+		m.issues = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.issues[ids[i]] = struct{}{}
@@ -2712,9 +2575,9 @@ func (m *RepositoryMutation) IssuesCleared() bool {
 }
 
 // RemoveIssueIDs removes the "issues" edge to the Issue entity by IDs.
-func (m *RepositoryMutation) RemoveIssueIDs(ids ...int) {
+func (m *RepositoryMutation) RemoveIssueIDs(ids ...uuid.UUID) {
 	if m.removedissues == nil {
-		m.removedissues = make(map[int]struct{})
+		m.removedissues = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.issues, ids[i])
@@ -2723,7 +2586,7 @@ func (m *RepositoryMutation) RemoveIssueIDs(ids ...int) {
 }
 
 // RemovedIssues returns the removed IDs of the "issues" edge to the Issue entity.
-func (m *RepositoryMutation) RemovedIssuesIDs() (ids []int) {
+func (m *RepositoryMutation) RemovedIssuesIDs() (ids []uuid.UUID) {
 	for id := range m.removedissues {
 		ids = append(ids, id)
 	}
@@ -2731,7 +2594,7 @@ func (m *RepositoryMutation) RemovedIssuesIDs() (ids []int) {
 }
 
 // IssuesIDs returns the "issues" edge IDs in the mutation.
-func (m *RepositoryMutation) IssuesIDs() (ids []int) {
+func (m *RepositoryMutation) IssuesIDs() (ids []uuid.UUID) {
 	for id := range m.issues {
 		ids = append(ids, id)
 	}

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -25,12 +26,6 @@ type CommitsUpdate struct {
 // Where appends a list predicates to the CommitsUpdate builder.
 func (cu *CommitsUpdate) Where(ps ...predicate.Commits) *CommitsUpdate {
 	cu.mutation.Where(ps...)
-	return cu
-}
-
-// SetPullrequestID sets the "pullrequest_id" field.
-func (cu *CommitsUpdate) SetPullrequestID(s string) *CommitsUpdate {
-	cu.mutation.SetPullrequestID(s)
 	return cu
 }
 
@@ -74,23 +69,23 @@ func (cu *CommitsUpdate) SetNillableCreatedAt(t *time.Time) *CommitsUpdate {
 	return cu
 }
 
-// SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID.
-func (cu *CommitsUpdate) SetPullRequestsID(id int) *CommitsUpdate {
-	cu.mutation.SetPullRequestsID(id)
+// SetPullRequestID sets the "pull_request" edge to the PullRequest entity by ID.
+func (cu *CommitsUpdate) SetPullRequestID(id uuid.UUID) *CommitsUpdate {
+	cu.mutation.SetPullRequestID(id)
 	return cu
 }
 
-// SetNillablePullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID if the given value is not nil.
-func (cu *CommitsUpdate) SetNillablePullRequestsID(id *int) *CommitsUpdate {
+// SetNillablePullRequestID sets the "pull_request" edge to the PullRequest entity by ID if the given value is not nil.
+func (cu *CommitsUpdate) SetNillablePullRequestID(id *uuid.UUID) *CommitsUpdate {
 	if id != nil {
-		cu = cu.SetPullRequestsID(*id)
+		cu = cu.SetPullRequestID(*id)
 	}
 	return cu
 }
 
-// SetPullRequests sets the "pull_requests" edge to the PullRequest entity.
-func (cu *CommitsUpdate) SetPullRequests(p *PullRequest) *CommitsUpdate {
-	return cu.SetPullRequestsID(p.ID)
+// SetPullRequest sets the "pull_request" edge to the PullRequest entity.
+func (cu *CommitsUpdate) SetPullRequest(p *PullRequest) *CommitsUpdate {
+	return cu.SetPullRequestID(p.ID)
 }
 
 // Mutation returns the CommitsMutation object of the builder.
@@ -98,9 +93,9 @@ func (cu *CommitsUpdate) Mutation() *CommitsMutation {
 	return cu.mutation
 }
 
-// ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (cu *CommitsUpdate) ClearPullRequests() *CommitsUpdate {
-	cu.mutation.ClearPullRequests()
+// ClearPullRequest clears the "pull_request" edge to the PullRequest entity.
+func (cu *CommitsUpdate) ClearPullRequest() *CommitsUpdate {
+	cu.mutation.ClearPullRequest()
 	return cu
 }
 
@@ -166,11 +161,6 @@ func (cu *CommitsUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (cu *CommitsUpdate) check() error {
-	if v, ok := cu.mutation.PullrequestID(); ok {
-		if err := commits.PullrequestIDValidator(v); err != nil {
-			return &ValidationError{Name: "pullrequest_id", err: fmt.Errorf("ent: validator failed for field \"pullrequest_id\": %w", err)}
-		}
-	}
 	if v, ok := cu.mutation.GithubID(); ok {
 		if err := commits.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -185,7 +175,7 @@ func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   commits.Table,
 			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: commits.FieldID,
 			},
 		},
@@ -196,13 +186,6 @@ func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := cu.mutation.PullrequestID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: commits.FieldPullrequestID,
-		})
 	}
 	if value, ok := cu.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -232,32 +215,32 @@ func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commits.FieldCreatedAt,
 		})
 	}
-	if cu.mutation.PullRequestsCleared() {
+	if cu.mutation.PullRequestCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commits.PullRequestsTable,
-			Columns: []string{commits.PullRequestsColumn},
+			Table:   commits.PullRequestTable,
+			Columns: []string{commits.PullRequestColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cu.mutation.PullRequestsIDs(); len(nodes) > 0 {
+	if nodes := cu.mutation.PullRequestIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commits.PullRequestsTable,
-			Columns: []string{commits.PullRequestsColumn},
+			Table:   commits.PullRequestTable,
+			Columns: []string{commits.PullRequestColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -284,12 +267,6 @@ type CommitsUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *CommitsMutation
-}
-
-// SetPullrequestID sets the "pullrequest_id" field.
-func (cuo *CommitsUpdateOne) SetPullrequestID(s string) *CommitsUpdateOne {
-	cuo.mutation.SetPullrequestID(s)
-	return cuo
 }
 
 // SetGithubID sets the "github_id" field.
@@ -332,23 +309,23 @@ func (cuo *CommitsUpdateOne) SetNillableCreatedAt(t *time.Time) *CommitsUpdateOn
 	return cuo
 }
 
-// SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID.
-func (cuo *CommitsUpdateOne) SetPullRequestsID(id int) *CommitsUpdateOne {
-	cuo.mutation.SetPullRequestsID(id)
+// SetPullRequestID sets the "pull_request" edge to the PullRequest entity by ID.
+func (cuo *CommitsUpdateOne) SetPullRequestID(id uuid.UUID) *CommitsUpdateOne {
+	cuo.mutation.SetPullRequestID(id)
 	return cuo
 }
 
-// SetNillablePullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID if the given value is not nil.
-func (cuo *CommitsUpdateOne) SetNillablePullRequestsID(id *int) *CommitsUpdateOne {
+// SetNillablePullRequestID sets the "pull_request" edge to the PullRequest entity by ID if the given value is not nil.
+func (cuo *CommitsUpdateOne) SetNillablePullRequestID(id *uuid.UUID) *CommitsUpdateOne {
 	if id != nil {
-		cuo = cuo.SetPullRequestsID(*id)
+		cuo = cuo.SetPullRequestID(*id)
 	}
 	return cuo
 }
 
-// SetPullRequests sets the "pull_requests" edge to the PullRequest entity.
-func (cuo *CommitsUpdateOne) SetPullRequests(p *PullRequest) *CommitsUpdateOne {
-	return cuo.SetPullRequestsID(p.ID)
+// SetPullRequest sets the "pull_request" edge to the PullRequest entity.
+func (cuo *CommitsUpdateOne) SetPullRequest(p *PullRequest) *CommitsUpdateOne {
+	return cuo.SetPullRequestID(p.ID)
 }
 
 // Mutation returns the CommitsMutation object of the builder.
@@ -356,9 +333,9 @@ func (cuo *CommitsUpdateOne) Mutation() *CommitsMutation {
 	return cuo.mutation
 }
 
-// ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (cuo *CommitsUpdateOne) ClearPullRequests() *CommitsUpdateOne {
-	cuo.mutation.ClearPullRequests()
+// ClearPullRequest clears the "pull_request" edge to the PullRequest entity.
+func (cuo *CommitsUpdateOne) ClearPullRequest() *CommitsUpdateOne {
+	cuo.mutation.ClearPullRequest()
 	return cuo
 }
 
@@ -431,11 +408,6 @@ func (cuo *CommitsUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (cuo *CommitsUpdateOne) check() error {
-	if v, ok := cuo.mutation.PullrequestID(); ok {
-		if err := commits.PullrequestIDValidator(v); err != nil {
-			return &ValidationError{Name: "pullrequest_id", err: fmt.Errorf("ent: validator failed for field \"pullrequest_id\": %w", err)}
-		}
-	}
 	if v, ok := cuo.mutation.GithubID(); ok {
 		if err := commits.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -450,7 +422,7 @@ func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err e
 			Table:   commits.Table,
 			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: commits.FieldID,
 			},
 		},
@@ -478,13 +450,6 @@ func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err e
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := cuo.mutation.PullrequestID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: commits.FieldPullrequestID,
-		})
 	}
 	if value, ok := cuo.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -514,32 +479,32 @@ func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err e
 			Column: commits.FieldCreatedAt,
 		})
 	}
-	if cuo.mutation.PullRequestsCleared() {
+	if cuo.mutation.PullRequestCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commits.PullRequestsTable,
-			Columns: []string{commits.PullRequestsColumn},
+			Table:   commits.PullRequestTable,
+			Columns: []string{commits.PullRequestColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cuo.mutation.PullRequestsIDs(); len(nodes) > 0 {
+	if nodes := cuo.mutation.PullRequestIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commits.PullRequestsTable,
-			Columns: []string{commits.PullRequestsColumn},
+			Table:   commits.PullRequestTable,
+			Columns: []string{commits.PullRequestColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},

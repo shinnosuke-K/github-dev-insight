@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 )
@@ -16,9 +17,7 @@ import (
 type Commits struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// PullrequestID holds the value of the "pullrequest_id" field.
-	PullrequestID string `json:"pullrequest_id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// GithubID holds the value of the "github_id" field.
 	GithubID string `json:"github_id,omitempty"`
 	// Message holds the value of the "message" field.
@@ -29,31 +28,31 @@ type Commits struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CommitsQuery when eager-loading is set.
-	Edges                CommitsEdges `json:"edges"`
-	pull_request_commits *int
+	Edges           CommitsEdges `json:"edges"`
+	pull_request_id *uuid.UUID
 }
 
 // CommitsEdges holds the relations/edges for other nodes in the graph.
 type CommitsEdges struct {
-	// PullRequests holds the value of the pull_requests edge.
-	PullRequests *PullRequest `json:"pull_requests,omitempty"`
+	// PullRequest holds the value of the pull_request edge.
+	PullRequest *PullRequest `json:"pull_request,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// PullRequestsOrErr returns the PullRequests value or an error if the edge
+// PullRequestOrErr returns the PullRequest value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e CommitsEdges) PullRequestsOrErr() (*PullRequest, error) {
+func (e CommitsEdges) PullRequestOrErr() (*PullRequest, error) {
 	if e.loadedTypes[0] {
-		if e.PullRequests == nil {
-			// The edge pull_requests was loaded in eager-loading,
+		if e.PullRequest == nil {
+			// The edge pull_request was loaded in eager-loading,
 			// but was not found.
 			return nil, &NotFoundError{label: pullrequest.Label}
 		}
-		return e.PullRequests, nil
+		return e.PullRequest, nil
 	}
-	return nil, &NotLoadedError{edge: "pull_requests"}
+	return nil, &NotLoadedError{edge: "pull_request"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,14 +60,14 @@ func (*Commits) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case commits.FieldID:
-			values[i] = new(sql.NullInt64)
-		case commits.FieldPullrequestID, commits.FieldGithubID, commits.FieldMessage:
+		case commits.FieldGithubID, commits.FieldMessage:
 			values[i] = new(sql.NullString)
 		case commits.FieldCommittedAt, commits.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case commits.ForeignKeys[0]: // pull_request_commits
-			values[i] = new(sql.NullInt64)
+		case commits.FieldID:
+			values[i] = new(uuid.UUID)
+		case commits.ForeignKeys[0]: // pull_request_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Commits", columns[i])
 		}
@@ -85,16 +84,10 @@ func (c *Commits) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case commits.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			c.ID = int(value.Int64)
-		case commits.FieldPullrequestID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field pullrequest_id", values[i])
-			} else if value.Valid {
-				c.PullrequestID = value.String
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				c.ID = *value
 			}
 		case commits.FieldGithubID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -121,20 +114,20 @@ func (c *Commits) assignValues(columns []string, values []interface{}) error {
 				c.CreatedAt = value.Time
 			}
 		case commits.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field pull_request_commits", value)
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field pull_request_id", values[i])
 			} else if value.Valid {
-				c.pull_request_commits = new(int)
-				*c.pull_request_commits = int(value.Int64)
+				c.pull_request_id = new(uuid.UUID)
+				*c.pull_request_id = *value.S.(*uuid.UUID)
 			}
 		}
 	}
 	return nil
 }
 
-// QueryPullRequests queries the "pull_requests" edge of the Commits entity.
-func (c *Commits) QueryPullRequests() *PullRequestQuery {
-	return (&CommitsClient{config: c.config}).QueryPullRequests(c)
+// QueryPullRequest queries the "pull_request" edge of the Commits entity.
+func (c *Commits) QueryPullRequest() *PullRequestQuery {
+	return (&CommitsClient{config: c.config}).QueryPullRequest(c)
 }
 
 // Update returns a builder for updating this Commits.
@@ -160,8 +153,6 @@ func (c *Commits) String() string {
 	var builder strings.Builder
 	builder.WriteString("Commits(")
 	builder.WriteString(fmt.Sprintf("id=%v", c.ID))
-	builder.WriteString(", pullrequest_id=")
-	builder.WriteString(c.PullrequestID)
 	builder.WriteString(", github_id=")
 	builder.WriteString(c.GithubID)
 	builder.WriteString(", message=")
