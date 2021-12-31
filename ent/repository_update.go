@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -152,14 +153,14 @@ func (ru *RepositoryUpdate) SetNillablePushedAt(t *time.Time) *RepositoryUpdate 
 }
 
 // AddPullRequestIDs adds the "pull_requests" edge to the PullRequest entity by IDs.
-func (ru *RepositoryUpdate) AddPullRequestIDs(ids ...int) *RepositoryUpdate {
+func (ru *RepositoryUpdate) AddPullRequestIDs(ids ...uuid.UUID) *RepositoryUpdate {
 	ru.mutation.AddPullRequestIDs(ids...)
 	return ru
 }
 
 // AddPullRequests adds the "pull_requests" edges to the PullRequest entity.
 func (ru *RepositoryUpdate) AddPullRequests(p ...*PullRequest) *RepositoryUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -167,14 +168,14 @@ func (ru *RepositoryUpdate) AddPullRequests(p ...*PullRequest) *RepositoryUpdate
 }
 
 // AddIssueIDs adds the "issues" edge to the Issue entity by IDs.
-func (ru *RepositoryUpdate) AddIssueIDs(ids ...int) *RepositoryUpdate {
+func (ru *RepositoryUpdate) AddIssueIDs(ids ...uuid.UUID) *RepositoryUpdate {
 	ru.mutation.AddIssueIDs(ids...)
 	return ru
 }
 
 // AddIssues adds the "issues" edges to the Issue entity.
 func (ru *RepositoryUpdate) AddIssues(i ...*Issue) *RepositoryUpdate {
-	ids := make([]int, len(i))
+	ids := make([]uuid.UUID, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -193,14 +194,14 @@ func (ru *RepositoryUpdate) ClearPullRequests() *RepositoryUpdate {
 }
 
 // RemovePullRequestIDs removes the "pull_requests" edge to PullRequest entities by IDs.
-func (ru *RepositoryUpdate) RemovePullRequestIDs(ids ...int) *RepositoryUpdate {
+func (ru *RepositoryUpdate) RemovePullRequestIDs(ids ...uuid.UUID) *RepositoryUpdate {
 	ru.mutation.RemovePullRequestIDs(ids...)
 	return ru
 }
 
 // RemovePullRequests removes "pull_requests" edges to PullRequest entities.
 func (ru *RepositoryUpdate) RemovePullRequests(p ...*PullRequest) *RepositoryUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -214,14 +215,14 @@ func (ru *RepositoryUpdate) ClearIssues() *RepositoryUpdate {
 }
 
 // RemoveIssueIDs removes the "issues" edge to Issue entities by IDs.
-func (ru *RepositoryUpdate) RemoveIssueIDs(ids ...int) *RepositoryUpdate {
+func (ru *RepositoryUpdate) RemoveIssueIDs(ids ...uuid.UUID) *RepositoryUpdate {
 	ru.mutation.RemoveIssueIDs(ids...)
 	return ru
 }
 
 // RemoveIssues removes "issues" edges to Issue entities.
 func (ru *RepositoryUpdate) RemoveIssues(i ...*Issue) *RepositoryUpdate {
-	ids := make([]int, len(i))
+	ids := make([]uuid.UUID, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -324,7 +325,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   repository.Table,
 			Columns: repository.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: repository.FieldID,
 			},
 		},
@@ -428,7 +429,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -444,7 +445,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -463,7 +464,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -482,7 +483,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -498,7 +499,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -517,7 +518,7 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -669,14 +670,14 @@ func (ruo *RepositoryUpdateOne) SetNillablePushedAt(t *time.Time) *RepositoryUpd
 }
 
 // AddPullRequestIDs adds the "pull_requests" edge to the PullRequest entity by IDs.
-func (ruo *RepositoryUpdateOne) AddPullRequestIDs(ids ...int) *RepositoryUpdateOne {
+func (ruo *RepositoryUpdateOne) AddPullRequestIDs(ids ...uuid.UUID) *RepositoryUpdateOne {
 	ruo.mutation.AddPullRequestIDs(ids...)
 	return ruo
 }
 
 // AddPullRequests adds the "pull_requests" edges to the PullRequest entity.
 func (ruo *RepositoryUpdateOne) AddPullRequests(p ...*PullRequest) *RepositoryUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -684,14 +685,14 @@ func (ruo *RepositoryUpdateOne) AddPullRequests(p ...*PullRequest) *RepositoryUp
 }
 
 // AddIssueIDs adds the "issues" edge to the Issue entity by IDs.
-func (ruo *RepositoryUpdateOne) AddIssueIDs(ids ...int) *RepositoryUpdateOne {
+func (ruo *RepositoryUpdateOne) AddIssueIDs(ids ...uuid.UUID) *RepositoryUpdateOne {
 	ruo.mutation.AddIssueIDs(ids...)
 	return ruo
 }
 
 // AddIssues adds the "issues" edges to the Issue entity.
 func (ruo *RepositoryUpdateOne) AddIssues(i ...*Issue) *RepositoryUpdateOne {
-	ids := make([]int, len(i))
+	ids := make([]uuid.UUID, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -710,14 +711,14 @@ func (ruo *RepositoryUpdateOne) ClearPullRequests() *RepositoryUpdateOne {
 }
 
 // RemovePullRequestIDs removes the "pull_requests" edge to PullRequest entities by IDs.
-func (ruo *RepositoryUpdateOne) RemovePullRequestIDs(ids ...int) *RepositoryUpdateOne {
+func (ruo *RepositoryUpdateOne) RemovePullRequestIDs(ids ...uuid.UUID) *RepositoryUpdateOne {
 	ruo.mutation.RemovePullRequestIDs(ids...)
 	return ruo
 }
 
 // RemovePullRequests removes "pull_requests" edges to PullRequest entities.
 func (ruo *RepositoryUpdateOne) RemovePullRequests(p ...*PullRequest) *RepositoryUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -731,14 +732,14 @@ func (ruo *RepositoryUpdateOne) ClearIssues() *RepositoryUpdateOne {
 }
 
 // RemoveIssueIDs removes the "issues" edge to Issue entities by IDs.
-func (ruo *RepositoryUpdateOne) RemoveIssueIDs(ids ...int) *RepositoryUpdateOne {
+func (ruo *RepositoryUpdateOne) RemoveIssueIDs(ids ...uuid.UUID) *RepositoryUpdateOne {
 	ruo.mutation.RemoveIssueIDs(ids...)
 	return ruo
 }
 
 // RemoveIssues removes "issues" edges to Issue entities.
 func (ruo *RepositoryUpdateOne) RemoveIssues(i ...*Issue) *RepositoryUpdateOne {
-	ids := make([]int, len(i))
+	ids := make([]uuid.UUID, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -848,7 +849,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Table:   repository.Table,
 			Columns: repository.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: repository.FieldID,
 			},
 		},
@@ -969,7 +970,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -985,7 +986,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -1004,7 +1005,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -1023,7 +1024,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -1039,7 +1040,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -1058,7 +1059,7 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},

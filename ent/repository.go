@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 )
 
@@ -15,7 +16,7 @@ import (
 type Repository struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// GithubID holds the value of the "github_id" field.
 	GithubID string `json:"github_id,omitempty"`
 	// Owner holds the value of the "owner" field.
@@ -73,12 +74,14 @@ func (*Repository) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case repository.FieldID, repository.FieldTotalPr, repository.FieldTotalIssue:
+		case repository.FieldTotalPr, repository.FieldTotalIssue:
 			values[i] = new(sql.NullInt64)
 		case repository.FieldGithubID, repository.FieldOwner, repository.FieldName, repository.FieldDescription:
 			values[i] = new(sql.NullString)
 		case repository.FieldCreatedAt, repository.FieldUpdatedAt, repository.FieldPushedAt:
 			values[i] = new(sql.NullTime)
+		case repository.FieldID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Repository", columns[i])
 		}
@@ -95,11 +98,11 @@ func (r *Repository) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case repository.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				r.ID = *value
 			}
-			r.ID = int(value.Int64)
 		case repository.FieldGithubID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field github_id", values[i])

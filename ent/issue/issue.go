@@ -4,6 +4,8 @@ package issue
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,8 +13,6 @@ const (
 	Label = "issue"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldRepositoryID holds the string denoting the repository_id field in the database.
-	FieldRepositoryID = "repository_id"
 	// FieldGithubID holds the string denoting the github_id field in the database.
 	FieldGithubID = "github_id"
 	// FieldTitle holds the string denoting the title field in the database.
@@ -35,13 +35,12 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "repository" package.
 	RepositoryInverseTable = "repositories"
 	// RepositoryColumn is the table column denoting the repository relation/edge.
-	RepositoryColumn = "repository_issues"
+	RepositoryColumn = "repository_id"
 )
 
 // Columns holds all SQL columns for issue fields.
 var Columns = []string{
 	FieldID,
-	FieldRepositoryID,
 	FieldGithubID,
 	FieldTitle,
 	FieldCreatedAt,
@@ -53,7 +52,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "issues"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"repository_issues",
+	"repository_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -72,8 +71,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
-	RepositoryIDValidator func(string) error
 	// GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
 	GithubIDValidator func(string) error
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
@@ -86,4 +83,6 @@ var (
 	DefaultLastEditedAt func() time.Time
 	// DefaultClosedAt holds the default value on creation for the "closed_at" field.
 	DefaultClosedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

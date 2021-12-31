@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // Repository holds the schema definition for the Repository entity.
@@ -16,6 +17,7 @@ type Repository struct {
 // Fields of the Repository.
 func (Repository) Fields() []ent.Field {
 	return []ent.Field{
+		field.UUID("id", uuid.UUID{}).Default(func() uuid.UUID { return uuid.Must(uuid.NewRandom()) }),
 		field.String("github_id").MaxLen(255).NotEmpty(),
 		field.String("owner").MaxLen(255).NotEmpty(),
 		field.String("name").MaxLen(255).NotEmpty(),
@@ -31,7 +33,7 @@ func (Repository) Fields() []ent.Field {
 // Edges of the Repository.
 func (Repository) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("pull_requests", PullRequest.Type),
-		edge.To("issues", Issue.Type),
+		edge.To("pull_requests", PullRequest.Type).StorageKey(edge.Column("repository_id")),
+		edge.To("issues", Issue.Type).StorageKey(edge.Column("repository_id")),
 	}
 }

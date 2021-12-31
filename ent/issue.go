@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 )
@@ -16,9 +17,7 @@ import (
 type Issue struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// RepositoryID holds the value of the "repository_id" field.
-	RepositoryID string `json:"repository_id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// GithubID holds the value of the "github_id" field.
 	GithubID string `json:"github_id,omitempty"`
 	// Title holds the value of the "title" field.
@@ -33,8 +32,8 @@ type Issue struct {
 	ClosedAt time.Time `json:"closed_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IssueQuery when eager-loading is set.
-	Edges             IssueEdges `json:"edges"`
-	repository_issues *int
+	Edges         IssueEdges `json:"edges"`
+	repository_id *uuid.UUID
 }
 
 // IssueEdges holds the relations/edges for other nodes in the graph.
@@ -65,14 +64,14 @@ func (*Issue) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case issue.FieldID:
-			values[i] = new(sql.NullInt64)
-		case issue.FieldRepositoryID, issue.FieldGithubID, issue.FieldTitle:
+		case issue.FieldGithubID, issue.FieldTitle:
 			values[i] = new(sql.NullString)
 		case issue.FieldCreatedAt, issue.FieldUpdatedAt, issue.FieldLastEditedAt, issue.FieldClosedAt:
 			values[i] = new(sql.NullTime)
-		case issue.ForeignKeys[0]: // repository_issues
-			values[i] = new(sql.NullInt64)
+		case issue.FieldID:
+			values[i] = new(uuid.UUID)
+		case issue.ForeignKeys[0]: // repository_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Issue", columns[i])
 		}
@@ -89,16 +88,10 @@ func (i *Issue) assignValues(columns []string, values []interface{}) error {
 	for j := range columns {
 		switch columns[j] {
 		case issue.FieldID:
-			value, ok := values[j].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			i.ID = int(value.Int64)
-		case issue.FieldRepositoryID:
-			if value, ok := values[j].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field repository_id", values[j])
-			} else if value.Valid {
-				i.RepositoryID = value.String
+			if value, ok := values[j].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[j])
+			} else if value != nil {
+				i.ID = *value
 			}
 		case issue.FieldGithubID:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -137,11 +130,11 @@ func (i *Issue) assignValues(columns []string, values []interface{}) error {
 				i.ClosedAt = value.Time
 			}
 		case issue.ForeignKeys[0]:
-			if value, ok := values[j].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field repository_issues", value)
+			if value, ok := values[j].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field repository_id", values[j])
 			} else if value.Valid {
-				i.repository_issues = new(int)
-				*i.repository_issues = int(value.Int64)
+				i.repository_id = new(uuid.UUID)
+				*i.repository_id = *value.S.(*uuid.UUID)
 			}
 		}
 	}
@@ -176,8 +169,6 @@ func (i *Issue) String() string {
 	var builder strings.Builder
 	builder.WriteString("Issue(")
 	builder.WriteString(fmt.Sprintf("id=%v", i.ID))
-	builder.WriteString(", repository_id=")
-	builder.WriteString(i.RepositoryID)
 	builder.WriteString(", github_id=")
 	builder.WriteString(i.GithubID)
 	builder.WriteString(", title=")

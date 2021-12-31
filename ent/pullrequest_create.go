@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -20,12 +21,6 @@ type PullRequestCreate struct {
 	config
 	mutation *PullRequestMutation
 	hooks    []Hook
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (prc *PullRequestCreate) SetRepositoryID(s string) *PullRequestCreate {
-	prc.mutation.SetRepositoryID(s)
-	return prc
 }
 
 // SetGithubID sets the "github_id" field.
@@ -110,15 +105,21 @@ func (prc *PullRequestCreate) SetNillableMergedAt(t *time.Time) *PullRequestCrea
 	return prc
 }
 
+// SetID sets the "id" field.
+func (prc *PullRequestCreate) SetID(u uuid.UUID) *PullRequestCreate {
+	prc.mutation.SetID(u)
+	return prc
+}
+
 // AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
-func (prc *PullRequestCreate) AddCommitIDs(ids ...int) *PullRequestCreate {
+func (prc *PullRequestCreate) AddCommitIDs(ids ...uuid.UUID) *PullRequestCreate {
 	prc.mutation.AddCommitIDs(ids...)
 	return prc
 }
 
 // AddCommits adds the "commits" edges to the Commits entity.
 func (prc *PullRequestCreate) AddCommits(c ...*Commits) *PullRequestCreate {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -126,13 +127,13 @@ func (prc *PullRequestCreate) AddCommits(c ...*Commits) *PullRequestCreate {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (prc *PullRequestCreate) SetRepositoryID(id int) *PullRequestCreate {
+func (prc *PullRequestCreate) SetRepositoryID(id uuid.UUID) *PullRequestCreate {
 	prc.mutation.SetRepositoryID(id)
 	return prc
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (prc *PullRequestCreate) SetNillableRepositoryID(id *int) *PullRequestCreate {
+func (prc *PullRequestCreate) SetNillableRepositoryID(id *uuid.UUID) *PullRequestCreate {
 	if id != nil {
 		prc = prc.SetRepositoryID(*id)
 	}
@@ -235,18 +236,14 @@ func (prc *PullRequestCreate) defaults() {
 		v := pullrequest.DefaultMergedAt()
 		prc.mutation.SetMergedAt(v)
 	}
+	if _, ok := prc.mutation.ID(); !ok {
+		v := pullrequest.DefaultID()
+		prc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (prc *PullRequestCreate) check() error {
-	if _, ok := prc.mutation.RepositoryID(); !ok {
-		return &ValidationError{Name: "repository_id", err: errors.New(`ent: missing required field "repository_id"`)}
-	}
-	if v, ok := prc.mutation.RepositoryID(); ok {
-		if err := pullrequest.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf(`ent: validator failed for field "repository_id": %w`, err)}
-		}
-	}
 	if _, ok := prc.mutation.GithubID(); !ok {
 		return &ValidationError{Name: "github_id", err: errors.New(`ent: missing required field "github_id"`)}
 	}
@@ -294,8 +291,9 @@ func (prc *PullRequestCreate) sqlSave(ctx context.Context) (*PullRequest, error)
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -305,18 +303,14 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 		_spec = &sqlgraph.CreateSpec{
 			Table: pullrequest.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pullrequest.FieldID,
 			},
 		}
 	)
-	if value, ok := prc.mutation.RepositoryID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: pullrequest.FieldRepositoryID,
-		})
-		_node.RepositoryID = value
+	if id, ok := prc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
 	}
 	if value, ok := prc.mutation.GithubID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -383,7 +377,7 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -402,7 +396,7 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -410,7 +404,7 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.repository_pull_requests = &nodes[0]
+		_node.repository_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -458,10 +452,6 @@ func (prcb *PullRequestCreateBulk) Save(ctx context.Context) ([]*PullRequest, er
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 )
@@ -16,9 +17,7 @@ import (
 type PullRequest struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// RepositoryID holds the value of the "repository_id" field.
-	RepositoryID string `json:"repository_id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// GithubID holds the value of the "github_id" field.
 	GithubID string `json:"github_id,omitempty"`
 	// Title holds the value of the "title" field.
@@ -35,8 +34,8 @@ type PullRequest struct {
 	MergedAt time.Time `json:"merged_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PullRequestQuery when eager-loading is set.
-	Edges                    PullRequestEdges `json:"edges"`
-	repository_pull_requests *int
+	Edges         PullRequestEdges `json:"edges"`
+	repository_id *uuid.UUID
 }
 
 // PullRequestEdges holds the relations/edges for other nodes in the graph.
@@ -78,14 +77,16 @@ func (*PullRequest) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pullrequest.FieldID, pullrequest.FieldTotalCommits:
+		case pullrequest.FieldTotalCommits:
 			values[i] = new(sql.NullInt64)
-		case pullrequest.FieldRepositoryID, pullrequest.FieldGithubID, pullrequest.FieldTitle:
+		case pullrequest.FieldGithubID, pullrequest.FieldTitle:
 			values[i] = new(sql.NullString)
 		case pullrequest.FieldCreatedAt, pullrequest.FieldUpdatedAt, pullrequest.FieldClosedAt, pullrequest.FieldMergedAt:
 			values[i] = new(sql.NullTime)
-		case pullrequest.ForeignKeys[0]: // repository_pull_requests
-			values[i] = new(sql.NullInt64)
+		case pullrequest.FieldID:
+			values[i] = new(uuid.UUID)
+		case pullrequest.ForeignKeys[0]: // repository_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type PullRequest", columns[i])
 		}
@@ -102,16 +103,10 @@ func (pr *PullRequest) assignValues(columns []string, values []interface{}) erro
 	for i := range columns {
 		switch columns[i] {
 		case pullrequest.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			pr.ID = int(value.Int64)
-		case pullrequest.FieldRepositoryID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field repository_id", values[i])
-			} else if value.Valid {
-				pr.RepositoryID = value.String
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				pr.ID = *value
 			}
 		case pullrequest.FieldGithubID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -156,11 +151,11 @@ func (pr *PullRequest) assignValues(columns []string, values []interface{}) erro
 				pr.MergedAt = value.Time
 			}
 		case pullrequest.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field repository_pull_requests", value)
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field repository_id", values[i])
 			} else if value.Valid {
-				pr.repository_pull_requests = new(int)
-				*pr.repository_pull_requests = int(value.Int64)
+				pr.repository_id = new(uuid.UUID)
+				*pr.repository_id = *value.S.(*uuid.UUID)
 			}
 		}
 	}
@@ -200,8 +195,6 @@ func (pr *PullRequest) String() string {
 	var builder strings.Builder
 	builder.WriteString("PullRequest(")
 	builder.WriteString(fmt.Sprintf("id=%v", pr.ID))
-	builder.WriteString(", repository_id=")
-	builder.WriteString(pr.RepositoryID)
 	builder.WriteString(", github_id=")
 	builder.WriteString(pr.GithubID)
 	builder.WriteString(", title=")

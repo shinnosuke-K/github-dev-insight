@@ -4,6 +4,8 @@ package commits
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,8 +13,6 @@ const (
 	Label = "commits"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldPullrequestID holds the string denoting the pullrequest_id field in the database.
-	FieldPullrequestID = "pullrequest_id"
 	// FieldGithubID holds the string denoting the github_id field in the database.
 	FieldGithubID = "github_id"
 	// FieldMessage holds the string denoting the message field in the database.
@@ -21,23 +21,22 @@ const (
 	FieldCommittedAt = "committed_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// EdgePullRequests holds the string denoting the pull_requests edge name in mutations.
-	EdgePullRequests = "pull_requests"
+	// EdgePullRequest holds the string denoting the pull_request edge name in mutations.
+	EdgePullRequest = "pull_request"
 	// Table holds the table name of the commits in the database.
 	Table = "commits"
-	// PullRequestsTable is the table that holds the pull_requests relation/edge.
-	PullRequestsTable = "commits"
-	// PullRequestsInverseTable is the table name for the PullRequest entity.
+	// PullRequestTable is the table that holds the pull_request relation/edge.
+	PullRequestTable = "commits"
+	// PullRequestInverseTable is the table name for the PullRequest entity.
 	// It exists in this package in order to avoid circular dependency with the "pullrequest" package.
-	PullRequestsInverseTable = "pull_requests"
-	// PullRequestsColumn is the table column denoting the pull_requests relation/edge.
-	PullRequestsColumn = "pull_request_commits"
+	PullRequestInverseTable = "pull_requests"
+	// PullRequestColumn is the table column denoting the pull_request relation/edge.
+	PullRequestColumn = "pull_request_id"
 )
 
 // Columns holds all SQL columns for commits fields.
 var Columns = []string{
 	FieldID,
-	FieldPullrequestID,
 	FieldGithubID,
 	FieldMessage,
 	FieldCommittedAt,
@@ -47,7 +46,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "commits"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"pull_request_commits",
+	"pull_request_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -66,12 +65,12 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// PullrequestIDValidator is a validator for the "pullrequest_id" field. It is called by the builders before save.
-	PullrequestIDValidator func(string) error
 	// GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
 	GithubIDValidator func(string) error
 	// DefaultCommittedAt holds the default value on creation for the "committed_at" field.
 	DefaultCommittedAt func() time.Time
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

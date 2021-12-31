@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -18,24 +19,6 @@ import (
 func init() {
 	commitsFields := schema.Commits{}.Fields()
 	_ = commitsFields
-	// commitsDescPullrequestID is the schema descriptor for pullrequest_id field.
-	commitsDescPullrequestID := commitsFields[0].Descriptor()
-	// commits.PullrequestIDValidator is a validator for the "pullrequest_id" field. It is called by the builders before save.
-	commits.PullrequestIDValidator = func() func(string) error {
-		validators := commitsDescPullrequestID.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(pullrequest_id string) error {
-			for _, fn := range fns {
-				if err := fn(pullrequest_id); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
 	// commitsDescGithubID is the schema descriptor for github_id field.
 	commitsDescGithubID := commitsFields[1].Descriptor()
 	// commits.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
@@ -62,26 +45,12 @@ func init() {
 	commitsDescCreatedAt := commitsFields[4].Descriptor()
 	// commits.DefaultCreatedAt holds the default value on creation for the created_at field.
 	commits.DefaultCreatedAt = commitsDescCreatedAt.Default.(func() time.Time)
+	// commitsDescID is the schema descriptor for id field.
+	commitsDescID := commitsFields[0].Descriptor()
+	// commits.DefaultID holds the default value on creation for the id field.
+	commits.DefaultID = commitsDescID.Default.(func() uuid.UUID)
 	issueFields := schema.Issue{}.Fields()
 	_ = issueFields
-	// issueDescRepositoryID is the schema descriptor for repository_id field.
-	issueDescRepositoryID := issueFields[0].Descriptor()
-	// issue.RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
-	issue.RepositoryIDValidator = func() func(string) error {
-		validators := issueDescRepositoryID.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(repository_id string) error {
-			for _, fn := range fns {
-				if err := fn(repository_id); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
 	// issueDescGithubID is the schema descriptor for github_id field.
 	issueDescGithubID := issueFields[1].Descriptor()
 	// issue.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
@@ -134,26 +103,12 @@ func init() {
 	issueDescClosedAt := issueFields[6].Descriptor()
 	// issue.DefaultClosedAt holds the default value on creation for the closed_at field.
 	issue.DefaultClosedAt = issueDescClosedAt.Default.(func() time.Time)
+	// issueDescID is the schema descriptor for id field.
+	issueDescID := issueFields[0].Descriptor()
+	// issue.DefaultID holds the default value on creation for the id field.
+	issue.DefaultID = issueDescID.Default.(func() uuid.UUID)
 	pullrequestFields := schema.PullRequest{}.Fields()
 	_ = pullrequestFields
-	// pullrequestDescRepositoryID is the schema descriptor for repository_id field.
-	pullrequestDescRepositoryID := pullrequestFields[0].Descriptor()
-	// pullrequest.RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
-	pullrequest.RepositoryIDValidator = func() func(string) error {
-		validators := pullrequestDescRepositoryID.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(repository_id string) error {
-			for _, fn := range fns {
-				if err := fn(repository_id); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
 	// pullrequestDescGithubID is the schema descriptor for github_id field.
 	pullrequestDescGithubID := pullrequestFields[1].Descriptor()
 	// pullrequest.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
@@ -212,10 +167,14 @@ func init() {
 	pullrequestDescMergedAt := pullrequestFields[7].Descriptor()
 	// pullrequest.DefaultMergedAt holds the default value on creation for the merged_at field.
 	pullrequest.DefaultMergedAt = pullrequestDescMergedAt.Default.(func() time.Time)
+	// pullrequestDescID is the schema descriptor for id field.
+	pullrequestDescID := pullrequestFields[0].Descriptor()
+	// pullrequest.DefaultID holds the default value on creation for the id field.
+	pullrequest.DefaultID = pullrequestDescID.Default.(func() uuid.UUID)
 	repositoryFields := schema.Repository{}.Fields()
 	_ = repositoryFields
 	// repositoryDescGithubID is the schema descriptor for github_id field.
-	repositoryDescGithubID := repositoryFields[0].Descriptor()
+	repositoryDescGithubID := repositoryFields[1].Descriptor()
 	// repository.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
 	repository.GithubIDValidator = func() func(string) error {
 		validators := repositoryDescGithubID.Validators
@@ -233,7 +192,7 @@ func init() {
 		}
 	}()
 	// repositoryDescOwner is the schema descriptor for owner field.
-	repositoryDescOwner := repositoryFields[1].Descriptor()
+	repositoryDescOwner := repositoryFields[2].Descriptor()
 	// repository.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
 	repository.OwnerValidator = func() func(string) error {
 		validators := repositoryDescOwner.Validators
@@ -251,7 +210,7 @@ func init() {
 		}
 	}()
 	// repositoryDescName is the schema descriptor for name field.
-	repositoryDescName := repositoryFields[2].Descriptor()
+	repositoryDescName := repositoryFields[3].Descriptor()
 	// repository.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	repository.NameValidator = func() func(string) error {
 		validators := repositoryDescName.Validators
@@ -269,27 +228,31 @@ func init() {
 		}
 	}()
 	// repositoryDescTotalPr is the schema descriptor for total_pr field.
-	repositoryDescTotalPr := repositoryFields[4].Descriptor()
+	repositoryDescTotalPr := repositoryFields[5].Descriptor()
 	// repository.DefaultTotalPr holds the default value on creation for the total_pr field.
 	repository.DefaultTotalPr = repositoryDescTotalPr.Default.(int64)
 	// repository.TotalPrValidator is a validator for the "total_pr" field. It is called by the builders before save.
 	repository.TotalPrValidator = repositoryDescTotalPr.Validators[0].(func(int64) error)
 	// repositoryDescTotalIssue is the schema descriptor for total_issue field.
-	repositoryDescTotalIssue := repositoryFields[5].Descriptor()
+	repositoryDescTotalIssue := repositoryFields[6].Descriptor()
 	// repository.DefaultTotalIssue holds the default value on creation for the total_issue field.
 	repository.DefaultTotalIssue = repositoryDescTotalIssue.Default.(int64)
 	// repository.TotalIssueValidator is a validator for the "total_issue" field. It is called by the builders before save.
 	repository.TotalIssueValidator = repositoryDescTotalIssue.Validators[0].(func(int64) error)
 	// repositoryDescCreatedAt is the schema descriptor for created_at field.
-	repositoryDescCreatedAt := repositoryFields[6].Descriptor()
+	repositoryDescCreatedAt := repositoryFields[7].Descriptor()
 	// repository.DefaultCreatedAt holds the default value on creation for the created_at field.
 	repository.DefaultCreatedAt = repositoryDescCreatedAt.Default.(func() time.Time)
 	// repositoryDescUpdatedAt is the schema descriptor for updated_at field.
-	repositoryDescUpdatedAt := repositoryFields[7].Descriptor()
+	repositoryDescUpdatedAt := repositoryFields[8].Descriptor()
 	// repository.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	repository.DefaultUpdatedAt = repositoryDescUpdatedAt.Default.(func() time.Time)
 	// repositoryDescPushedAt is the schema descriptor for pushed_at field.
-	repositoryDescPushedAt := repositoryFields[8].Descriptor()
+	repositoryDescPushedAt := repositoryFields[9].Descriptor()
 	// repository.DefaultPushedAt holds the default value on creation for the pushed_at field.
 	repository.DefaultPushedAt = repositoryDescPushedAt.Default.(func() time.Time)
+	// repositoryDescID is the schema descriptor for id field.
+	repositoryDescID := repositoryFields[0].Descriptor()
+	// repository.DefaultID holds the default value on creation for the id field.
+	repository.DefaultID = repositoryDescID.Default.(func() uuid.UUID)
 }

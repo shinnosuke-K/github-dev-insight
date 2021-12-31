@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/migrate"
 
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
@@ -183,7 +184,7 @@ func (c *CommitsClient) UpdateOne(co *Commits) *CommitsUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CommitsClient) UpdateOneID(id int) *CommitsUpdateOne {
+func (c *CommitsClient) UpdateOneID(id uuid.UUID) *CommitsUpdateOne {
 	mutation := newCommitsMutation(c.config, OpUpdateOne, withCommitsID(id))
 	return &CommitsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -200,7 +201,7 @@ func (c *CommitsClient) DeleteOne(co *Commits) *CommitsDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *CommitsClient) DeleteOneID(id int) *CommitsDeleteOne {
+func (c *CommitsClient) DeleteOneID(id uuid.UUID) *CommitsDeleteOne {
 	builder := c.Delete().Where(commits.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -215,12 +216,12 @@ func (c *CommitsClient) Query() *CommitsQuery {
 }
 
 // Get returns a Commits entity by its id.
-func (c *CommitsClient) Get(ctx context.Context, id int) (*Commits, error) {
+func (c *CommitsClient) Get(ctx context.Context, id uuid.UUID) (*Commits, error) {
 	return c.Query().Where(commits.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CommitsClient) GetX(ctx context.Context, id int) *Commits {
+func (c *CommitsClient) GetX(ctx context.Context, id uuid.UUID) *Commits {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -228,15 +229,15 @@ func (c *CommitsClient) GetX(ctx context.Context, id int) *Commits {
 	return obj
 }
 
-// QueryPullRequests queries the pull_requests edge of a Commits.
-func (c *CommitsClient) QueryPullRequests(co *Commits) *PullRequestQuery {
+// QueryPullRequest queries the pull_request edge of a Commits.
+func (c *CommitsClient) QueryPullRequest(co *Commits) *PullRequestQuery {
 	query := &PullRequestQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := co.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(commits.Table, commits.FieldID, id),
 			sqlgraph.To(pullrequest.Table, pullrequest.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestsTable, commits.PullRequestsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestTable, commits.PullRequestColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -289,7 +290,7 @@ func (c *IssueClient) UpdateOne(i *Issue) *IssueUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *IssueClient) UpdateOneID(id int) *IssueUpdateOne {
+func (c *IssueClient) UpdateOneID(id uuid.UUID) *IssueUpdateOne {
 	mutation := newIssueMutation(c.config, OpUpdateOne, withIssueID(id))
 	return &IssueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -306,7 +307,7 @@ func (c *IssueClient) DeleteOne(i *Issue) *IssueDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *IssueClient) DeleteOneID(id int) *IssueDeleteOne {
+func (c *IssueClient) DeleteOneID(id uuid.UUID) *IssueDeleteOne {
 	builder := c.Delete().Where(issue.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -321,12 +322,12 @@ func (c *IssueClient) Query() *IssueQuery {
 }
 
 // Get returns a Issue entity by its id.
-func (c *IssueClient) Get(ctx context.Context, id int) (*Issue, error) {
+func (c *IssueClient) Get(ctx context.Context, id uuid.UUID) (*Issue, error) {
 	return c.Query().Where(issue.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *IssueClient) GetX(ctx context.Context, id int) *Issue {
+func (c *IssueClient) GetX(ctx context.Context, id uuid.UUID) *Issue {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -395,7 +396,7 @@ func (c *PullRequestClient) UpdateOne(pr *PullRequest) *PullRequestUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PullRequestClient) UpdateOneID(id int) *PullRequestUpdateOne {
+func (c *PullRequestClient) UpdateOneID(id uuid.UUID) *PullRequestUpdateOne {
 	mutation := newPullRequestMutation(c.config, OpUpdateOne, withPullRequestID(id))
 	return &PullRequestUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -412,7 +413,7 @@ func (c *PullRequestClient) DeleteOne(pr *PullRequest) *PullRequestDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *PullRequestClient) DeleteOneID(id int) *PullRequestDeleteOne {
+func (c *PullRequestClient) DeleteOneID(id uuid.UUID) *PullRequestDeleteOne {
 	builder := c.Delete().Where(pullrequest.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -427,12 +428,12 @@ func (c *PullRequestClient) Query() *PullRequestQuery {
 }
 
 // Get returns a PullRequest entity by its id.
-func (c *PullRequestClient) Get(ctx context.Context, id int) (*PullRequest, error) {
+func (c *PullRequestClient) Get(ctx context.Context, id uuid.UUID) (*PullRequest, error) {
 	return c.Query().Where(pullrequest.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PullRequestClient) GetX(ctx context.Context, id int) *PullRequest {
+func (c *PullRequestClient) GetX(ctx context.Context, id uuid.UUID) *PullRequest {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -517,7 +518,7 @@ func (c *RepositoryClient) UpdateOne(r *Repository) *RepositoryUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *RepositoryClient) UpdateOneID(id int) *RepositoryUpdateOne {
+func (c *RepositoryClient) UpdateOneID(id uuid.UUID) *RepositoryUpdateOne {
 	mutation := newRepositoryMutation(c.config, OpUpdateOne, withRepositoryID(id))
 	return &RepositoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -534,7 +535,7 @@ func (c *RepositoryClient) DeleteOne(r *Repository) *RepositoryDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *RepositoryClient) DeleteOneID(id int) *RepositoryDeleteOne {
+func (c *RepositoryClient) DeleteOneID(id uuid.UUID) *RepositoryDeleteOne {
 	builder := c.Delete().Where(repository.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -549,12 +550,12 @@ func (c *RepositoryClient) Query() *RepositoryQuery {
 }
 
 // Get returns a Repository entity by its id.
-func (c *RepositoryClient) Get(ctx context.Context, id int) (*Repository, error) {
+func (c *RepositoryClient) Get(ctx context.Context, id uuid.UUID) (*Repository, error) {
 	return c.Query().Where(repository.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *RepositoryClient) GetX(ctx context.Context, id int) *Repository {
+func (c *RepositoryClient) GetX(ctx context.Context, id uuid.UUID) *Repository {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

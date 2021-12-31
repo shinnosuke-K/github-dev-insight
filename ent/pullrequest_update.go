@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -26,12 +27,6 @@ type PullRequestUpdate struct {
 // Where appends a list predicates to the PullRequestUpdate builder.
 func (pru *PullRequestUpdate) Where(ps ...predicate.PullRequest) *PullRequestUpdate {
 	pru.mutation.Where(ps...)
-	return pru
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (pru *PullRequestUpdate) SetRepositoryID(s string) *PullRequestUpdate {
-	pru.mutation.SetRepositoryID(s)
 	return pru
 }
 
@@ -125,14 +120,14 @@ func (pru *PullRequestUpdate) SetNillableMergedAt(t *time.Time) *PullRequestUpda
 }
 
 // AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
-func (pru *PullRequestUpdate) AddCommitIDs(ids ...int) *PullRequestUpdate {
+func (pru *PullRequestUpdate) AddCommitIDs(ids ...uuid.UUID) *PullRequestUpdate {
 	pru.mutation.AddCommitIDs(ids...)
 	return pru
 }
 
 // AddCommits adds the "commits" edges to the Commits entity.
 func (pru *PullRequestUpdate) AddCommits(c ...*Commits) *PullRequestUpdate {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -140,13 +135,13 @@ func (pru *PullRequestUpdate) AddCommits(c ...*Commits) *PullRequestUpdate {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (pru *PullRequestUpdate) SetRepositoryID(id int) *PullRequestUpdate {
+func (pru *PullRequestUpdate) SetRepositoryID(id uuid.UUID) *PullRequestUpdate {
 	pru.mutation.SetRepositoryID(id)
 	return pru
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (pru *PullRequestUpdate) SetNillableRepositoryID(id *int) *PullRequestUpdate {
+func (pru *PullRequestUpdate) SetNillableRepositoryID(id *uuid.UUID) *PullRequestUpdate {
 	if id != nil {
 		pru = pru.SetRepositoryID(*id)
 	}
@@ -170,14 +165,14 @@ func (pru *PullRequestUpdate) ClearCommits() *PullRequestUpdate {
 }
 
 // RemoveCommitIDs removes the "commits" edge to Commits entities by IDs.
-func (pru *PullRequestUpdate) RemoveCommitIDs(ids ...int) *PullRequestUpdate {
+func (pru *PullRequestUpdate) RemoveCommitIDs(ids ...uuid.UUID) *PullRequestUpdate {
 	pru.mutation.RemoveCommitIDs(ids...)
 	return pru
 }
 
 // RemoveCommits removes "commits" edges to Commits entities.
 func (pru *PullRequestUpdate) RemoveCommits(c ...*Commits) *PullRequestUpdate {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -252,11 +247,6 @@ func (pru *PullRequestUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pru *PullRequestUpdate) check() error {
-	if v, ok := pru.mutation.RepositoryID(); ok {
-		if err := pullrequest.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf("ent: validator failed for field \"repository_id\": %w", err)}
-		}
-	}
 	if v, ok := pru.mutation.GithubID(); ok {
 		if err := pullrequest.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -281,7 +271,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   pullrequest.Table,
 			Columns: pullrequest.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pullrequest.FieldID,
 			},
 		},
@@ -292,13 +282,6 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := pru.mutation.RepositoryID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: pullrequest.FieldRepositoryID,
-		})
 	}
 	if value, ok := pru.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -365,7 +348,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -381,7 +364,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -400,7 +383,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -419,7 +402,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -435,7 +418,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -462,12 +445,6 @@ type PullRequestUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *PullRequestMutation
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (pruo *PullRequestUpdateOne) SetRepositoryID(s string) *PullRequestUpdateOne {
-	pruo.mutation.SetRepositoryID(s)
-	return pruo
 }
 
 // SetGithubID sets the "github_id" field.
@@ -560,14 +537,14 @@ func (pruo *PullRequestUpdateOne) SetNillableMergedAt(t *time.Time) *PullRequest
 }
 
 // AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
-func (pruo *PullRequestUpdateOne) AddCommitIDs(ids ...int) *PullRequestUpdateOne {
+func (pruo *PullRequestUpdateOne) AddCommitIDs(ids ...uuid.UUID) *PullRequestUpdateOne {
 	pruo.mutation.AddCommitIDs(ids...)
 	return pruo
 }
 
 // AddCommits adds the "commits" edges to the Commits entity.
 func (pruo *PullRequestUpdateOne) AddCommits(c ...*Commits) *PullRequestUpdateOne {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -575,13 +552,13 @@ func (pruo *PullRequestUpdateOne) AddCommits(c ...*Commits) *PullRequestUpdateOn
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (pruo *PullRequestUpdateOne) SetRepositoryID(id int) *PullRequestUpdateOne {
+func (pruo *PullRequestUpdateOne) SetRepositoryID(id uuid.UUID) *PullRequestUpdateOne {
 	pruo.mutation.SetRepositoryID(id)
 	return pruo
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (pruo *PullRequestUpdateOne) SetNillableRepositoryID(id *int) *PullRequestUpdateOne {
+func (pruo *PullRequestUpdateOne) SetNillableRepositoryID(id *uuid.UUID) *PullRequestUpdateOne {
 	if id != nil {
 		pruo = pruo.SetRepositoryID(*id)
 	}
@@ -605,14 +582,14 @@ func (pruo *PullRequestUpdateOne) ClearCommits() *PullRequestUpdateOne {
 }
 
 // RemoveCommitIDs removes the "commits" edge to Commits entities by IDs.
-func (pruo *PullRequestUpdateOne) RemoveCommitIDs(ids ...int) *PullRequestUpdateOne {
+func (pruo *PullRequestUpdateOne) RemoveCommitIDs(ids ...uuid.UUID) *PullRequestUpdateOne {
 	pruo.mutation.RemoveCommitIDs(ids...)
 	return pruo
 }
 
 // RemoveCommits removes "commits" edges to Commits entities.
 func (pruo *PullRequestUpdateOne) RemoveCommits(c ...*Commits) *PullRequestUpdateOne {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -694,11 +671,6 @@ func (pruo *PullRequestUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pruo *PullRequestUpdateOne) check() error {
-	if v, ok := pruo.mutation.RepositoryID(); ok {
-		if err := pullrequest.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf("ent: validator failed for field \"repository_id\": %w", err)}
-		}
-	}
 	if v, ok := pruo.mutation.GithubID(); ok {
 		if err := pullrequest.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -723,7 +695,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Table:   pullrequest.Table,
 			Columns: pullrequest.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pullrequest.FieldID,
 			},
 		},
@@ -751,13 +723,6 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := pruo.mutation.RepositoryID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: pullrequest.FieldRepositoryID,
-		})
 	}
 	if value, ok := pruo.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -824,7 +789,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -840,7 +805,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -859,7 +824,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: commits.FieldID,
 				},
 			},
@@ -878,7 +843,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -894,7 +859,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},

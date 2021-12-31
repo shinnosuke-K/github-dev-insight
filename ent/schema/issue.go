@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // Issue holds the schema definition for the Issue entity.
@@ -16,7 +17,7 @@ type Issue struct {
 // Fields of the Issue.
 func (Issue) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("repository_id").MaxLen(255).NotEmpty(),
+		field.UUID("id", uuid.UUID{}).Default(func() uuid.UUID { return uuid.Must(uuid.NewRandom()) }),
 		field.String("github_id").MaxLen(255).NotEmpty(),
 		field.String("title").MaxLen(255).NotEmpty(),
 		field.Time("created_at").Default(time.Now),

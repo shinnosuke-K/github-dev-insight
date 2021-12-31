@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -25,12 +26,6 @@ type IssueUpdate struct {
 // Where appends a list predicates to the IssueUpdate builder.
 func (iu *IssueUpdate) Where(ps ...predicate.Issue) *IssueUpdate {
 	iu.mutation.Where(ps...)
-	return iu
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (iu *IssueUpdate) SetRepositoryID(s string) *IssueUpdate {
-	iu.mutation.SetRepositoryID(s)
 	return iu
 }
 
@@ -103,13 +98,13 @@ func (iu *IssueUpdate) SetNillableClosedAt(t *time.Time) *IssueUpdate {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (iu *IssueUpdate) SetRepositoryID(id int) *IssueUpdate {
+func (iu *IssueUpdate) SetRepositoryID(id uuid.UUID) *IssueUpdate {
 	iu.mutation.SetRepositoryID(id)
 	return iu
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (iu *IssueUpdate) SetNillableRepositoryID(id *int) *IssueUpdate {
+func (iu *IssueUpdate) SetNillableRepositoryID(id *uuid.UUID) *IssueUpdate {
 	if id != nil {
 		iu = iu.SetRepositoryID(*id)
 	}
@@ -194,11 +189,6 @@ func (iu *IssueUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *IssueUpdate) check() error {
-	if v, ok := iu.mutation.RepositoryID(); ok {
-		if err := issue.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf("ent: validator failed for field \"repository_id\": %w", err)}
-		}
-	}
 	if v, ok := iu.mutation.GithubID(); ok {
 		if err := issue.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -218,7 +208,7 @@ func (iu *IssueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   issue.Table,
 			Columns: issue.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: issue.FieldID,
 			},
 		},
@@ -229,13 +219,6 @@ func (iu *IssueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := iu.mutation.RepositoryID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: issue.FieldRepositoryID,
-		})
 	}
 	if value, ok := iu.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -288,7 +271,7 @@ func (iu *IssueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -304,7 +287,7 @@ func (iu *IssueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -331,12 +314,6 @@ type IssueUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *IssueMutation
-}
-
-// SetRepositoryID sets the "repository_id" field.
-func (iuo *IssueUpdateOne) SetRepositoryID(s string) *IssueUpdateOne {
-	iuo.mutation.SetRepositoryID(s)
-	return iuo
 }
 
 // SetGithubID sets the "github_id" field.
@@ -408,13 +385,13 @@ func (iuo *IssueUpdateOne) SetNillableClosedAt(t *time.Time) *IssueUpdateOne {
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by ID.
-func (iuo *IssueUpdateOne) SetRepositoryID(id int) *IssueUpdateOne {
+func (iuo *IssueUpdateOne) SetRepositoryID(id uuid.UUID) *IssueUpdateOne {
 	iuo.mutation.SetRepositoryID(id)
 	return iuo
 }
 
 // SetNillableRepositoryID sets the "repository" edge to the Repository entity by ID if the given value is not nil.
-func (iuo *IssueUpdateOne) SetNillableRepositoryID(id *int) *IssueUpdateOne {
+func (iuo *IssueUpdateOne) SetNillableRepositoryID(id *uuid.UUID) *IssueUpdateOne {
 	if id != nil {
 		iuo = iuo.SetRepositoryID(*id)
 	}
@@ -506,11 +483,6 @@ func (iuo *IssueUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *IssueUpdateOne) check() error {
-	if v, ok := iuo.mutation.RepositoryID(); ok {
-		if err := issue.RepositoryIDValidator(v); err != nil {
-			return &ValidationError{Name: "repository_id", err: fmt.Errorf("ent: validator failed for field \"repository_id\": %w", err)}
-		}
-	}
 	if v, ok := iuo.mutation.GithubID(); ok {
 		if err := issue.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
@@ -530,7 +502,7 @@ func (iuo *IssueUpdateOne) sqlSave(ctx context.Context) (_node *Issue, err error
 			Table:   issue.Table,
 			Columns: issue.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: issue.FieldID,
 			},
 		},
@@ -558,13 +530,6 @@ func (iuo *IssueUpdateOne) sqlSave(ctx context.Context) (_node *Issue, err error
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := iuo.mutation.RepositoryID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: issue.FieldRepositoryID,
-		})
 	}
 	if value, ok := iuo.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -617,7 +582,7 @@ func (iuo *IssueUpdateOne) sqlSave(ctx context.Context) (_node *Issue, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},
@@ -633,7 +598,7 @@ func (iuo *IssueUpdateOne) sqlSave(ctx context.Context) (_node *Issue, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: repository.FieldID,
 				},
 			},

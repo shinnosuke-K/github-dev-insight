@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -124,15 +125,21 @@ func (rc *RepositoryCreate) SetNillablePushedAt(t *time.Time) *RepositoryCreate 
 	return rc
 }
 
+// SetID sets the "id" field.
+func (rc *RepositoryCreate) SetID(u uuid.UUID) *RepositoryCreate {
+	rc.mutation.SetID(u)
+	return rc
+}
+
 // AddPullRequestIDs adds the "pull_requests" edge to the PullRequest entity by IDs.
-func (rc *RepositoryCreate) AddPullRequestIDs(ids ...int) *RepositoryCreate {
+func (rc *RepositoryCreate) AddPullRequestIDs(ids ...uuid.UUID) *RepositoryCreate {
 	rc.mutation.AddPullRequestIDs(ids...)
 	return rc
 }
 
 // AddPullRequests adds the "pull_requests" edges to the PullRequest entity.
 func (rc *RepositoryCreate) AddPullRequests(p ...*PullRequest) *RepositoryCreate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -140,14 +147,14 @@ func (rc *RepositoryCreate) AddPullRequests(p ...*PullRequest) *RepositoryCreate
 }
 
 // AddIssueIDs adds the "issues" edge to the Issue entity by IDs.
-func (rc *RepositoryCreate) AddIssueIDs(ids ...int) *RepositoryCreate {
+func (rc *RepositoryCreate) AddIssueIDs(ids ...uuid.UUID) *RepositoryCreate {
 	rc.mutation.AddIssueIDs(ids...)
 	return rc
 }
 
 // AddIssues adds the "issues" edges to the Issue entity.
 func (rc *RepositoryCreate) AddIssues(i ...*Issue) *RepositoryCreate {
-	ids := make([]int, len(i))
+	ids := make([]uuid.UUID, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -245,6 +252,10 @@ func (rc *RepositoryCreate) defaults() {
 		v := repository.DefaultPushedAt()
 		rc.mutation.SetPushedAt(v)
 	}
+	if _, ok := rc.mutation.ID(); !ok {
+		v := repository.DefaultID()
+		rc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -309,8 +320,9 @@ func (rc *RepositoryCreate) sqlSave(ctx context.Context) (*Repository, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -320,11 +332,15 @@ func (rc *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: repository.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: repository.FieldID,
 			},
 		}
 	)
+	if id, ok := rc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := rc.mutation.GithubID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -406,7 +422,7 @@ func (rc *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: pullrequest.FieldID,
 				},
 			},
@@ -425,7 +441,7 @@ func (rc *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: issue.FieldID,
 				},
 			},
@@ -480,10 +496,6 @@ func (rcb *RepositoryCreateBulk) Save(ctx context.Context) ([]*Repository, error
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

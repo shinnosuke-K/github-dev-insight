@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
@@ -26,8 +27,8 @@ type CommitsQuery struct {
 	fields     []string
 	predicates []predicate.Commits
 	// eager-loading edges.
-	withPullRequests *PullRequestQuery
-	withFKs          bool
+	withPullRequest *PullRequestQuery
+	withFKs         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,8 +65,8 @@ func (cq *CommitsQuery) Order(o ...OrderFunc) *CommitsQuery {
 	return cq
 }
 
-// QueryPullRequests chains the current query on the "pull_requests" edge.
-func (cq *CommitsQuery) QueryPullRequests() *PullRequestQuery {
+// QueryPullRequest chains the current query on the "pull_request" edge.
+func (cq *CommitsQuery) QueryPullRequest() *PullRequestQuery {
 	query := &PullRequestQuery{config: cq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -78,7 +79,7 @@ func (cq *CommitsQuery) QueryPullRequests() *PullRequestQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(commits.Table, commits.FieldID, selector),
 			sqlgraph.To(pullrequest.Table, pullrequest.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestsTable, commits.PullRequestsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestTable, commits.PullRequestColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -110,8 +111,8 @@ func (cq *CommitsQuery) FirstX(ctx context.Context) *Commits {
 
 // FirstID returns the first Commits ID from the query.
 // Returns a *NotFoundError when no Commits ID was found.
-func (cq *CommitsQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (cq *CommitsQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = cq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -123,7 +124,7 @@ func (cq *CommitsQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (cq *CommitsQuery) FirstIDX(ctx context.Context) int {
+func (cq *CommitsQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := cq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -161,8 +162,8 @@ func (cq *CommitsQuery) OnlyX(ctx context.Context) *Commits {
 // OnlyID is like Only, but returns the only Commits ID in the query.
 // Returns a *NotSingularError when exactly one Commits ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (cq *CommitsQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (cq *CommitsQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = cq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -178,7 +179,7 @@ func (cq *CommitsQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (cq *CommitsQuery) OnlyIDX(ctx context.Context) int {
+func (cq *CommitsQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := cq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,8 +205,8 @@ func (cq *CommitsQuery) AllX(ctx context.Context) []*Commits {
 }
 
 // IDs executes the query and returns a list of Commits IDs.
-func (cq *CommitsQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (cq *CommitsQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := cq.Select(commits.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -213,7 +214,7 @@ func (cq *CommitsQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (cq *CommitsQuery) IDsX(ctx context.Context) []int {
+func (cq *CommitsQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := cq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -262,26 +263,26 @@ func (cq *CommitsQuery) Clone() *CommitsQuery {
 		return nil
 	}
 	return &CommitsQuery{
-		config:           cq.config,
-		limit:            cq.limit,
-		offset:           cq.offset,
-		order:            append([]OrderFunc{}, cq.order...),
-		predicates:       append([]predicate.Commits{}, cq.predicates...),
-		withPullRequests: cq.withPullRequests.Clone(),
+		config:          cq.config,
+		limit:           cq.limit,
+		offset:          cq.offset,
+		order:           append([]OrderFunc{}, cq.order...),
+		predicates:      append([]predicate.Commits{}, cq.predicates...),
+		withPullRequest: cq.withPullRequest.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
 	}
 }
 
-// WithPullRequests tells the query-builder to eager-load the nodes that are connected to
-// the "pull_requests" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *CommitsQuery) WithPullRequests(opts ...func(*PullRequestQuery)) *CommitsQuery {
+// WithPullRequest tells the query-builder to eager-load the nodes that are connected to
+// the "pull_request" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CommitsQuery) WithPullRequest(opts ...func(*PullRequestQuery)) *CommitsQuery {
 	query := &PullRequestQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	cq.withPullRequests = query
+	cq.withPullRequest = query
 	return cq
 }
 
@@ -291,12 +292,12 @@ func (cq *CommitsQuery) WithPullRequests(opts ...func(*PullRequestQuery)) *Commi
 // Example:
 //
 //	var v []struct {
-//		PullrequestID string `json:"pullrequest_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Commits.Query().
-//		GroupBy(commits.FieldPullrequestID).
+//		GroupBy(commits.FieldGithubID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +319,11 @@ func (cq *CommitsQuery) GroupBy(field string, fields ...string) *CommitsGroupBy 
 // Example:
 //
 //	var v []struct {
-//		PullrequestID string `json:"pullrequest_id,omitempty"`
+//		GithubID string `json:"github_id,omitempty"`
 //	}
 //
 //	client.Commits.Query().
-//		Select(commits.FieldPullrequestID).
+//		Select(commits.FieldGithubID).
 //		Scan(ctx, &v)
 //
 func (cq *CommitsQuery) Select(fields ...string) *CommitsSelect {
@@ -352,10 +353,10 @@ func (cq *CommitsQuery) sqlAll(ctx context.Context) ([]*Commits, error) {
 		withFKs     = cq.withFKs
 		_spec       = cq.querySpec()
 		loadedTypes = [1]bool{
-			cq.withPullRequests != nil,
+			cq.withPullRequest != nil,
 		}
 	)
-	if cq.withPullRequests != nil {
+	if cq.withPullRequest != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -381,14 +382,14 @@ func (cq *CommitsQuery) sqlAll(ctx context.Context) ([]*Commits, error) {
 		return nodes, nil
 	}
 
-	if query := cq.withPullRequests; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Commits)
+	if query := cq.withPullRequest; query != nil {
+		ids := make([]uuid.UUID, 0, len(nodes))
+		nodeids := make(map[uuid.UUID][]*Commits)
 		for i := range nodes {
-			if nodes[i].pull_request_commits == nil {
+			if nodes[i].pull_request_id == nil {
 				continue
 			}
-			fk := *nodes[i].pull_request_commits
+			fk := *nodes[i].pull_request_id
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,10 +403,10 @@ func (cq *CommitsQuery) sqlAll(ctx context.Context) ([]*Commits, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "pull_request_commits" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "pull_request_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.PullRequests = n
+				nodes[i].Edges.PullRequest = n
 			}
 		}
 	}
@@ -432,7 +433,7 @@ func (cq *CommitsQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   commits.Table,
 			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: commits.FieldID,
 			},
 		},
