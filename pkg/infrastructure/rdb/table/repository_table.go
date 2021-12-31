@@ -14,11 +14,10 @@ type Repository struct {
 
 func (t *Repository) Create(ctx context.Context, ents ...entity.Repository) error {
 	var (
-		repo = t.Client.DB().Repository.Create()
 		bulk = make([]*ent.RepositoryCreate, len(ents))
 	)
 	for i, e := range ents {
-		bulk[i] = repo.
+		bulk[i] = t.Client.DB().Repository.Create().
 			SetGithubID(e.GitHubID).
 			SetName(e.Name).
 			SetOwner(e.Owner).
