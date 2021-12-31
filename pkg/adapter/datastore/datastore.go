@@ -15,6 +15,7 @@ type DataStore interface {
 
 type Repository interface {
 	Create(ctx context.Context, ent ...entity.Repository) error
+	GetAll(ctx context.Context) ([]*entity.Repository, error)
 }
 
 type dataStore struct {

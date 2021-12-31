@@ -5,16 +5,16 @@ import "time"
 type RepositoryID string
 
 type Repository struct {
-	ID          RepositoryID
-	GitHubID    string
-	Owner       string
-	Name        string
-	Description string
-	TotalPR     int64
-	TotalIssue  int64
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	PushedAt    time.Time
+	ID          RepositoryID `json:"id"`
+	GitHubID    string       `json:"github_id"`
+	Owner       string       `json:"owner"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	TotalPR     int64        `json:"total_pr"`
+	TotalIssue  int64        `json:"total_issue"`
+	CreatedAt   time.Time    `json:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at"`
+	PushedAt    time.Time    `json:"pushed_at"`
 }
 
 type Repositories []*Repository

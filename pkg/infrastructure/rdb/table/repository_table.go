@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/shinnosuke-K/github-dev-insight/ent"
+	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb/client"
 )
@@ -31,4 +32,12 @@ func (t *Repository) Create(ctx context.Context, ents ...entity.Repository) erro
 		return err
 	}
 	return nil
+}
+
+func (t *Repository) GetAll(ctx context.Context) ([]*entity.Repository, error) {
+	res := []*entity.Repository{}
+	if err := t.Client.DB().Repository.Query().Select(repository.Columns...).Scan(ctx, &res); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
