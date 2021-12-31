@@ -10,7 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 )
@@ -110,14 +110,14 @@ func (prc *PullRequestCreate) SetNillableMergedAt(t *time.Time) *PullRequestCrea
 	return prc
 }
 
-// AddCommitIDs adds the "commits" edge to the Commit entity by IDs.
+// AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
 func (prc *PullRequestCreate) AddCommitIDs(ids ...int) *PullRequestCreate {
 	prc.mutation.AddCommitIDs(ids...)
 	return prc
 }
 
-// AddCommits adds the "commits" edges to the Commit entity.
-func (prc *PullRequestCreate) AddCommits(c ...*Commit) *PullRequestCreate {
+// AddCommits adds the "commits" edges to the Commits entity.
+func (prc *PullRequestCreate) AddCommits(c ...*Commits) *PullRequestCreate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -384,7 +384,7 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}

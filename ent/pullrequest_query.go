@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -28,7 +28,7 @@ type PullRequestQuery struct {
 	fields     []string
 	predicates []predicate.PullRequest
 	// eager-loading edges.
-	withCommits    *CommitQuery
+	withCommits    *CommitsQuery
 	withRepository *RepositoryQuery
 	withFKs        bool
 	// intermediate query (i.e. traversal path).
@@ -68,8 +68,8 @@ func (prq *PullRequestQuery) Order(o ...OrderFunc) *PullRequestQuery {
 }
 
 // QueryCommits chains the current query on the "commits" edge.
-func (prq *PullRequestQuery) QueryCommits() *CommitQuery {
-	query := &CommitQuery{config: prq.config}
+func (prq *PullRequestQuery) QueryCommits() *CommitsQuery {
+	query := &CommitsQuery{config: prq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := prq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -80,7 +80,7 @@ func (prq *PullRequestQuery) QueryCommits() *CommitQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pullrequest.Table, pullrequest.FieldID, selector),
-			sqlgraph.To(commit.Table, commit.FieldID),
+			sqlgraph.To(commits.Table, commits.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, pullrequest.CommitsTable, pullrequest.CommitsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(prq.driver.Dialect(), step)
@@ -302,8 +302,8 @@ func (prq *PullRequestQuery) Clone() *PullRequestQuery {
 
 // WithCommits tells the query-builder to eager-load the nodes that are connected to
 // the "commits" edge. The optional arguments are used to configure the query builder of the edge.
-func (prq *PullRequestQuery) WithCommits(opts ...func(*CommitQuery)) *PullRequestQuery {
-	query := &CommitQuery{config: prq.config}
+func (prq *PullRequestQuery) WithCommits(opts ...func(*CommitsQuery)) *PullRequestQuery {
+	query := &CommitsQuery{config: prq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -425,10 +425,10 @@ func (prq *PullRequestQuery) sqlAll(ctx context.Context) ([]*PullRequest, error)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Commits = []*Commit{}
+			nodes[i].Edges.Commits = []*Commits{}
 		}
 		query.withFKs = true
-		query.Where(predicate.Commit(func(s *sql.Selector) {
+		query.Where(predicate.Commits(func(s *sql.Selector) {
 			s.Where(sql.InValues(pullrequest.CommitsColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

@@ -28,9 +28,6 @@ func (s *repositoryService) ImportRepositories(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to get repositories. %w", err)
 	}
-	for _, r := range repos {
-		fmt.Println(r.Name, r.Description)
-	}
 	if err := s.DataStore().Repository().Create(ctx, repos...); err != nil {
 		return fmt.Errorf("failed to create repositories. %w", err)
 	}

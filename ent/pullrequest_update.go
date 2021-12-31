@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -124,14 +124,14 @@ func (pru *PullRequestUpdate) SetNillableMergedAt(t *time.Time) *PullRequestUpda
 	return pru
 }
 
-// AddCommitIDs adds the "commits" edge to the Commit entity by IDs.
+// AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
 func (pru *PullRequestUpdate) AddCommitIDs(ids ...int) *PullRequestUpdate {
 	pru.mutation.AddCommitIDs(ids...)
 	return pru
 }
 
-// AddCommits adds the "commits" edges to the Commit entity.
-func (pru *PullRequestUpdate) AddCommits(c ...*Commit) *PullRequestUpdate {
+// AddCommits adds the "commits" edges to the Commits entity.
+func (pru *PullRequestUpdate) AddCommits(c ...*Commits) *PullRequestUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -163,20 +163,20 @@ func (pru *PullRequestUpdate) Mutation() *PullRequestMutation {
 	return pru.mutation
 }
 
-// ClearCommits clears all "commits" edges to the Commit entity.
+// ClearCommits clears all "commits" edges to the Commits entity.
 func (pru *PullRequestUpdate) ClearCommits() *PullRequestUpdate {
 	pru.mutation.ClearCommits()
 	return pru
 }
 
-// RemoveCommitIDs removes the "commits" edge to Commit entities by IDs.
+// RemoveCommitIDs removes the "commits" edge to Commits entities by IDs.
 func (pru *PullRequestUpdate) RemoveCommitIDs(ids ...int) *PullRequestUpdate {
 	pru.mutation.RemoveCommitIDs(ids...)
 	return pru
 }
 
-// RemoveCommits removes "commits" edges to Commit entities.
-func (pru *PullRequestUpdate) RemoveCommits(c ...*Commit) *PullRequestUpdate {
+// RemoveCommits removes "commits" edges to Commits entities.
+func (pru *PullRequestUpdate) RemoveCommits(c ...*Commits) *PullRequestUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -366,7 +366,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}
@@ -382,7 +382,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}
@@ -401,7 +401,7 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}
@@ -559,14 +559,14 @@ func (pruo *PullRequestUpdateOne) SetNillableMergedAt(t *time.Time) *PullRequest
 	return pruo
 }
 
-// AddCommitIDs adds the "commits" edge to the Commit entity by IDs.
+// AddCommitIDs adds the "commits" edge to the Commits entity by IDs.
 func (pruo *PullRequestUpdateOne) AddCommitIDs(ids ...int) *PullRequestUpdateOne {
 	pruo.mutation.AddCommitIDs(ids...)
 	return pruo
 }
 
-// AddCommits adds the "commits" edges to the Commit entity.
-func (pruo *PullRequestUpdateOne) AddCommits(c ...*Commit) *PullRequestUpdateOne {
+// AddCommits adds the "commits" edges to the Commits entity.
+func (pruo *PullRequestUpdateOne) AddCommits(c ...*Commits) *PullRequestUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -598,20 +598,20 @@ func (pruo *PullRequestUpdateOne) Mutation() *PullRequestMutation {
 	return pruo.mutation
 }
 
-// ClearCommits clears all "commits" edges to the Commit entity.
+// ClearCommits clears all "commits" edges to the Commits entity.
 func (pruo *PullRequestUpdateOne) ClearCommits() *PullRequestUpdateOne {
 	pruo.mutation.ClearCommits()
 	return pruo
 }
 
-// RemoveCommitIDs removes the "commits" edge to Commit entities by IDs.
+// RemoveCommitIDs removes the "commits" edge to Commits entities by IDs.
 func (pruo *PullRequestUpdateOne) RemoveCommitIDs(ids ...int) *PullRequestUpdateOne {
 	pruo.mutation.RemoveCommitIDs(ids...)
 	return pruo
 }
 
-// RemoveCommits removes "commits" edges to Commit entities.
-func (pruo *PullRequestUpdateOne) RemoveCommits(c ...*Commit) *PullRequestUpdateOne {
+// RemoveCommits removes "commits" edges to Commits entities.
+func (pruo *PullRequestUpdateOne) RemoveCommits(c ...*Commits) *PullRequestUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -825,7 +825,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}
@@ -841,7 +841,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}
@@ -860,7 +860,7 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: commit.FieldID,
+					Column: commits.FieldID,
 				},
 			},
 		}

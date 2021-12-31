@@ -8,13 +8,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Commit holds the schema definition for the Commit entity.
-type Commit struct {
+// Commit holds the schema definition for the Commits entity.
+type Commits struct {
 	ent.Schema
 }
 
 // Fields of the Commit.
-func (Commit) Fields() []ent.Field {
+func (Commits) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("pullrequest_id").MaxLen(255).NotEmpty(),
 		field.String("github_id").MaxLen(255).NotEmpty(),
@@ -25,7 +25,7 @@ func (Commit) Fields() []ent.Field {
 }
 
 // Edges of the Commit.
-func (Commit) Edges() []ent.Edge {
+func (Commits) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("pull_requests", PullRequest.Type).Ref("commits").Unique(),
 	}

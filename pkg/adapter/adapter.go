@@ -6,8 +6,8 @@ import (
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/datastore"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/env"
-	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/aws/dynamo"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/graphql"
+	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb"
 )
 
 type Adapter struct {
@@ -18,7 +18,7 @@ type Adapter struct {
 func NewAdapter() (*Adapter, error) {
 	var (
 		_github = env.Get().GitHub
-		_aws    = env.Get().AWS
+		_rdb    = env.Get().RDB
 	)
 	graph, err := graphql.NewGraphQL(graphql.Config{
 		LoginUser: _github.LoginUser,
@@ -29,11 +29,13 @@ func NewAdapter() (*Adapter, error) {
 		return nil, fmt.Errorf("failed to create graphql. %w", err)
 	}
 
-	d, err := datastore.NewDataStore(dynamo.Config{
-		SecretAccessKey: _aws.SecretAccessKey,
-		AccessToken:     _aws.AccessToken,
-		Region:          _aws.Region,
-		EndPoint:        _aws.EndPoint,
+	d, err := datastore.NewDataStore(rdb.Config{
+		Driver: _rdb.Driver,
+		User:   _rdb.User,
+		Pass:   _rdb.Password,
+		Host:   _rdb.Host,
+		Port:   _rdb.Port,
+		Name:   _rdb.Name,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to init datastore. %w", err)

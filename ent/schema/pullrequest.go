@@ -30,7 +30,7 @@ func (PullRequest) Fields() []ent.Field {
 // Edges of the PullRequest.
 func (PullRequest) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("commits", Commit.Type),
+		edge.To("commits", Commits.Type),
 		edge.From("repository", Repository.Type).Ref("pull_requests").Unique(),
 	}
 }

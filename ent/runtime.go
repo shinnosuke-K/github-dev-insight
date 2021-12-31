@@ -5,7 +5,7 @@ package ent
 import (
 	"time"
 
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -16,13 +16,13 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	commitFields := schema.Commit{}.Fields()
-	_ = commitFields
-	// commitDescPullrequestID is the schema descriptor for pullrequest_id field.
-	commitDescPullrequestID := commitFields[0].Descriptor()
-	// commit.PullrequestIDValidator is a validator for the "pullrequest_id" field. It is called by the builders before save.
-	commit.PullrequestIDValidator = func() func(string) error {
-		validators := commitDescPullrequestID.Validators
+	commitsFields := schema.Commits{}.Fields()
+	_ = commitsFields
+	// commitsDescPullrequestID is the schema descriptor for pullrequest_id field.
+	commitsDescPullrequestID := commitsFields[0].Descriptor()
+	// commits.PullrequestIDValidator is a validator for the "pullrequest_id" field. It is called by the builders before save.
+	commits.PullrequestIDValidator = func() func(string) error {
+		validators := commitsDescPullrequestID.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
@@ -36,11 +36,11 @@ func init() {
 			return nil
 		}
 	}()
-	// commitDescGithubID is the schema descriptor for github_id field.
-	commitDescGithubID := commitFields[1].Descriptor()
-	// commit.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
-	commit.GithubIDValidator = func() func(string) error {
-		validators := commitDescGithubID.Validators
+	// commitsDescGithubID is the schema descriptor for github_id field.
+	commitsDescGithubID := commitsFields[1].Descriptor()
+	// commits.GithubIDValidator is a validator for the "github_id" field. It is called by the builders before save.
+	commits.GithubIDValidator = func() func(string) error {
+		validators := commitsDescGithubID.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
@@ -54,14 +54,14 @@ func init() {
 			return nil
 		}
 	}()
-	// commitDescCommittedAt is the schema descriptor for committed_at field.
-	commitDescCommittedAt := commitFields[3].Descriptor()
-	// commit.DefaultCommittedAt holds the default value on creation for the committed_at field.
-	commit.DefaultCommittedAt = commitDescCommittedAt.Default.(func() time.Time)
-	// commitDescCreatedAt is the schema descriptor for created_at field.
-	commitDescCreatedAt := commitFields[4].Descriptor()
-	// commit.DefaultCreatedAt holds the default value on creation for the created_at field.
-	commit.DefaultCreatedAt = commitDescCreatedAt.Default.(func() time.Time)
+	// commitsDescCommittedAt is the schema descriptor for committed_at field.
+	commitsDescCommittedAt := commitsFields[3].Descriptor()
+	// commits.DefaultCommittedAt holds the default value on creation for the committed_at field.
+	commits.DefaultCommittedAt = commitsDescCommittedAt.Default.(func() time.Time)
+	// commitsDescCreatedAt is the schema descriptor for created_at field.
+	commitsDescCreatedAt := commitsFields[4].Descriptor()
+	// commits.DefaultCreatedAt holds the default value on creation for the created_at field.
+	commits.DefaultCreatedAt = commitsDescCreatedAt.Default.(func() time.Time)
 	issueFields := schema.Issue{}.Fields()
 	_ = issueFields
 	// issueDescRepositoryID is the schema descriptor for repository_id field.

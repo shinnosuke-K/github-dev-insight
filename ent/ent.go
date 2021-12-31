@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -32,7 +32,7 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		commit.Table:      commit.ValidColumn,
+		commits.Table:     commits.ValidColumn,
 		issue.Table:       issue.ValidColumn,
 		pullrequest.Table: pullrequest.ValidColumn,
 		repository.Table:  repository.ValidColumn,

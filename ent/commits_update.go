@@ -10,50 +10,50 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/predicate"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 )
 
-// CommitUpdate is the builder for updating Commit entities.
-type CommitUpdate struct {
+// CommitsUpdate is the builder for updating Commits entities.
+type CommitsUpdate struct {
 	config
 	hooks    []Hook
-	mutation *CommitMutation
+	mutation *CommitsMutation
 }
 
-// Where appends a list predicates to the CommitUpdate builder.
-func (cu *CommitUpdate) Where(ps ...predicate.Commit) *CommitUpdate {
+// Where appends a list predicates to the CommitsUpdate builder.
+func (cu *CommitsUpdate) Where(ps ...predicate.Commits) *CommitsUpdate {
 	cu.mutation.Where(ps...)
 	return cu
 }
 
 // SetPullrequestID sets the "pullrequest_id" field.
-func (cu *CommitUpdate) SetPullrequestID(s string) *CommitUpdate {
+func (cu *CommitsUpdate) SetPullrequestID(s string) *CommitsUpdate {
 	cu.mutation.SetPullrequestID(s)
 	return cu
 }
 
 // SetGithubID sets the "github_id" field.
-func (cu *CommitUpdate) SetGithubID(s string) *CommitUpdate {
+func (cu *CommitsUpdate) SetGithubID(s string) *CommitsUpdate {
 	cu.mutation.SetGithubID(s)
 	return cu
 }
 
 // SetMessage sets the "message" field.
-func (cu *CommitUpdate) SetMessage(s string) *CommitUpdate {
+func (cu *CommitsUpdate) SetMessage(s string) *CommitsUpdate {
 	cu.mutation.SetMessage(s)
 	return cu
 }
 
 // SetCommittedAt sets the "committed_at" field.
-func (cu *CommitUpdate) SetCommittedAt(t time.Time) *CommitUpdate {
+func (cu *CommitsUpdate) SetCommittedAt(t time.Time) *CommitsUpdate {
 	cu.mutation.SetCommittedAt(t)
 	return cu
 }
 
 // SetNillableCommittedAt sets the "committed_at" field if the given value is not nil.
-func (cu *CommitUpdate) SetNillableCommittedAt(t *time.Time) *CommitUpdate {
+func (cu *CommitsUpdate) SetNillableCommittedAt(t *time.Time) *CommitsUpdate {
 	if t != nil {
 		cu.SetCommittedAt(*t)
 	}
@@ -61,13 +61,13 @@ func (cu *CommitUpdate) SetNillableCommittedAt(t *time.Time) *CommitUpdate {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (cu *CommitUpdate) SetCreatedAt(t time.Time) *CommitUpdate {
+func (cu *CommitsUpdate) SetCreatedAt(t time.Time) *CommitsUpdate {
 	cu.mutation.SetCreatedAt(t)
 	return cu
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cu *CommitUpdate) SetNillableCreatedAt(t *time.Time) *CommitUpdate {
+func (cu *CommitsUpdate) SetNillableCreatedAt(t *time.Time) *CommitsUpdate {
 	if t != nil {
 		cu.SetCreatedAt(*t)
 	}
@@ -75,13 +75,13 @@ func (cu *CommitUpdate) SetNillableCreatedAt(t *time.Time) *CommitUpdate {
 }
 
 // SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID.
-func (cu *CommitUpdate) SetPullRequestsID(id int) *CommitUpdate {
+func (cu *CommitsUpdate) SetPullRequestsID(id int) *CommitsUpdate {
 	cu.mutation.SetPullRequestsID(id)
 	return cu
 }
 
 // SetNillablePullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID if the given value is not nil.
-func (cu *CommitUpdate) SetNillablePullRequestsID(id *int) *CommitUpdate {
+func (cu *CommitsUpdate) SetNillablePullRequestsID(id *int) *CommitsUpdate {
 	if id != nil {
 		cu = cu.SetPullRequestsID(*id)
 	}
@@ -89,23 +89,23 @@ func (cu *CommitUpdate) SetNillablePullRequestsID(id *int) *CommitUpdate {
 }
 
 // SetPullRequests sets the "pull_requests" edge to the PullRequest entity.
-func (cu *CommitUpdate) SetPullRequests(p *PullRequest) *CommitUpdate {
+func (cu *CommitsUpdate) SetPullRequests(p *PullRequest) *CommitsUpdate {
 	return cu.SetPullRequestsID(p.ID)
 }
 
-// Mutation returns the CommitMutation object of the builder.
-func (cu *CommitUpdate) Mutation() *CommitMutation {
+// Mutation returns the CommitsMutation object of the builder.
+func (cu *CommitsUpdate) Mutation() *CommitsMutation {
 	return cu.mutation
 }
 
 // ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (cu *CommitUpdate) ClearPullRequests() *CommitUpdate {
+func (cu *CommitsUpdate) ClearPullRequests() *CommitsUpdate {
 	cu.mutation.ClearPullRequests()
 	return cu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (cu *CommitUpdate) Save(ctx context.Context) (int, error) {
+func (cu *CommitsUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -117,7 +117,7 @@ func (cu *CommitUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = cu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CommitMutation)
+			mutation, ok := m.(*CommitsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -143,7 +143,7 @@ func (cu *CommitUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cu *CommitUpdate) SaveX(ctx context.Context) int {
+func (cu *CommitsUpdate) SaveX(ctx context.Context) int {
 	affected, err := cu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -152,41 +152,41 @@ func (cu *CommitUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (cu *CommitUpdate) Exec(ctx context.Context) error {
+func (cu *CommitsUpdate) Exec(ctx context.Context) error {
 	_, err := cu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cu *CommitUpdate) ExecX(ctx context.Context) {
+func (cu *CommitsUpdate) ExecX(ctx context.Context) {
 	if err := cu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cu *CommitUpdate) check() error {
+func (cu *CommitsUpdate) check() error {
 	if v, ok := cu.mutation.PullrequestID(); ok {
-		if err := commit.PullrequestIDValidator(v); err != nil {
+		if err := commits.PullrequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "pullrequest_id", err: fmt.Errorf("ent: validator failed for field \"pullrequest_id\": %w", err)}
 		}
 	}
 	if v, ok := cu.mutation.GithubID(); ok {
-		if err := commit.GithubIDValidator(v); err != nil {
+		if err := commits.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (cu *CommitUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   commit.Table,
-			Columns: commit.Columns,
+			Table:   commits.Table,
+			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: commit.FieldID,
+				Column: commits.FieldID,
 			},
 		},
 	}
@@ -201,43 +201,43 @@ func (cu *CommitUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldPullrequestID,
+			Column: commits.FieldPullrequestID,
 		})
 	}
 	if value, ok := cu.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldGithubID,
+			Column: commits.FieldGithubID,
 		})
 	}
 	if value, ok := cu.mutation.Message(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldMessage,
+			Column: commits.FieldMessage,
 		})
 	}
 	if value, ok := cu.mutation.CommittedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCommittedAt,
+			Column: commits.FieldCommittedAt,
 		})
 	}
 	if value, ok := cu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCreatedAt,
+			Column: commits.FieldCreatedAt,
 		})
 	}
 	if cu.mutation.PullRequestsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commit.PullRequestsTable,
-			Columns: []string{commit.PullRequestsColumn},
+			Table:   commits.PullRequestsTable,
+			Columns: []string{commits.PullRequestsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -252,8 +252,8 @@ func (cu *CommitUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commit.PullRequestsTable,
-			Columns: []string{commit.PullRequestsColumn},
+			Table:   commits.PullRequestsTable,
+			Columns: []string{commits.PullRequestsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -269,7 +269,7 @@ func (cu *CommitUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{commit.Label}
+			err = &NotFoundError{commits.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{err.Error(), err}
 		}
@@ -278,40 +278,40 @@ func (cu *CommitUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// CommitUpdateOne is the builder for updating a single Commit entity.
-type CommitUpdateOne struct {
+// CommitsUpdateOne is the builder for updating a single Commits entity.
+type CommitsUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *CommitMutation
+	mutation *CommitsMutation
 }
 
 // SetPullrequestID sets the "pullrequest_id" field.
-func (cuo *CommitUpdateOne) SetPullrequestID(s string) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetPullrequestID(s string) *CommitsUpdateOne {
 	cuo.mutation.SetPullrequestID(s)
 	return cuo
 }
 
 // SetGithubID sets the "github_id" field.
-func (cuo *CommitUpdateOne) SetGithubID(s string) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetGithubID(s string) *CommitsUpdateOne {
 	cuo.mutation.SetGithubID(s)
 	return cuo
 }
 
 // SetMessage sets the "message" field.
-func (cuo *CommitUpdateOne) SetMessage(s string) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetMessage(s string) *CommitsUpdateOne {
 	cuo.mutation.SetMessage(s)
 	return cuo
 }
 
 // SetCommittedAt sets the "committed_at" field.
-func (cuo *CommitUpdateOne) SetCommittedAt(t time.Time) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetCommittedAt(t time.Time) *CommitsUpdateOne {
 	cuo.mutation.SetCommittedAt(t)
 	return cuo
 }
 
 // SetNillableCommittedAt sets the "committed_at" field if the given value is not nil.
-func (cuo *CommitUpdateOne) SetNillableCommittedAt(t *time.Time) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetNillableCommittedAt(t *time.Time) *CommitsUpdateOne {
 	if t != nil {
 		cuo.SetCommittedAt(*t)
 	}
@@ -319,13 +319,13 @@ func (cuo *CommitUpdateOne) SetNillableCommittedAt(t *time.Time) *CommitUpdateOn
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (cuo *CommitUpdateOne) SetCreatedAt(t time.Time) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetCreatedAt(t time.Time) *CommitsUpdateOne {
 	cuo.mutation.SetCreatedAt(t)
 	return cuo
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cuo *CommitUpdateOne) SetNillableCreatedAt(t *time.Time) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetNillableCreatedAt(t *time.Time) *CommitsUpdateOne {
 	if t != nil {
 		cuo.SetCreatedAt(*t)
 	}
@@ -333,13 +333,13 @@ func (cuo *CommitUpdateOne) SetNillableCreatedAt(t *time.Time) *CommitUpdateOne 
 }
 
 // SetPullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID.
-func (cuo *CommitUpdateOne) SetPullRequestsID(id int) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetPullRequestsID(id int) *CommitsUpdateOne {
 	cuo.mutation.SetPullRequestsID(id)
 	return cuo
 }
 
 // SetNillablePullRequestsID sets the "pull_requests" edge to the PullRequest entity by ID if the given value is not nil.
-func (cuo *CommitUpdateOne) SetNillablePullRequestsID(id *int) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetNillablePullRequestsID(id *int) *CommitsUpdateOne {
 	if id != nil {
 		cuo = cuo.SetPullRequestsID(*id)
 	}
@@ -347,33 +347,33 @@ func (cuo *CommitUpdateOne) SetNillablePullRequestsID(id *int) *CommitUpdateOne 
 }
 
 // SetPullRequests sets the "pull_requests" edge to the PullRequest entity.
-func (cuo *CommitUpdateOne) SetPullRequests(p *PullRequest) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) SetPullRequests(p *PullRequest) *CommitsUpdateOne {
 	return cuo.SetPullRequestsID(p.ID)
 }
 
-// Mutation returns the CommitMutation object of the builder.
-func (cuo *CommitUpdateOne) Mutation() *CommitMutation {
+// Mutation returns the CommitsMutation object of the builder.
+func (cuo *CommitsUpdateOne) Mutation() *CommitsMutation {
 	return cuo.mutation
 }
 
 // ClearPullRequests clears the "pull_requests" edge to the PullRequest entity.
-func (cuo *CommitUpdateOne) ClearPullRequests() *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) ClearPullRequests() *CommitsUpdateOne {
 	cuo.mutation.ClearPullRequests()
 	return cuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (cuo *CommitUpdateOne) Select(field string, fields ...string) *CommitUpdateOne {
+func (cuo *CommitsUpdateOne) Select(field string, fields ...string) *CommitsUpdateOne {
 	cuo.fields = append([]string{field}, fields...)
 	return cuo
 }
 
-// Save executes the query and returns the updated Commit entity.
-func (cuo *CommitUpdateOne) Save(ctx context.Context) (*Commit, error) {
+// Save executes the query and returns the updated Commits entity.
+func (cuo *CommitsUpdateOne) Save(ctx context.Context) (*Commits, error) {
 	var (
 		err  error
-		node *Commit
+		node *Commits
 	)
 	if len(cuo.hooks) == 0 {
 		if err = cuo.check(); err != nil {
@@ -382,7 +382,7 @@ func (cuo *CommitUpdateOne) Save(ctx context.Context) (*Commit, error) {
 		node, err = cuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CommitMutation)
+			mutation, ok := m.(*CommitsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -408,7 +408,7 @@ func (cuo *CommitUpdateOne) Save(ctx context.Context) (*Commit, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cuo *CommitUpdateOne) SaveX(ctx context.Context) *Commit {
+func (cuo *CommitsUpdateOne) SaveX(ctx context.Context) *Commits {
 	node, err := cuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -417,57 +417,57 @@ func (cuo *CommitUpdateOne) SaveX(ctx context.Context) *Commit {
 }
 
 // Exec executes the query on the entity.
-func (cuo *CommitUpdateOne) Exec(ctx context.Context) error {
+func (cuo *CommitsUpdateOne) Exec(ctx context.Context) error {
 	_, err := cuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cuo *CommitUpdateOne) ExecX(ctx context.Context) {
+func (cuo *CommitsUpdateOne) ExecX(ctx context.Context) {
 	if err := cuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cuo *CommitUpdateOne) check() error {
+func (cuo *CommitsUpdateOne) check() error {
 	if v, ok := cuo.mutation.PullrequestID(); ok {
-		if err := commit.PullrequestIDValidator(v); err != nil {
+		if err := commits.PullrequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "pullrequest_id", err: fmt.Errorf("ent: validator failed for field \"pullrequest_id\": %w", err)}
 		}
 	}
 	if v, ok := cuo.mutation.GithubID(); ok {
-		if err := commit.GithubIDValidator(v); err != nil {
+		if err := commits.GithubIDValidator(v); err != nil {
 			return &ValidationError{Name: "github_id", err: fmt.Errorf("ent: validator failed for field \"github_id\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (cuo *CommitUpdateOne) sqlSave(ctx context.Context) (_node *Commit, err error) {
+func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   commit.Table,
-			Columns: commit.Columns,
+			Table:   commits.Table,
+			Columns: commits.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: commit.FieldID,
+				Column: commits.FieldID,
 			},
 		},
 	}
 	id, ok := cuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Commit.ID for update")}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Commits.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if fields := cuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, commit.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, commits.FieldID)
 		for _, f := range fields {
-			if !commit.ValidColumn(f) {
+			if !commits.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != commit.FieldID {
+			if f != commits.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -483,43 +483,43 @@ func (cuo *CommitUpdateOne) sqlSave(ctx context.Context) (_node *Commit, err err
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldPullrequestID,
+			Column: commits.FieldPullrequestID,
 		})
 	}
 	if value, ok := cuo.mutation.GithubID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldGithubID,
+			Column: commits.FieldGithubID,
 		})
 	}
 	if value, ok := cuo.mutation.Message(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commit.FieldMessage,
+			Column: commits.FieldMessage,
 		})
 	}
 	if value, ok := cuo.mutation.CommittedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCommittedAt,
+			Column: commits.FieldCommittedAt,
 		})
 	}
 	if value, ok := cuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commit.FieldCreatedAt,
+			Column: commits.FieldCreatedAt,
 		})
 	}
 	if cuo.mutation.PullRequestsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commit.PullRequestsTable,
-			Columns: []string{commit.PullRequestsColumn},
+			Table:   commits.PullRequestsTable,
+			Columns: []string{commits.PullRequestsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -534,8 +534,8 @@ func (cuo *CommitUpdateOne) sqlSave(ctx context.Context) (_node *Commit, err err
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   commit.PullRequestsTable,
-			Columns: []string{commit.PullRequestsColumn},
+			Table:   commits.PullRequestsTable,
+			Columns: []string{commits.PullRequestsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -549,12 +549,12 @@ func (cuo *CommitUpdateOne) sqlSave(ctx context.Context) (_node *Commit, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Commit{config: cuo.config}
+	_node = &Commits{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, cuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{commit.Label}
+			err = &NotFoundError{commits.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{err.Error(), err}
 		}

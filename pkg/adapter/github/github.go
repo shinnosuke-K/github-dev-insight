@@ -7,7 +7,7 @@ import (
 )
 
 type GitHub interface {
-	GetRepositories(ctx context.Context, params *GetRepositoriesParams) ([]*entity.Repository, error)
+	GetRepositories(ctx context.Context, params *GetRepositoriesParams) ([]entity.Repository, error)
 }
 
 type GetRepositoriesParams struct {

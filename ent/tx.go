@@ -12,8 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Commit is the client for interacting with the Commit builders.
-	Commit *CommitClient
+	// Commits is the client for interacting with the Commits builders.
+	Commits *CommitsClient
 	// Issue is the client for interacting with the Issue builders.
 	Issue *IssueClient
 	// PullRequest is the client for interacting with the PullRequest builders.
@@ -155,7 +155,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Commit = NewCommitClient(tx.config)
+	tx.Commits = NewCommitsClient(tx.config)
 	tx.Issue = NewIssueClient(tx.config)
 	tx.PullRequest = NewPullRequestClient(tx.config)
 	tx.Repository = NewRepositoryClient(tx.config)
@@ -168,7 +168,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Commit.QueryXXX(), the query will be executed
+// applies a query, for example: Commits.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

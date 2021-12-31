@@ -15,3 +15,7 @@ func ToTime(s string) time.Time {
 	t, _ := time.Parse(time.RFC3339, s)
 	return t
 }
+
+func ToPtr(s string) *string {
+	return &s
+}

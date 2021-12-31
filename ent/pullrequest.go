@@ -42,7 +42,7 @@ type PullRequest struct {
 // PullRequestEdges holds the relations/edges for other nodes in the graph.
 type PullRequestEdges struct {
 	// Commits holds the value of the commits edge.
-	Commits []*Commit `json:"commits,omitempty"`
+	Commits []*Commits `json:"commits,omitempty"`
 	// Repository holds the value of the repository edge.
 	Repository *Repository `json:"repository,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -52,7 +52,7 @@ type PullRequestEdges struct {
 
 // CommitsOrErr returns the Commits value or an error if the edge
 // was not loaded in eager-loading.
-func (e PullRequestEdges) CommitsOrErr() ([]*Commit, error) {
+func (e PullRequestEdges) CommitsOrErr() ([]*Commits, error) {
 	if e.loadedTypes[0] {
 		return e.Commits, nil
 	}
@@ -168,7 +168,7 @@ func (pr *PullRequest) assignValues(columns []string, values []interface{}) erro
 }
 
 // QueryCommits queries the "commits" edge of the PullRequest entity.
-func (pr *PullRequest) QueryCommits() *CommitQuery {
+func (pr *PullRequest) QueryCommits() *CommitsQuery {
 	return (&PullRequestClient{config: pr.config}).QueryCommits(pr)
 }
 

@@ -10,6 +10,8 @@ type Repository struct {
 	Owner       string
 	Name        string
 	Description string
+	TotalPR     int64
+	TotalIssue  int64
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	PushedAt    time.Time

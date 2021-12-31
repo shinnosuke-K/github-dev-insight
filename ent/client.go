@@ -9,7 +9,7 @@ import (
 
 	"github.com/shinnosuke-K/github-dev-insight/ent/migrate"
 
-	"github.com/shinnosuke-K/github-dev-insight/ent/commit"
+	"github.com/shinnosuke-K/github-dev-insight/ent/commits"
 	"github.com/shinnosuke-K/github-dev-insight/ent/issue"
 	"github.com/shinnosuke-K/github-dev-insight/ent/pullrequest"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
@@ -24,8 +24,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Commit is the client for interacting with the Commit builders.
-	Commit *CommitClient
+	// Commits is the client for interacting with the Commits builders.
+	Commits *CommitsClient
 	// Issue is the client for interacting with the Issue builders.
 	Issue *IssueClient
 	// PullRequest is the client for interacting with the PullRequest builders.
@@ -45,7 +45,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Commit = NewCommitClient(c.config)
+	c.Commits = NewCommitsClient(c.config)
 	c.Issue = NewIssueClient(c.config)
 	c.PullRequest = NewPullRequestClient(c.config)
 	c.Repository = NewRepositoryClient(c.config)
@@ -82,7 +82,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:         ctx,
 		config:      cfg,
-		Commit:      NewCommitClient(cfg),
+		Commits:     NewCommitsClient(cfg),
 		Issue:       NewIssueClient(cfg),
 		PullRequest: NewPullRequestClient(cfg),
 		Repository:  NewRepositoryClient(cfg),
@@ -104,7 +104,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
 		config:      cfg,
-		Commit:      NewCommitClient(cfg),
+		Commits:     NewCommitsClient(cfg),
 		Issue:       NewIssueClient(cfg),
 		PullRequest: NewPullRequestClient(cfg),
 		Repository:  NewRepositoryClient(cfg),
@@ -114,7 +114,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Commit.
+//		Commits.
 //		Query().
 //		Count(ctx)
 //
@@ -137,90 +137,90 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Commit.Use(hooks...)
+	c.Commits.Use(hooks...)
 	c.Issue.Use(hooks...)
 	c.PullRequest.Use(hooks...)
 	c.Repository.Use(hooks...)
 }
 
-// CommitClient is a client for the Commit schema.
-type CommitClient struct {
+// CommitsClient is a client for the Commits schema.
+type CommitsClient struct {
 	config
 }
 
-// NewCommitClient returns a client for the Commit from the given config.
-func NewCommitClient(c config) *CommitClient {
-	return &CommitClient{config: c}
+// NewCommitsClient returns a client for the Commits from the given config.
+func NewCommitsClient(c config) *CommitsClient {
+	return &CommitsClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `commit.Hooks(f(g(h())))`.
-func (c *CommitClient) Use(hooks ...Hook) {
-	c.hooks.Commit = append(c.hooks.Commit, hooks...)
+// A call to `Use(f, g, h)` equals to `commits.Hooks(f(g(h())))`.
+func (c *CommitsClient) Use(hooks ...Hook) {
+	c.hooks.Commits = append(c.hooks.Commits, hooks...)
 }
 
-// Create returns a create builder for Commit.
-func (c *CommitClient) Create() *CommitCreate {
-	mutation := newCommitMutation(c.config, OpCreate)
-	return &CommitCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for Commits.
+func (c *CommitsClient) Create() *CommitsCreate {
+	mutation := newCommitsMutation(c.config, OpCreate)
+	return &CommitsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Commit entities.
-func (c *CommitClient) CreateBulk(builders ...*CommitCreate) *CommitCreateBulk {
-	return &CommitCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Commits entities.
+func (c *CommitsClient) CreateBulk(builders ...*CommitsCreate) *CommitsCreateBulk {
+	return &CommitsCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Commit.
-func (c *CommitClient) Update() *CommitUpdate {
-	mutation := newCommitMutation(c.config, OpUpdate)
-	return &CommitUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Commits.
+func (c *CommitsClient) Update() *CommitsUpdate {
+	mutation := newCommitsMutation(c.config, OpUpdate)
+	return &CommitsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *CommitClient) UpdateOne(co *Commit) *CommitUpdateOne {
-	mutation := newCommitMutation(c.config, OpUpdateOne, withCommit(co))
-	return &CommitUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CommitsClient) UpdateOne(co *Commits) *CommitsUpdateOne {
+	mutation := newCommitsMutation(c.config, OpUpdateOne, withCommits(co))
+	return &CommitsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CommitClient) UpdateOneID(id int) *CommitUpdateOne {
-	mutation := newCommitMutation(c.config, OpUpdateOne, withCommitID(id))
-	return &CommitUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CommitsClient) UpdateOneID(id int) *CommitsUpdateOne {
+	mutation := newCommitsMutation(c.config, OpUpdateOne, withCommitsID(id))
+	return &CommitsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Commit.
-func (c *CommitClient) Delete() *CommitDelete {
-	mutation := newCommitMutation(c.config, OpDelete)
-	return &CommitDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Commits.
+func (c *CommitsClient) Delete() *CommitsDelete {
+	mutation := newCommitsMutation(c.config, OpDelete)
+	return &CommitsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *CommitClient) DeleteOne(co *Commit) *CommitDeleteOne {
+func (c *CommitsClient) DeleteOne(co *Commits) *CommitsDeleteOne {
 	return c.DeleteOneID(co.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *CommitClient) DeleteOneID(id int) *CommitDeleteOne {
-	builder := c.Delete().Where(commit.ID(id))
+func (c *CommitsClient) DeleteOneID(id int) *CommitsDeleteOne {
+	builder := c.Delete().Where(commits.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &CommitDeleteOne{builder}
+	return &CommitsDeleteOne{builder}
 }
 
-// Query returns a query builder for Commit.
-func (c *CommitClient) Query() *CommitQuery {
-	return &CommitQuery{
+// Query returns a query builder for Commits.
+func (c *CommitsClient) Query() *CommitsQuery {
+	return &CommitsQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a Commit entity by its id.
-func (c *CommitClient) Get(ctx context.Context, id int) (*Commit, error) {
-	return c.Query().Where(commit.ID(id)).Only(ctx)
+// Get returns a Commits entity by its id.
+func (c *CommitsClient) Get(ctx context.Context, id int) (*Commits, error) {
+	return c.Query().Where(commits.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CommitClient) GetX(ctx context.Context, id int) *Commit {
+func (c *CommitsClient) GetX(ctx context.Context, id int) *Commits {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -228,15 +228,15 @@ func (c *CommitClient) GetX(ctx context.Context, id int) *Commit {
 	return obj
 }
 
-// QueryPullRequests queries the pull_requests edge of a Commit.
-func (c *CommitClient) QueryPullRequests(co *Commit) *PullRequestQuery {
+// QueryPullRequests queries the pull_requests edge of a Commits.
+func (c *CommitsClient) QueryPullRequests(co *Commits) *PullRequestQuery {
 	query := &PullRequestQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := co.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(commit.Table, commit.FieldID, id),
+			sqlgraph.From(commits.Table, commits.FieldID, id),
 			sqlgraph.To(pullrequest.Table, pullrequest.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, commit.PullRequestsTable, commit.PullRequestsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, commits.PullRequestsTable, commits.PullRequestsColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -245,8 +245,8 @@ func (c *CommitClient) QueryPullRequests(co *Commit) *PullRequestQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *CommitClient) Hooks() []Hook {
-	return c.hooks.Commit
+func (c *CommitsClient) Hooks() []Hook {
+	return c.hooks.Commits
 }
 
 // IssueClient is a client for the Issue schema.
@@ -441,13 +441,13 @@ func (c *PullRequestClient) GetX(ctx context.Context, id int) *PullRequest {
 }
 
 // QueryCommits queries the commits edge of a PullRequest.
-func (c *PullRequestClient) QueryCommits(pr *PullRequest) *CommitQuery {
-	query := &CommitQuery{config: c.config}
+func (c *PullRequestClient) QueryCommits(pr *PullRequest) *CommitsQuery {
+	query := &CommitsQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pullrequest.Table, pullrequest.FieldID, id),
-			sqlgraph.To(commit.Table, commit.FieldID),
+			sqlgraph.To(commits.Table, commits.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, pullrequest.CommitsTable, pullrequest.CommitsColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
