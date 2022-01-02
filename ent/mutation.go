@@ -842,9 +842,22 @@ func (m *IssueMutation) OldLastEditedAt(ctx context.Context) (v time.Time, err e
 	return oldValue.LastEditedAt, nil
 }
 
+// ClearLastEditedAt clears the value of the "last_edited_at" field.
+func (m *IssueMutation) ClearLastEditedAt() {
+	m.last_edited_at = nil
+	m.clearedFields[issue.FieldLastEditedAt] = struct{}{}
+}
+
+// LastEditedAtCleared returns if the "last_edited_at" field was cleared in this mutation.
+func (m *IssueMutation) LastEditedAtCleared() bool {
+	_, ok := m.clearedFields[issue.FieldLastEditedAt]
+	return ok
+}
+
 // ResetLastEditedAt resets all changes to the "last_edited_at" field.
 func (m *IssueMutation) ResetLastEditedAt() {
 	m.last_edited_at = nil
+	delete(m.clearedFields, issue.FieldLastEditedAt)
 }
 
 // SetClosedAt sets the "closed_at" field.
@@ -878,9 +891,22 @@ func (m *IssueMutation) OldClosedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.ClosedAt, nil
 }
 
+// ClearClosedAt clears the value of the "closed_at" field.
+func (m *IssueMutation) ClearClosedAt() {
+	m.closed_at = nil
+	m.clearedFields[issue.FieldClosedAt] = struct{}{}
+}
+
+// ClosedAtCleared returns if the "closed_at" field was cleared in this mutation.
+func (m *IssueMutation) ClosedAtCleared() bool {
+	_, ok := m.clearedFields[issue.FieldClosedAt]
+	return ok
+}
+
 // ResetClosedAt resets all changes to the "closed_at" field.
 func (m *IssueMutation) ResetClosedAt() {
 	m.closed_at = nil
+	delete(m.clearedFields, issue.FieldClosedAt)
 }
 
 // SetRepositoryID sets the "repository" edge to the Repository entity by id.
@@ -1081,7 +1107,14 @@ func (m *IssueMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *IssueMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(issue.FieldLastEditedAt) {
+		fields = append(fields, issue.FieldLastEditedAt)
+	}
+	if m.FieldCleared(issue.FieldClosedAt) {
+		fields = append(fields, issue.FieldClosedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1094,6 +1127,14 @@ func (m *IssueMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *IssueMutation) ClearField(name string) error {
+	switch name {
+	case issue.FieldLastEditedAt:
+		m.ClearLastEditedAt()
+		return nil
+	case issue.FieldClosedAt:
+		m.ClearClosedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown Issue nullable field %s", name)
 }
 
@@ -1540,9 +1581,22 @@ func (m *PullRequestMutation) OldClosedAt(ctx context.Context) (v time.Time, err
 	return oldValue.ClosedAt, nil
 }
 
+// ClearClosedAt clears the value of the "closed_at" field.
+func (m *PullRequestMutation) ClearClosedAt() {
+	m.closed_at = nil
+	m.clearedFields[pullrequest.FieldClosedAt] = struct{}{}
+}
+
+// ClosedAtCleared returns if the "closed_at" field was cleared in this mutation.
+func (m *PullRequestMutation) ClosedAtCleared() bool {
+	_, ok := m.clearedFields[pullrequest.FieldClosedAt]
+	return ok
+}
+
 // ResetClosedAt resets all changes to the "closed_at" field.
 func (m *PullRequestMutation) ResetClosedAt() {
 	m.closed_at = nil
+	delete(m.clearedFields, pullrequest.FieldClosedAt)
 }
 
 // SetMergedAt sets the "merged_at" field.
@@ -1576,9 +1630,22 @@ func (m *PullRequestMutation) OldMergedAt(ctx context.Context) (v time.Time, err
 	return oldValue.MergedAt, nil
 }
 
+// ClearMergedAt clears the value of the "merged_at" field.
+func (m *PullRequestMutation) ClearMergedAt() {
+	m.merged_at = nil
+	m.clearedFields[pullrequest.FieldMergedAt] = struct{}{}
+}
+
+// MergedAtCleared returns if the "merged_at" field was cleared in this mutation.
+func (m *PullRequestMutation) MergedAtCleared() bool {
+	_, ok := m.clearedFields[pullrequest.FieldMergedAt]
+	return ok
+}
+
 // ResetMergedAt resets all changes to the "merged_at" field.
 func (m *PullRequestMutation) ResetMergedAt() {
 	m.merged_at = nil
+	delete(m.clearedFields, pullrequest.FieldMergedAt)
 }
 
 // AddCommitIDs adds the "commits" edge to the Commits entity by ids.
@@ -1862,7 +1929,14 @@ func (m *PullRequestMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *PullRequestMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(pullrequest.FieldClosedAt) {
+		fields = append(fields, pullrequest.FieldClosedAt)
+	}
+	if m.FieldCleared(pullrequest.FieldMergedAt) {
+		fields = append(fields, pullrequest.FieldMergedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1875,6 +1949,14 @@ func (m *PullRequestMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *PullRequestMutation) ClearField(name string) error {
+	switch name {
+	case pullrequest.FieldClosedAt:
+		m.ClearClosedAt()
+		return nil
+	case pullrequest.FieldMergedAt:
+		m.ClearMergedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown PullRequest nullable field %s", name)
 }
 

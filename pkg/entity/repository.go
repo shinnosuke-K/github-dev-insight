@@ -1,12 +1,16 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 type RepositoryID string
 
+type GitHubID string
+
 type Repository struct {
 	ID          RepositoryID `json:"id"`
-	GitHubID    string       `json:"github_id"`
+	GitHubID    GitHubID     `json:"github_id"`
 	Owner       string       `json:"owner"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
@@ -14,7 +18,7 @@ type Repository struct {
 	TotalIssue  int64        `json:"total_issue"`
 	CreatedAt   time.Time    `json:"created_at"`
 	UpdatedAt   time.Time    `json:"updated_at"`
-	PushedAt    time.Time    `json:"pushed_at"`
+	PushedAt    *time.Time   `json:"pushed_at"`
 }
 
 type Repositories []*Repository

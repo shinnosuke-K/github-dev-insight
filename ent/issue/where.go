@@ -586,6 +586,20 @@ func LastEditedAtLTE(v time.Time) predicate.Issue {
 	})
 }
 
+// LastEditedAtIsNil applies the IsNil predicate on the "last_edited_at" field.
+func LastEditedAtIsNil() predicate.Issue {
+	return predicate.Issue(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLastEditedAt)))
+	})
+}
+
+// LastEditedAtNotNil applies the NotNil predicate on the "last_edited_at" field.
+func LastEditedAtNotNil() predicate.Issue {
+	return predicate.Issue(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLastEditedAt)))
+	})
+}
+
 // ClosedAtEQ applies the EQ predicate on the "closed_at" field.
 func ClosedAtEQ(v time.Time) predicate.Issue {
 	return predicate.Issue(func(s *sql.Selector) {
@@ -659,6 +673,20 @@ func ClosedAtLT(v time.Time) predicate.Issue {
 func ClosedAtLTE(v time.Time) predicate.Issue {
 	return predicate.Issue(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldClosedAt), v))
+	})
+}
+
+// ClosedAtIsNil applies the IsNil predicate on the "closed_at" field.
+func ClosedAtIsNil() predicate.Issue {
+	return predicate.Issue(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldClosedAt)))
+	})
+}
+
+// ClosedAtNotNil applies the NotNil predicate on the "closed_at" field.
+func ClosedAtNotNil() predicate.Issue {
+	return predicate.Issue(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldClosedAt)))
 	})
 }
 

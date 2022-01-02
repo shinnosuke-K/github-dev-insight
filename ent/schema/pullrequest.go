@@ -23,8 +23,8 @@ func (PullRequest) Fields() []ent.Field {
 		field.Int64("total_commits").Default(0).NonNegative(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),
-		field.Time("closed_at").Default(time.Now),
-		field.Time("merged_at").Default(time.Now),
+		field.Time("closed_at").Default(time.Now).Optional(),
+		field.Time("merged_at").Default(time.Now).Optional(),
 	}
 }
 
