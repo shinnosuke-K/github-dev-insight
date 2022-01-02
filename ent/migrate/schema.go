@@ -38,8 +38,8 @@ var (
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "last_edited_at", Type: field.TypeTime},
-		{Name: "closed_at", Type: field.TypeTime},
+		{Name: "last_edited_at", Type: field.TypeTime, Nullable: true},
+		{Name: "closed_at", Type: field.TypeTime, Nullable: true},
 		{Name: "repository_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// IssuesTable holds the schema information for the "issues" table.
@@ -64,8 +64,8 @@ var (
 		{Name: "total_commits", Type: field.TypeInt64, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "closed_at", Type: field.TypeTime},
-		{Name: "merged_at", Type: field.TypeTime},
+		{Name: "closed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "merged_at", Type: field.TypeTime, Nullable: true},
 		{Name: "repository_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// PullRequestsTable holds the schema information for the "pull_requests" table.

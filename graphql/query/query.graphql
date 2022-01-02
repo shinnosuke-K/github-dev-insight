@@ -28,6 +28,10 @@ query pullRequests($number_of_pr: Int!, $repo_id: ID!, $after: String) {
     node(id: $repo_id) {
         ... on Repository {
             pullRequests(after: $after, first: $number_of_pr) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
                 nodes {
                     closedAt
                     createdAt
@@ -68,6 +72,10 @@ query issues($number_of_issues: Int!, $repo_id: ID!, $after: String) {
     node(id: $repo_id) {
         ... on Repository {
             issues(after: $after, first: $number_of_issues) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
                 nodes {
                     closedAt
                     id

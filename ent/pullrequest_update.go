@@ -105,6 +105,12 @@ func (pru *PullRequestUpdate) SetNillableClosedAt(t *time.Time) *PullRequestUpda
 	return pru
 }
 
+// ClearClosedAt clears the value of the "closed_at" field.
+func (pru *PullRequestUpdate) ClearClosedAt() *PullRequestUpdate {
+	pru.mutation.ClearClosedAt()
+	return pru
+}
+
 // SetMergedAt sets the "merged_at" field.
 func (pru *PullRequestUpdate) SetMergedAt(t time.Time) *PullRequestUpdate {
 	pru.mutation.SetMergedAt(t)
@@ -116,6 +122,12 @@ func (pru *PullRequestUpdate) SetNillableMergedAt(t *time.Time) *PullRequestUpda
 	if t != nil {
 		pru.SetMergedAt(*t)
 	}
+	return pru
+}
+
+// ClearMergedAt clears the value of the "merged_at" field.
+func (pru *PullRequestUpdate) ClearMergedAt() *PullRequestUpdate {
+	pru.mutation.ClearMergedAt()
 	return pru
 }
 
@@ -332,10 +344,22 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: pullrequest.FieldClosedAt,
 		})
 	}
+	if pru.mutation.ClosedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: pullrequest.FieldClosedAt,
+		})
+	}
 	if value, ok := pru.mutation.MergedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: pullrequest.FieldMergedAt,
+		})
+	}
+	if pru.mutation.MergedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: pullrequest.FieldMergedAt,
 		})
 	}
@@ -522,6 +546,12 @@ func (pruo *PullRequestUpdateOne) SetNillableClosedAt(t *time.Time) *PullRequest
 	return pruo
 }
 
+// ClearClosedAt clears the value of the "closed_at" field.
+func (pruo *PullRequestUpdateOne) ClearClosedAt() *PullRequestUpdateOne {
+	pruo.mutation.ClearClosedAt()
+	return pruo
+}
+
 // SetMergedAt sets the "merged_at" field.
 func (pruo *PullRequestUpdateOne) SetMergedAt(t time.Time) *PullRequestUpdateOne {
 	pruo.mutation.SetMergedAt(t)
@@ -533,6 +563,12 @@ func (pruo *PullRequestUpdateOne) SetNillableMergedAt(t *time.Time) *PullRequest
 	if t != nil {
 		pruo.SetMergedAt(*t)
 	}
+	return pruo
+}
+
+// ClearMergedAt clears the value of the "merged_at" field.
+func (pruo *PullRequestUpdateOne) ClearMergedAt() *PullRequestUpdateOne {
+	pruo.mutation.ClearMergedAt()
 	return pruo
 }
 
@@ -773,10 +809,22 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Column: pullrequest.FieldClosedAt,
 		})
 	}
+	if pruo.mutation.ClosedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: pullrequest.FieldClosedAt,
+		})
+	}
 	if value, ok := pruo.mutation.MergedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: pullrequest.FieldMergedAt,
+		})
+	}
+	if pruo.mutation.MergedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: pullrequest.FieldMergedAt,
 		})
 	}

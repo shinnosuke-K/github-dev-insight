@@ -34,7 +34,7 @@ type Query struct {
 	Nodes                                    []Node                             "json:\"nodes\" graphql:\"nodes\""
 	Organization                             *Organization                      "json:\"organization\" graphql:\"organization\""
 	RateLimit                                *RateLimit                         "json:\"rateLimit\" graphql:\"rateLimit\""
-	Relay                                    *Query                             "json:\"relay\" graphql:\"relay\""
+	Relay                                    **Query                            "json:\"relay\" graphql:\"relay\""
 	Repository                               *Repository                        "json:\"repository\" graphql:\"repository\""
 	RepositoryOwner                          RepositoryOwner                    "json:\"repositoryOwner\" graphql:\"repositoryOwner\""
 	Resource                                 UniformResourceLocatable           "json:\"resource\" graphql:\"resource\""
@@ -246,6 +246,10 @@ type Repositories struct {
 type PullRequests struct {
 	Node *struct {
 		PullRequests struct {
+			PageInfo struct {
+				HasNextPage bool    "json:\"hasNextPage\" graphql:\"hasNextPage\""
+				EndCursor   *string "json:\"endCursor\" graphql:\"endCursor\""
+			} "json:\"pageInfo\" graphql:\"pageInfo\""
 			Nodes []*struct {
 				ClosedAt  *string "json:\"closedAt\" graphql:\"closedAt\""
 				CreatedAt string  "json:\"createdAt\" graphql:\"createdAt\""
@@ -280,6 +284,10 @@ type Commits struct {
 type Issues struct {
 	Node *struct {
 		Issues struct {
+			PageInfo struct {
+				HasNextPage bool    "json:\"hasNextPage\" graphql:\"hasNextPage\""
+				EndCursor   *string "json:\"endCursor\" graphql:\"endCursor\""
+			} "json:\"pageInfo\" graphql:\"pageInfo\""
 			Nodes []*struct {
 				ClosedAt     *string "json:\"closedAt\" graphql:\"closedAt\""
 				ID           string  "json:\"id\" graphql:\"id\""
@@ -338,6 +346,10 @@ const PullRequestsDocument = `query pullRequests ($number_of_pr: Int!, $repo_id:
 	node(id: $repo_id) {
 		... on Repository {
 			pullRequests(after: $after, first: $number_of_pr) {
+				pageInfo {
+					hasNextPage
+					endCursor
+				}
 				nodes {
 					closedAt
 					createdAt
@@ -410,6 +422,10 @@ const IssuesDocument = `query issues ($number_of_issues: Int!, $repo_id: ID!, $a
 	node(id: $repo_id) {
 		... on Repository {
 			issues(after: $after, first: $number_of_issues) {
+				pageInfo {
+					hasNextPage
+					endCursor
+				}
 				nodes {
 					closedAt
 					id

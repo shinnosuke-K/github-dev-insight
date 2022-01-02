@@ -83,6 +83,12 @@ func (iu *IssueUpdate) SetNillableLastEditedAt(t *time.Time) *IssueUpdate {
 	return iu
 }
 
+// ClearLastEditedAt clears the value of the "last_edited_at" field.
+func (iu *IssueUpdate) ClearLastEditedAt() *IssueUpdate {
+	iu.mutation.ClearLastEditedAt()
+	return iu
+}
+
 // SetClosedAt sets the "closed_at" field.
 func (iu *IssueUpdate) SetClosedAt(t time.Time) *IssueUpdate {
 	iu.mutation.SetClosedAt(t)
@@ -94,6 +100,12 @@ func (iu *IssueUpdate) SetNillableClosedAt(t *time.Time) *IssueUpdate {
 	if t != nil {
 		iu.SetClosedAt(*t)
 	}
+	return iu
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (iu *IssueUpdate) ClearClosedAt() *IssueUpdate {
+	iu.mutation.ClearClosedAt()
 	return iu
 }
 
@@ -255,10 +267,22 @@ func (iu *IssueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: issue.FieldLastEditedAt,
 		})
 	}
+	if iu.mutation.LastEditedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: issue.FieldLastEditedAt,
+		})
+	}
 	if value, ok := iu.mutation.ClosedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: issue.FieldClosedAt,
+		})
+	}
+	if iu.mutation.ClosedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: issue.FieldClosedAt,
 		})
 	}
@@ -370,6 +394,12 @@ func (iuo *IssueUpdateOne) SetNillableLastEditedAt(t *time.Time) *IssueUpdateOne
 	return iuo
 }
 
+// ClearLastEditedAt clears the value of the "last_edited_at" field.
+func (iuo *IssueUpdateOne) ClearLastEditedAt() *IssueUpdateOne {
+	iuo.mutation.ClearLastEditedAt()
+	return iuo
+}
+
 // SetClosedAt sets the "closed_at" field.
 func (iuo *IssueUpdateOne) SetClosedAt(t time.Time) *IssueUpdateOne {
 	iuo.mutation.SetClosedAt(t)
@@ -381,6 +411,12 @@ func (iuo *IssueUpdateOne) SetNillableClosedAt(t *time.Time) *IssueUpdateOne {
 	if t != nil {
 		iuo.SetClosedAt(*t)
 	}
+	return iuo
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (iuo *IssueUpdateOne) ClearClosedAt() *IssueUpdateOne {
+	iuo.mutation.ClearClosedAt()
 	return iuo
 }
 
@@ -566,10 +602,22 @@ func (iuo *IssueUpdateOne) sqlSave(ctx context.Context) (_node *Issue, err error
 			Column: issue.FieldLastEditedAt,
 		})
 	}
+	if iuo.mutation.LastEditedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: issue.FieldLastEditedAt,
+		})
+	}
 	if value, ok := iuo.mutation.ClosedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: issue.FieldClosedAt,
+		})
+	}
+	if iuo.mutation.ClosedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: issue.FieldClosedAt,
 		})
 	}

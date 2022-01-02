@@ -274,12 +274,6 @@ func (prc *PullRequestCreate) check() error {
 	if _, ok := prc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "updated_at"`)}
 	}
-	if _, ok := prc.mutation.ClosedAt(); !ok {
-		return &ValidationError{Name: "closed_at", err: errors.New(`ent: missing required field "closed_at"`)}
-	}
-	if _, ok := prc.mutation.MergedAt(); !ok {
-		return &ValidationError{Name: "merged_at", err: errors.New(`ent: missing required field "merged_at"`)}
-	}
 	return nil
 }
 

@@ -22,8 +22,8 @@ func (Issue) Fields() []ent.Field {
 		field.String("title").MaxLen(255).NotEmpty(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),
-		field.Time("last_edited_at").Default(time.Now),
-		field.Time("closed_at").Default(time.Now),
+		field.Time("last_edited_at").Default(time.Now).Optional(),
+		field.Time("closed_at").Default(time.Now).Optional(),
 	}
 }
 

@@ -16,6 +16,10 @@ func ToTime(s string) time.Time {
 	return t
 }
 
-func ToPtr(s string) *string {
-	return &s
+func ToTimePtr(s string) *time.Time {
+	t := ToTime(s)
+	if t.IsZero() {
+		return nil
+	}
+	return &t
 }

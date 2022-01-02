@@ -13,20 +13,21 @@ type Repository struct {
 	Client *client.Client
 }
 
-func (t *Repository) Create(ctx context.Context, ents ...entity.Repository) error {
+func (t *Repository) Create(ctx context.Context, ents ...*entity.Repository) error {
 	var (
 		bulk = make([]*ent.RepositoryCreate, len(ents))
 	)
 	for i, e := range ents {
 		bulk[i] = t.Client.DB().Repository.Create().
-			SetGithubID(e.GitHubID).
+			SetGithubID(string(e.GitHubID)).
 			SetName(e.Name).
 			SetOwner(e.Owner).
 			SetDescription(e.Description).
 			SetTotalIssue(e.TotalIssue).
 			SetTotalPr(e.TotalPR).
 			SetCreatedAt(e.CreatedAt).
-			SetUpdatedAt(e.UpdatedAt)
+			SetUpdatedAt(e.UpdatedAt).
+			SetNillablePushedAt(e.PushedAt)
 	}
 	if _, err := t.Client.DB().Repository.CreateBulk(bulk...).Save(ctx); err != nil {
 		return err

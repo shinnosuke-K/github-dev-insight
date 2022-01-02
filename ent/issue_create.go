@@ -232,12 +232,6 @@ func (ic *IssueCreate) check() error {
 	if _, ok := ic.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "updated_at"`)}
 	}
-	if _, ok := ic.mutation.LastEditedAt(); !ok {
-		return &ValidationError{Name: "last_edited_at", err: errors.New(`ent: missing required field "last_edited_at"`)}
-	}
-	if _, ok := ic.mutation.ClosedAt(); !ok {
-		return &ValidationError{Name: "closed_at", err: errors.New(`ent: missing required field "closed_at"`)}
-	}
 	return nil
 }
 

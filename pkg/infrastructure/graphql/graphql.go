@@ -8,7 +8,6 @@ import (
 
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
-	"github.com/shinnosuke-K/github-dev-insight/pkg/util/id"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/util/strconvert"
 )
 
@@ -35,9 +34,9 @@ func NewGraphQL(cfg Config) (github.GitHub, error) {
 }
 
 // GetRepositories は指定したユーザに紐づくリポジトリ一覧を取得する
-func (c *Client) GetRepositories(ctx context.Context, params *github.GetRepositoriesParams) ([]entity.Repository, error) {
+func (c *Client) GetRepositories(ctx context.Context, params *github.GetRepositoriesParams) ([]*entity.Repository, error) {
 	var (
-		res   []entity.Repository
+		res   []*entity.Repository
 		after *string
 		total = 10
 	)
@@ -47,9 +46,8 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 			return nil, fmt.Errorf("failed to get repositories. %w", err)
 		}
 		for _, n := range repos.Organization.Repositories.Nodes {
-			res = append(res, entity.Repository{
-				ID:          entity.RepositoryID(id.Generate()),
-				GitHubID:    n.ID,
+			res = append(res, &entity.Repository{
+				GitHubID:    entity.GitHubID(n.ID),
 				Owner:       params.UserName,
 				Name:        n.Name,
 				TotalIssue:  n.Issues.TotalCount,
@@ -57,13 +55,44 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 				Description: strconvert.StringOrDefault(n.Description),
 				CreatedAt:   strconvert.ToTime(n.CreatedAt),
 				UpdatedAt:   strconvert.ToTime(n.UpdatedAt),
-				PushedAt:    strconvert.ToTime(strconvert.StringOrDefault(n.PushedAt)),
+				PushedAt:    strconvert.ToTimePtr(strconvert.StringOrDefault(n.PushedAt)),
 			})
 		}
 		if !repos.Organization.Repositories.PageInfo.HasNextPage {
 			break
 		}
 		after = repos.Organization.Repositories.PageInfo.EndCursor
+	}
+	return res, nil
+}
+
+func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.GetPullRequestsByGitHubIDParams) ([]*entity.PullRequest, error) {
+	var (
+		res   []*entity.PullRequest
+		after *string
+		total = 10
+	)
+	for i := 0; i < total; i++ {
+		prs, err := c.PullRequests(ctx, 100, string(params.GitHubID), after)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get pull requests. %w", err)
+		}
+		for _, n := range prs.Node.PullRequests.Nodes {
+			res = append(res, &entity.PullRequest{
+				GitHubID:     entity.GitHubID(n.ID),
+				RepositoryID: params.RepositoryID,
+				Title:        n.Title,
+				TotalCommit:  n.Commits.TotalCount,
+				CreatedAt:    strconvert.ToTime(n.CreatedAt),
+				UpdatedAt:    strconvert.ToTime(n.UpdatedAt),
+				ClosedAt:     strconvert.ToTimePtr(strconvert.StringOrDefault(n.ClosedAt)),
+				MergedAt:     strconvert.ToTimePtr(strconvert.StringOrDefault(n.MergedAt)),
+			})
+		}
+		if !prs.Node.PullRequests.PageInfo.HasNextPage {
+			break
+		}
+		after = prs.Node.PullRequests.PageInfo.EndCursor
 	}
 	return res, nil
 }

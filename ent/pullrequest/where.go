@@ -669,6 +669,20 @@ func ClosedAtLTE(v time.Time) predicate.PullRequest {
 	})
 }
 
+// ClosedAtIsNil applies the IsNil predicate on the "closed_at" field.
+func ClosedAtIsNil() predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldClosedAt)))
+	})
+}
+
+// ClosedAtNotNil applies the NotNil predicate on the "closed_at" field.
+func ClosedAtNotNil() predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldClosedAt)))
+	})
+}
+
 // MergedAtEQ applies the EQ predicate on the "merged_at" field.
 func MergedAtEQ(v time.Time) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
@@ -742,6 +756,20 @@ func MergedAtLT(v time.Time) predicate.PullRequest {
 func MergedAtLTE(v time.Time) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldMergedAt), v))
+	})
+}
+
+// MergedAtIsNil applies the IsNil predicate on the "merged_at" field.
+func MergedAtIsNil() predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMergedAt)))
+	})
+}
+
+// MergedAtNotNil applies the NotNil predicate on the "merged_at" field.
+func MergedAtNotNil() predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMergedAt)))
 	})
 }
 
