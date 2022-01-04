@@ -28,7 +28,7 @@ func _main() error {
 		return fmt.Errorf("failed to register service. %w", err)
 	}
 	if err := repoSvc.ImportPullRequest(context.Background()); err != nil {
-		return fmt.Errorf("failed to import repositries. %w", err)
+		return fmt.Errorf("failed to import pull requests. %w", err)
 	}
 	return nil
 }

@@ -23,7 +23,7 @@ func (c *Config) dataSourceName() string {
 }
 
 func NewRDB(cfg Config) (*client.Client, error) {
-	db, err := ent.Open(cfg.Driver, cfg.dataSourceName(), ent.Debug())
+	db, err := ent.Open(cfg.Driver, cfg.dataSourceName())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open rdb. %w", err)
 	}
