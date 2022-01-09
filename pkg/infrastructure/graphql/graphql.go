@@ -38,7 +38,7 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 	var (
 		res   []*entity.Repository
 		after *string
-		total = 10
+		total = 100
 	)
 	for i := 0; i < total; i++ {
 		repos, err := c.Repositories(ctx, 100, params.UserName, after)
@@ -70,7 +70,7 @@ func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.G
 	var (
 		res   []*entity.PullRequest
 		after *string
-		total = 10
+		total = 100
 	)
 	for i := 0; i < total; i++ {
 		prs, err := c.PullRequests(ctx, 100, string(params.GitHubID), after)
