@@ -63,6 +63,20 @@ func (pru *PullRequestUpdate) AddTotalCommits(i int64) *PullRequestUpdate {
 	return pru
 }
 
+// SetGetCommit sets the "get_commit" field.
+func (pru *PullRequestUpdate) SetGetCommit(b bool) *PullRequestUpdate {
+	pru.mutation.SetGetCommit(b)
+	return pru
+}
+
+// SetNillableGetCommit sets the "get_commit" field if the given value is not nil.
+func (pru *PullRequestUpdate) SetNillableGetCommit(b *bool) *PullRequestUpdate {
+	if b != nil {
+		pru.SetGetCommit(*b)
+	}
+	return pru
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (pru *PullRequestUpdate) SetCreatedAt(t time.Time) *PullRequestUpdate {
 	pru.mutation.SetCreatedAt(t)
@@ -323,6 +337,13 @@ func (pru *PullRequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: pullrequest.FieldTotalCommits,
 		})
 	}
+	if value, ok := pru.mutation.GetCommit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: pullrequest.FieldGetCommit,
+		})
+	}
 	if value, ok := pru.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -501,6 +522,20 @@ func (pruo *PullRequestUpdateOne) SetNillableTotalCommits(i *int64) *PullRequest
 // AddTotalCommits adds i to the "total_commits" field.
 func (pruo *PullRequestUpdateOne) AddTotalCommits(i int64) *PullRequestUpdateOne {
 	pruo.mutation.AddTotalCommits(i)
+	return pruo
+}
+
+// SetGetCommit sets the "get_commit" field.
+func (pruo *PullRequestUpdateOne) SetGetCommit(b bool) *PullRequestUpdateOne {
+	pruo.mutation.SetGetCommit(b)
+	return pruo
+}
+
+// SetNillableGetCommit sets the "get_commit" field if the given value is not nil.
+func (pruo *PullRequestUpdateOne) SetNillableGetCommit(b *bool) *PullRequestUpdateOne {
+	if b != nil {
+		pruo.SetGetCommit(*b)
+	}
 	return pruo
 }
 
@@ -786,6 +821,13 @@ func (pruo *PullRequestUpdateOne) sqlSave(ctx context.Context) (_node *PullReque
 			Type:   field.TypeInt64,
 			Value:  value,
 			Column: pullrequest.FieldTotalCommits,
+		})
+	}
+	if value, ok := pruo.mutation.GetCommit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: pullrequest.FieldGetCommit,
 		})
 	}
 	if value, ok := pruo.mutation.CreatedAt(); ok {

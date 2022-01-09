@@ -83,6 +83,34 @@ func (rc *RepositoryCreate) SetNillableTotalIssue(i *int64) *RepositoryCreate {
 	return rc
 }
 
+// SetGetPullRequest sets the "get_pull_request" field.
+func (rc *RepositoryCreate) SetGetPullRequest(b bool) *RepositoryCreate {
+	rc.mutation.SetGetPullRequest(b)
+	return rc
+}
+
+// SetNillableGetPullRequest sets the "get_pull_request" field if the given value is not nil.
+func (rc *RepositoryCreate) SetNillableGetPullRequest(b *bool) *RepositoryCreate {
+	if b != nil {
+		rc.SetGetPullRequest(*b)
+	}
+	return rc
+}
+
+// SetGetIssue sets the "get_issue" field.
+func (rc *RepositoryCreate) SetGetIssue(b bool) *RepositoryCreate {
+	rc.mutation.SetGetIssue(b)
+	return rc
+}
+
+// SetNillableGetIssue sets the "get_issue" field if the given value is not nil.
+func (rc *RepositoryCreate) SetNillableGetIssue(b *bool) *RepositoryCreate {
+	if b != nil {
+		rc.SetGetIssue(*b)
+	}
+	return rc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (rc *RepositoryCreate) SetCreatedAt(t time.Time) *RepositoryCreate {
 	rc.mutation.SetCreatedAt(t)
@@ -240,6 +268,14 @@ func (rc *RepositoryCreate) defaults() {
 		v := repository.DefaultTotalIssue
 		rc.mutation.SetTotalIssue(v)
 	}
+	if _, ok := rc.mutation.GetPullRequest(); !ok {
+		v := repository.DefaultGetPullRequest
+		rc.mutation.SetGetPullRequest(v)
+	}
+	if _, ok := rc.mutation.GetIssue(); !ok {
+		v := repository.DefaultGetIssue
+		rc.mutation.SetGetIssue(v)
+	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		v := repository.DefaultCreatedAt()
 		rc.mutation.SetCreatedAt(v)
@@ -299,6 +335,12 @@ func (rc *RepositoryCreate) check() error {
 		if err := repository.TotalIssueValidator(v); err != nil {
 			return &ValidationError{Name: "total_issue", err: fmt.Errorf(`ent: validator failed for field "total_issue": %w`, err)}
 		}
+	}
+	if _, ok := rc.mutation.GetPullRequest(); !ok {
+		return &ValidationError{Name: "get_pull_request", err: errors.New(`ent: missing required field "get_pull_request"`)}
+	}
+	if _, ok := rc.mutation.GetIssue(); !ok {
+		return &ValidationError{Name: "get_issue", err: errors.New(`ent: missing required field "get_issue"`)}
 	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
@@ -388,6 +430,22 @@ func (rc *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 			Column: repository.FieldTotalIssue,
 		})
 		_node.TotalIssue = value
+	}
+	if value, ok := rc.mutation.GetPullRequest(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetPullRequest,
+		})
+		_node.GetPullRequest = value
+	}
+	if value, ok := rc.mutation.GetIssue(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetIssue,
+		})
+		_node.GetIssue = value
 	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

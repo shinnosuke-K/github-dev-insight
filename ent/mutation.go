@@ -1250,6 +1250,7 @@ type PullRequestMutation struct {
 	title             *string
 	total_commits     *int64
 	addtotal_commits  *int64
+	get_commit        *bool
 	created_at        *time.Time
 	updated_at        *time.Time
 	closed_at         *time.Time
@@ -1476,6 +1477,42 @@ func (m *PullRequestMutation) AddedTotalCommits() (r int64, exists bool) {
 func (m *PullRequestMutation) ResetTotalCommits() {
 	m.total_commits = nil
 	m.addtotal_commits = nil
+}
+
+// SetGetCommit sets the "get_commit" field.
+func (m *PullRequestMutation) SetGetCommit(b bool) {
+	m.get_commit = &b
+}
+
+// GetCommit returns the value of the "get_commit" field in the mutation.
+func (m *PullRequestMutation) GetCommit() (r bool, exists bool) {
+	v := m.get_commit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetCommit returns the old "get_commit" field's value of the PullRequest entity.
+// If the PullRequest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PullRequestMutation) OldGetCommit(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldGetCommit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldGetCommit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetCommit: %w", err)
+	}
+	return oldValue.GetCommit, nil
+}
+
+// ResetGetCommit resets all changes to the "get_commit" field.
+func (m *PullRequestMutation) ResetGetCommit() {
+	m.get_commit = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1760,7 +1797,7 @@ func (m *PullRequestMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PullRequestMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.github_id != nil {
 		fields = append(fields, pullrequest.FieldGithubID)
 	}
@@ -1769,6 +1806,9 @@ func (m *PullRequestMutation) Fields() []string {
 	}
 	if m.total_commits != nil {
 		fields = append(fields, pullrequest.FieldTotalCommits)
+	}
+	if m.get_commit != nil {
+		fields = append(fields, pullrequest.FieldGetCommit)
 	}
 	if m.created_at != nil {
 		fields = append(fields, pullrequest.FieldCreatedAt)
@@ -1796,6 +1836,8 @@ func (m *PullRequestMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case pullrequest.FieldTotalCommits:
 		return m.TotalCommits()
+	case pullrequest.FieldGetCommit:
+		return m.GetCommit()
 	case pullrequest.FieldCreatedAt:
 		return m.CreatedAt()
 	case pullrequest.FieldUpdatedAt:
@@ -1819,6 +1861,8 @@ func (m *PullRequestMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldTitle(ctx)
 	case pullrequest.FieldTotalCommits:
 		return m.OldTotalCommits(ctx)
+	case pullrequest.FieldGetCommit:
+		return m.OldGetCommit(ctx)
 	case pullrequest.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case pullrequest.FieldUpdatedAt:
@@ -1856,6 +1900,13 @@ func (m *PullRequestMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalCommits(v)
+		return nil
+	case pullrequest.FieldGetCommit:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetCommit(v)
 		return nil
 	case pullrequest.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1972,6 +2023,9 @@ func (m *PullRequestMutation) ResetField(name string) error {
 		return nil
 	case pullrequest.FieldTotalCommits:
 		m.ResetTotalCommits()
+		return nil
+	case pullrequest.FieldGetCommit:
+		m.ResetGetCommit()
 		return nil
 	case pullrequest.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -2105,6 +2159,8 @@ type RepositoryMutation struct {
 	addtotal_pr          *int64
 	total_issue          *int64
 	addtotal_issue       *int64
+	get_pull_request     *bool
+	get_issue            *bool
 	created_at           *time.Time
 	updated_at           *time.Time
 	pushed_at            *time.Time
@@ -2474,6 +2530,78 @@ func (m *RepositoryMutation) ResetTotalIssue() {
 	m.addtotal_issue = nil
 }
 
+// SetGetPullRequest sets the "get_pull_request" field.
+func (m *RepositoryMutation) SetGetPullRequest(b bool) {
+	m.get_pull_request = &b
+}
+
+// GetPullRequest returns the value of the "get_pull_request" field in the mutation.
+func (m *RepositoryMutation) GetPullRequest() (r bool, exists bool) {
+	v := m.get_pull_request
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetPullRequest returns the old "get_pull_request" field's value of the Repository entity.
+// If the Repository object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RepositoryMutation) OldGetPullRequest(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldGetPullRequest is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldGetPullRequest requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetPullRequest: %w", err)
+	}
+	return oldValue.GetPullRequest, nil
+}
+
+// ResetGetPullRequest resets all changes to the "get_pull_request" field.
+func (m *RepositoryMutation) ResetGetPullRequest() {
+	m.get_pull_request = nil
+}
+
+// SetGetIssue sets the "get_issue" field.
+func (m *RepositoryMutation) SetGetIssue(b bool) {
+	m.get_issue = &b
+}
+
+// GetIssue returns the value of the "get_issue" field in the mutation.
+func (m *RepositoryMutation) GetIssue() (r bool, exists bool) {
+	v := m.get_issue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetIssue returns the old "get_issue" field's value of the Repository entity.
+// If the Repository object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RepositoryMutation) OldGetIssue(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldGetIssue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldGetIssue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetIssue: %w", err)
+	}
+	return oldValue.GetIssue, nil
+}
+
+// ResetGetIssue resets all changes to the "get_issue" field.
+func (m *RepositoryMutation) ResetGetIssue() {
+	m.get_issue = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *RepositoryMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -2709,7 +2837,7 @@ func (m *RepositoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RepositoryMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 11)
 	if m.github_id != nil {
 		fields = append(fields, repository.FieldGithubID)
 	}
@@ -2727,6 +2855,12 @@ func (m *RepositoryMutation) Fields() []string {
 	}
 	if m.total_issue != nil {
 		fields = append(fields, repository.FieldTotalIssue)
+	}
+	if m.get_pull_request != nil {
+		fields = append(fields, repository.FieldGetPullRequest)
+	}
+	if m.get_issue != nil {
+		fields = append(fields, repository.FieldGetIssue)
 	}
 	if m.created_at != nil {
 		fields = append(fields, repository.FieldCreatedAt)
@@ -2757,6 +2891,10 @@ func (m *RepositoryMutation) Field(name string) (ent.Value, bool) {
 		return m.TotalPr()
 	case repository.FieldTotalIssue:
 		return m.TotalIssue()
+	case repository.FieldGetPullRequest:
+		return m.GetPullRequest()
+	case repository.FieldGetIssue:
+		return m.GetIssue()
 	case repository.FieldCreatedAt:
 		return m.CreatedAt()
 	case repository.FieldUpdatedAt:
@@ -2784,6 +2922,10 @@ func (m *RepositoryMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldTotalPr(ctx)
 	case repository.FieldTotalIssue:
 		return m.OldTotalIssue(ctx)
+	case repository.FieldGetPullRequest:
+		return m.OldGetPullRequest(ctx)
+	case repository.FieldGetIssue:
+		return m.OldGetIssue(ctx)
 	case repository.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case repository.FieldUpdatedAt:
@@ -2840,6 +2982,20 @@ func (m *RepositoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalIssue(v)
+		return nil
+	case repository.FieldGetPullRequest:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetPullRequest(v)
+		return nil
+	case repository.FieldGetIssue:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetIssue(v)
 		return nil
 	case repository.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -2964,6 +3120,12 @@ func (m *RepositoryMutation) ResetField(name string) error {
 		return nil
 	case repository.FieldTotalIssue:
 		m.ResetTotalIssue()
+		return nil
+	case repository.FieldGetPullRequest:
+		m.ResetGetPullRequest()
+		return nil
+	case repository.FieldGetIssue:
+		m.ResetGetIssue()
 		return nil
 	case repository.FieldCreatedAt:
 		m.ResetCreatedAt()
