@@ -27,5 +27,5 @@ func NewRDB(cfg Config) (*client.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open rdb. %w", err)
 	}
-	return &client.Client{Client: db}, nil
+	return client.NewClient(db), nil
 }
