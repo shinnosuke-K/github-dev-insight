@@ -18,11 +18,13 @@ type DataStore interface {
 
 type Repository interface {
 	Create(ctx context.Context, ents ...*entity.Repository) error
+	Update(ctx context.Context, ent *entity.Repository) error
 	GetAll(ctx context.Context) ([]*entity.Repository, error)
 }
 
 type PullRequest interface {
 	Create(ctx context.Context, ents ...*entity.PullRequest) error
+	Update(ctx context.Context, ent *entity.PullRequest) error
 }
 
 type dataStore struct {

@@ -3,6 +3,7 @@ package table
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/shinnosuke-K/github-dev-insight/ent"
 	"github.com/shinnosuke-K/github-dev-insight/ent/repository"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
@@ -30,6 +31,13 @@ func (t *Repository) Create(ctx context.Context, ents ...*entity.Repository) err
 			SetNillablePushedAt(e.PushedAt)
 	}
 	if _, err := t.Client.DB().Repository.CreateBulk(bulk...).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Repository) Update(ctx context.Context, ent *entity.Repository) error {
+	if _, err := t.Client.DB().Repository.UpdateOneID(uuid.MustParse(string(ent.ID))).Save(ctx); err != nil {
 		return err
 	}
 	return nil
