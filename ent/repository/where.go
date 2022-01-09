@@ -136,6 +136,20 @@ func TotalIssue(v int64) predicate.Repository {
 	})
 }
 
+// GetPullRequest applies equality check predicate on the "get_pull_request" field. It's identical to GetPullRequestEQ.
+func GetPullRequest(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetPullRequest), v))
+	})
+}
+
+// GetIssue applies equality check predicate on the "get_issue" field. It's identical to GetIssueEQ.
+func GetIssue(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetIssue), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Repository {
 	return predicate.Repository(func(s *sql.Selector) {
@@ -764,6 +778,34 @@ func TotalIssueLT(v int64) predicate.Repository {
 func TotalIssueLTE(v int64) predicate.Repository {
 	return predicate.Repository(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTotalIssue), v))
+	})
+}
+
+// GetPullRequestEQ applies the EQ predicate on the "get_pull_request" field.
+func GetPullRequestEQ(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetPullRequest), v))
+	})
+}
+
+// GetPullRequestNEQ applies the NEQ predicate on the "get_pull_request" field.
+func GetPullRequestNEQ(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGetPullRequest), v))
+	})
+}
+
+// GetIssueEQ applies the EQ predicate on the "get_issue" field.
+func GetIssueEQ(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetIssue), v))
+	})
+}
+
+// GetIssueNEQ applies the NEQ predicate on the "get_issue" field.
+func GetIssueNEQ(v bool) predicate.Repository {
+	return predicate.Repository(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGetIssue), v))
 	})
 }
 

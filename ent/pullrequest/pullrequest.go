@@ -19,6 +19,8 @@ const (
 	FieldTitle = "title"
 	// FieldTotalCommits holds the string denoting the total_commits field in the database.
 	FieldTotalCommits = "total_commits"
+	// FieldGetCommit holds the string denoting the get_commit field in the database.
+	FieldGetCommit = "get_commit"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -55,6 +57,7 @@ var Columns = []string{
 	FieldGithubID,
 	FieldTitle,
 	FieldTotalCommits,
+	FieldGetCommit,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldClosedAt,
@@ -91,6 +94,8 @@ var (
 	DefaultTotalCommits int64
 	// TotalCommitsValidator is a validator for the "total_commits" field. It is called by the builders before save.
 	TotalCommitsValidator func(int64) error
+	// DefaultGetCommit holds the default value on creation for the "get_commit" field.
+	DefaultGetCommit bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.

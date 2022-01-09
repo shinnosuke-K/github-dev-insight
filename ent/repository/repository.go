@@ -25,6 +25,10 @@ const (
 	FieldTotalPr = "total_pr"
 	// FieldTotalIssue holds the string denoting the total_issue field in the database.
 	FieldTotalIssue = "total_issue"
+	// FieldGetPullRequest holds the string denoting the get_pull_request field in the database.
+	FieldGetPullRequest = "get_pull_request"
+	// FieldGetIssue holds the string denoting the get_issue field in the database.
+	FieldGetIssue = "get_issue"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -62,6 +66,8 @@ var Columns = []string{
 	FieldDescription,
 	FieldTotalPr,
 	FieldTotalIssue,
+	FieldGetPullRequest,
+	FieldGetIssue,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldPushedAt,
@@ -92,6 +98,10 @@ var (
 	DefaultTotalIssue int64
 	// TotalIssueValidator is a validator for the "total_issue" field. It is called by the builders before save.
 	TotalIssueValidator func(int64) error
+	// DefaultGetPullRequest holds the default value on creation for the "get_pull_request" field.
+	DefaultGetPullRequest bool
+	// DefaultGetIssue holds the default value on creation for the "get_issue" field.
+	DefaultGetIssue bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.

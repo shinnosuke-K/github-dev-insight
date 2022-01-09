@@ -24,6 +24,8 @@ func (Repository) Fields() []ent.Field {
 		field.Text("description").Optional(),
 		field.Int64("total_pr").Default(0).NonNegative(),
 		field.Int64("total_issue").Default(0).NonNegative(),
+		field.Bool("get_pull_request").Comment("PR情報を取得したかどうか（0:未取得 1:取得済み）").Default(false),
+		field.Bool("get_issue").Comment("Issue情報を取得したかどうか（0:未取得 1:取得済み）").Default(false),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),
 		field.Time("pushed_at").Default(time.Now),

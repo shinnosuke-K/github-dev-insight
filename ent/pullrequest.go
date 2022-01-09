@@ -24,6 +24,9 @@ type PullRequest struct {
 	Title string `json:"title,omitempty"`
 	// TotalCommits holds the value of the "total_commits" field.
 	TotalCommits int64 `json:"total_commits,omitempty"`
+	// GetCommit holds the value of the "get_commit" field.
+	// コミット情報を取得したかどうか（0:未取得 1:取得済み）
+	GetCommit bool `json:"get_commit,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -77,6 +80,8 @@ func (*PullRequest) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case pullrequest.FieldGetCommit:
+			values[i] = new(sql.NullBool)
 		case pullrequest.FieldTotalCommits:
 			values[i] = new(sql.NullInt64)
 		case pullrequest.FieldGithubID, pullrequest.FieldTitle:
@@ -125,6 +130,12 @@ func (pr *PullRequest) assignValues(columns []string, values []interface{}) erro
 				return fmt.Errorf("unexpected type %T for field total_commits", values[i])
 			} else if value.Valid {
 				pr.TotalCommits = value.Int64
+			}
+		case pullrequest.FieldGetCommit:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field get_commit", values[i])
+			} else if value.Valid {
+				pr.GetCommit = value.Bool
 			}
 		case pullrequest.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -201,6 +212,8 @@ func (pr *PullRequest) String() string {
 	builder.WriteString(pr.Title)
 	builder.WriteString(", total_commits=")
 	builder.WriteString(fmt.Sprintf("%v", pr.TotalCommits))
+	builder.WriteString(", get_commit=")
+	builder.WriteString(fmt.Sprintf("%v", pr.GetCommit))
 	builder.WriteString(", created_at=")
 	builder.WriteString(pr.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

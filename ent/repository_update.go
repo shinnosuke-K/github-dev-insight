@@ -110,6 +110,34 @@ func (ru *RepositoryUpdate) AddTotalIssue(i int64) *RepositoryUpdate {
 	return ru
 }
 
+// SetGetPullRequest sets the "get_pull_request" field.
+func (ru *RepositoryUpdate) SetGetPullRequest(b bool) *RepositoryUpdate {
+	ru.mutation.SetGetPullRequest(b)
+	return ru
+}
+
+// SetNillableGetPullRequest sets the "get_pull_request" field if the given value is not nil.
+func (ru *RepositoryUpdate) SetNillableGetPullRequest(b *bool) *RepositoryUpdate {
+	if b != nil {
+		ru.SetGetPullRequest(*b)
+	}
+	return ru
+}
+
+// SetGetIssue sets the "get_issue" field.
+func (ru *RepositoryUpdate) SetGetIssue(b bool) *RepositoryUpdate {
+	ru.mutation.SetGetIssue(b)
+	return ru
+}
+
+// SetNillableGetIssue sets the "get_issue" field if the given value is not nil.
+func (ru *RepositoryUpdate) SetNillableGetIssue(b *bool) *RepositoryUpdate {
+	if b != nil {
+		ru.SetGetIssue(*b)
+	}
+	return ru
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ru *RepositoryUpdate) SetCreatedAt(t time.Time) *RepositoryUpdate {
 	ru.mutation.SetCreatedAt(t)
@@ -399,6 +427,20 @@ func (ru *RepositoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: repository.FieldTotalIssue,
 		})
 	}
+	if value, ok := ru.mutation.GetPullRequest(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetPullRequest,
+		})
+	}
+	if value, ok := ru.mutation.GetIssue(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetIssue,
+		})
+	}
 	if value, ok := ru.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -624,6 +666,34 @@ func (ruo *RepositoryUpdateOne) SetNillableTotalIssue(i *int64) *RepositoryUpdat
 // AddTotalIssue adds i to the "total_issue" field.
 func (ruo *RepositoryUpdateOne) AddTotalIssue(i int64) *RepositoryUpdateOne {
 	ruo.mutation.AddTotalIssue(i)
+	return ruo
+}
+
+// SetGetPullRequest sets the "get_pull_request" field.
+func (ruo *RepositoryUpdateOne) SetGetPullRequest(b bool) *RepositoryUpdateOne {
+	ruo.mutation.SetGetPullRequest(b)
+	return ruo
+}
+
+// SetNillableGetPullRequest sets the "get_pull_request" field if the given value is not nil.
+func (ruo *RepositoryUpdateOne) SetNillableGetPullRequest(b *bool) *RepositoryUpdateOne {
+	if b != nil {
+		ruo.SetGetPullRequest(*b)
+	}
+	return ruo
+}
+
+// SetGetIssue sets the "get_issue" field.
+func (ruo *RepositoryUpdateOne) SetGetIssue(b bool) *RepositoryUpdateOne {
+	ruo.mutation.SetGetIssue(b)
+	return ruo
+}
+
+// SetNillableGetIssue sets the "get_issue" field if the given value is not nil.
+func (ruo *RepositoryUpdateOne) SetNillableGetIssue(b *bool) *RepositoryUpdateOne {
+	if b != nil {
+		ruo.SetGetIssue(*b)
+	}
 	return ruo
 }
 
@@ -938,6 +1008,20 @@ func (ruo *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository,
 			Type:   field.TypeInt64,
 			Value:  value,
 			Column: repository.FieldTotalIssue,
+		})
+	}
+	if value, ok := ruo.mutation.GetPullRequest(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetPullRequest,
+		})
+	}
+	if value, ok := ruo.mutation.GetIssue(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: repository.FieldGetIssue,
 		})
 	}
 	if value, ok := ruo.mutation.CreatedAt(); ok {

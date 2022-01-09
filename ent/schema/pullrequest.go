@@ -21,6 +21,7 @@ func (PullRequest) Fields() []ent.Field {
 		field.String("github_id").MaxLen(255).NotEmpty(),
 		field.String("title").MaxLen(255).NotEmpty(),
 		field.Int64("total_commits").Default(0).NonNegative(),
+		field.Bool("get_commit").Comment("コミット情報を取得したかどうか（0:未取得 1:取得済み）").Default(false),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),
 		field.Time("closed_at").Default(time.Now).Optional(),

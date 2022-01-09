@@ -49,6 +49,20 @@ func (prc *PullRequestCreate) SetNillableTotalCommits(i *int64) *PullRequestCrea
 	return prc
 }
 
+// SetGetCommit sets the "get_commit" field.
+func (prc *PullRequestCreate) SetGetCommit(b bool) *PullRequestCreate {
+	prc.mutation.SetGetCommit(b)
+	return prc
+}
+
+// SetNillableGetCommit sets the "get_commit" field if the given value is not nil.
+func (prc *PullRequestCreate) SetNillableGetCommit(b *bool) *PullRequestCreate {
+	if b != nil {
+		prc.SetGetCommit(*b)
+	}
+	return prc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (prc *PullRequestCreate) SetCreatedAt(t time.Time) *PullRequestCreate {
 	prc.mutation.SetCreatedAt(t)
@@ -220,6 +234,10 @@ func (prc *PullRequestCreate) defaults() {
 		v := pullrequest.DefaultTotalCommits
 		prc.mutation.SetTotalCommits(v)
 	}
+	if _, ok := prc.mutation.GetCommit(); !ok {
+		v := pullrequest.DefaultGetCommit
+		prc.mutation.SetGetCommit(v)
+	}
 	if _, ok := prc.mutation.CreatedAt(); !ok {
 		v := pullrequest.DefaultCreatedAt()
 		prc.mutation.SetCreatedAt(v)
@@ -267,6 +285,9 @@ func (prc *PullRequestCreate) check() error {
 		if err := pullrequest.TotalCommitsValidator(v); err != nil {
 			return &ValidationError{Name: "total_commits", err: fmt.Errorf(`ent: validator failed for field "total_commits": %w`, err)}
 		}
+	}
+	if _, ok := prc.mutation.GetCommit(); !ok {
+		return &ValidationError{Name: "get_commit", err: errors.New(`ent: missing required field "get_commit"`)}
 	}
 	if _, ok := prc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
@@ -329,6 +350,14 @@ func (prc *PullRequestCreate) createSpec() (*PullRequest, *sqlgraph.CreateSpec) 
 			Column: pullrequest.FieldTotalCommits,
 		})
 		_node.TotalCommits = value
+	}
+	if value, ok := prc.mutation.GetCommit(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: pullrequest.FieldGetCommit,
+		})
+		_node.GetCommit = value
 	}
 	if value, ok := prc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

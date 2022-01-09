@@ -151,20 +151,24 @@ func init() {
 	pullrequest.DefaultTotalCommits = pullrequestDescTotalCommits.Default.(int64)
 	// pullrequest.TotalCommitsValidator is a validator for the "total_commits" field. It is called by the builders before save.
 	pullrequest.TotalCommitsValidator = pullrequestDescTotalCommits.Validators[0].(func(int64) error)
+	// pullrequestDescGetCommit is the schema descriptor for get_commit field.
+	pullrequestDescGetCommit := pullrequestFields[4].Descriptor()
+	// pullrequest.DefaultGetCommit holds the default value on creation for the get_commit field.
+	pullrequest.DefaultGetCommit = pullrequestDescGetCommit.Default.(bool)
 	// pullrequestDescCreatedAt is the schema descriptor for created_at field.
-	pullrequestDescCreatedAt := pullrequestFields[4].Descriptor()
+	pullrequestDescCreatedAt := pullrequestFields[5].Descriptor()
 	// pullrequest.DefaultCreatedAt holds the default value on creation for the created_at field.
 	pullrequest.DefaultCreatedAt = pullrequestDescCreatedAt.Default.(func() time.Time)
 	// pullrequestDescUpdatedAt is the schema descriptor for updated_at field.
-	pullrequestDescUpdatedAt := pullrequestFields[5].Descriptor()
+	pullrequestDescUpdatedAt := pullrequestFields[6].Descriptor()
 	// pullrequest.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	pullrequest.DefaultUpdatedAt = pullrequestDescUpdatedAt.Default.(func() time.Time)
 	// pullrequestDescClosedAt is the schema descriptor for closed_at field.
-	pullrequestDescClosedAt := pullrequestFields[6].Descriptor()
+	pullrequestDescClosedAt := pullrequestFields[7].Descriptor()
 	// pullrequest.DefaultClosedAt holds the default value on creation for the closed_at field.
 	pullrequest.DefaultClosedAt = pullrequestDescClosedAt.Default.(func() time.Time)
 	// pullrequestDescMergedAt is the schema descriptor for merged_at field.
-	pullrequestDescMergedAt := pullrequestFields[7].Descriptor()
+	pullrequestDescMergedAt := pullrequestFields[8].Descriptor()
 	// pullrequest.DefaultMergedAt holds the default value on creation for the merged_at field.
 	pullrequest.DefaultMergedAt = pullrequestDescMergedAt.Default.(func() time.Time)
 	// pullrequestDescID is the schema descriptor for id field.
@@ -239,16 +243,24 @@ func init() {
 	repository.DefaultTotalIssue = repositoryDescTotalIssue.Default.(int64)
 	// repository.TotalIssueValidator is a validator for the "total_issue" field. It is called by the builders before save.
 	repository.TotalIssueValidator = repositoryDescTotalIssue.Validators[0].(func(int64) error)
+	// repositoryDescGetPullRequest is the schema descriptor for get_pull_request field.
+	repositoryDescGetPullRequest := repositoryFields[7].Descriptor()
+	// repository.DefaultGetPullRequest holds the default value on creation for the get_pull_request field.
+	repository.DefaultGetPullRequest = repositoryDescGetPullRequest.Default.(bool)
+	// repositoryDescGetIssue is the schema descriptor for get_issue field.
+	repositoryDescGetIssue := repositoryFields[8].Descriptor()
+	// repository.DefaultGetIssue holds the default value on creation for the get_issue field.
+	repository.DefaultGetIssue = repositoryDescGetIssue.Default.(bool)
 	// repositoryDescCreatedAt is the schema descriptor for created_at field.
-	repositoryDescCreatedAt := repositoryFields[7].Descriptor()
+	repositoryDescCreatedAt := repositoryFields[9].Descriptor()
 	// repository.DefaultCreatedAt holds the default value on creation for the created_at field.
 	repository.DefaultCreatedAt = repositoryDescCreatedAt.Default.(func() time.Time)
 	// repositoryDescUpdatedAt is the schema descriptor for updated_at field.
-	repositoryDescUpdatedAt := repositoryFields[8].Descriptor()
+	repositoryDescUpdatedAt := repositoryFields[10].Descriptor()
 	// repository.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	repository.DefaultUpdatedAt = repositoryDescUpdatedAt.Default.(func() time.Time)
 	// repositoryDescPushedAt is the schema descriptor for pushed_at field.
-	repositoryDescPushedAt := repositoryFields[9].Descriptor()
+	repositoryDescPushedAt := repositoryFields[11].Descriptor()
 	// repository.DefaultPushedAt holds the default value on creation for the pushed_at field.
 	repository.DefaultPushedAt = repositoryDescPushedAt.Default.(func() time.Time)
 	// repositoryDescID is the schema descriptor for id field.

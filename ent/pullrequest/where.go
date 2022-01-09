@@ -115,6 +115,13 @@ func TotalCommits(v int64) predicate.PullRequest {
 	})
 }
 
+// GetCommit applies equality check predicate on the "get_commit" field. It's identical to GetCommitEQ.
+func GetCommit(v bool) predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetCommit), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
@@ -438,6 +445,20 @@ func TotalCommitsLT(v int64) predicate.PullRequest {
 func TotalCommitsLTE(v int64) predicate.PullRequest {
 	return predicate.PullRequest(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTotalCommits), v))
+	})
+}
+
+// GetCommitEQ applies the EQ predicate on the "get_commit" field.
+func GetCommitEQ(v bool) predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGetCommit), v))
+	})
+}
+
+// GetCommitNEQ applies the NEQ predicate on the "get_commit" field.
+func GetCommitNEQ(v bool) predicate.PullRequest {
+	return predicate.PullRequest(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGetCommit), v))
 	})
 }
 

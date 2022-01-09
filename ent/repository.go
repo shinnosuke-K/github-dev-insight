@@ -29,6 +29,12 @@ type Repository struct {
 	TotalPr int64 `json:"total_pr,omitempty"`
 	// TotalIssue holds the value of the "total_issue" field.
 	TotalIssue int64 `json:"total_issue,omitempty"`
+	// GetPullRequest holds the value of the "get_pull_request" field.
+	// PR情報を取得したかどうか（0:未取得 1:取得済み）
+	GetPullRequest bool `json:"get_pull_request,omitempty"`
+	// GetIssue holds the value of the "get_issue" field.
+	// Issue情報を取得したかどうか（0:未取得 1:取得済み）
+	GetIssue bool `json:"get_issue,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -74,6 +80,8 @@ func (*Repository) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case repository.FieldGetPullRequest, repository.FieldGetIssue:
+			values[i] = new(sql.NullBool)
 		case repository.FieldTotalPr, repository.FieldTotalIssue:
 			values[i] = new(sql.NullInt64)
 		case repository.FieldGithubID, repository.FieldOwner, repository.FieldName, repository.FieldDescription:
@@ -138,6 +146,18 @@ func (r *Repository) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field total_issue", values[i])
 			} else if value.Valid {
 				r.TotalIssue = value.Int64
+			}
+		case repository.FieldGetPullRequest:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field get_pull_request", values[i])
+			} else if value.Valid {
+				r.GetPullRequest = value.Bool
+			}
+		case repository.FieldGetIssue:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field get_issue", values[i])
+			} else if value.Valid {
+				r.GetIssue = value.Bool
 			}
 		case repository.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -207,6 +227,10 @@ func (r *Repository) String() string {
 	builder.WriteString(fmt.Sprintf("%v", r.TotalPr))
 	builder.WriteString(", total_issue=")
 	builder.WriteString(fmt.Sprintf("%v", r.TotalIssue))
+	builder.WriteString(", get_pull_request=")
+	builder.WriteString(fmt.Sprintf("%v", r.GetPullRequest))
+	builder.WriteString(", get_issue=")
+	builder.WriteString(fmt.Sprintf("%v", r.GetIssue))
 	builder.WriteString(", created_at=")
 	builder.WriteString(r.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

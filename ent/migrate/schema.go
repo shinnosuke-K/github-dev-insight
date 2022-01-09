@@ -62,6 +62,7 @@ var (
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "total_commits", Type: field.TypeInt64, Default: 0},
+		{Name: "get_commit", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "closed_at", Type: field.TypeTime, Nullable: true},
@@ -76,7 +77,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pull_requests_repositories_pull_requests",
-				Columns:    []*schema.Column{PullRequestsColumns[8]},
+				Columns:    []*schema.Column{PullRequestsColumns[9]},
 				RefColumns: []*schema.Column{RepositoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -91,6 +92,8 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "total_pr", Type: field.TypeInt64, Default: 0},
 		{Name: "total_issue", Type: field.TypeInt64, Default: 0},
+		{Name: "get_pull_request", Type: field.TypeBool, Default: false},
+		{Name: "get_issue", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "pushed_at", Type: field.TypeTime},
