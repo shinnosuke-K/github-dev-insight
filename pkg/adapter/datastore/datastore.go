@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/datastore/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb/client"
@@ -25,7 +26,8 @@ type Repository interface {
 
 type PullRequest interface {
 	Create(ctx context.Context, ents ...*entity.PullRequest) error
-	Update(ctx context.Context, ent *entity.PullRequest) error
+	UpdateStatusByID(ctx context.Context, id entity.PullRequestID, status bool) error
+	GetByStatusWithPaging(ctx context.Context, params *params.GetByStatusWithPaging) ([]*entity.PullRequest, error)
 }
 
 type dataStore struct {

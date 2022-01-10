@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
+	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/util/strconvert"
 )
@@ -34,7 +35,7 @@ func NewGraphQL(cfg Config) (github.GitHub, error) {
 }
 
 // GetRepositories は指定したユーザに紐づくリポジトリ一覧を取得する
-func (c *Client) GetRepositories(ctx context.Context, params *github.GetRepositoriesParams) ([]*entity.Repository, error) {
+func (c *Client) GetRepositories(ctx context.Context, params *params.GetRepositories) ([]*entity.Repository, error) {
 	var (
 		res   []*entity.Repository
 		after *string
@@ -66,7 +67,7 @@ func (c *Client) GetRepositories(ctx context.Context, params *github.GetReposito
 	return res, nil
 }
 
-func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.GetPullRequestsByGitHubIDParams) ([]*entity.PullRequest, error) {
+func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *params.GetPullRequestsByGitHubID) ([]*entity.PullRequest, error) {
 	var (
 		res   []*entity.PullRequest
 		after *string
@@ -82,7 +83,7 @@ func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.G
 				GitHubID:     entity.GitHubID(n.ID),
 				RepositoryID: params.RepositoryID,
 				Title:        n.Title,
-				TotalCommit:  n.Commits.TotalCount,
+				TotalCommits: n.Commits.TotalCount,
 				CreatedAt:    strconvert.ToTime(n.CreatedAt),
 				UpdatedAt:    strconvert.ToTime(n.UpdatedAt),
 				ClosedAt:     strconvert.ToTimePtr(strconvert.StringOrDefault(n.ClosedAt)),
@@ -97,7 +98,7 @@ func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.G
 	return res, nil
 }
 
-func (c *Client) GetCommitsByGitHubID(ctx context.Context, params *github.GetCommitsByGitHubIDParams) ([]*entity.Commit, error) {
+func (c *Client) GetCommitsByGitHubID(ctx context.Context, params *params.GetCommitsByGitHubID) ([]*entity.Commit, error) {
 	var (
 		res   []*entity.Commit
 		after *string

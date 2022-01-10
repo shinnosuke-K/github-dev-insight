@@ -22,3 +22,11 @@ func RegisterPullRequestService() (service.PullRequestService, error) {
 	}
 	return service.NewPullRequestService(ad), nil
 }
+
+func RegisterCommitService() (service.CommitService, error) {
+	ad, err := adapter.NewAdapter()
+	if err != nil {
+		return nil, fmt.Errorf("faild to create adapter. %w", err)
+	}
+	return service.NewCommitService(ad), nil
+}

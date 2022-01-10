@@ -11,7 +11,7 @@ type PullRequest struct {
 	RepositoryID RepositoryID  `json:"repository_id"`
 	GitHubID     GitHubID      `json:"github_id"`
 	Title        string        `json:"title"`
-	TotalCommit  int64         `json:"total_commit"`
+	TotalCommits int64         `json:"total_commits"`
 	GetCommit    bool          `json:"get_commit"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdatedAt    time.Time     `json:"updated_at"`
