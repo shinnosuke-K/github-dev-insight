@@ -39,9 +39,9 @@ func (t *Repository) Create(ctx context.Context, ents ...*entity.Repository) err
 func (t *Repository) UpdateStatusByID(ctx context.Context, id entity.RepositoryID, targetType entity.TargetType, status bool) error {
 	builder := t.Client.DB().Repository.UpdateOneID(uuid.MustParse(string(id)))
 	switch targetType {
-	case entity.PR:
+	case entity.TargetTypePullRequest:
 		builder = builder.SetGetPullRequest(status)
-	case entity.Issue:
+	case entity.TargetTypeIssue:
 		builder = builder.SetGetIssue(status)
 	default:
 		return nil
@@ -67,9 +67,9 @@ func (t *Repository) GetByTargetTypeAndStatus(ctx context.Context, targetType en
 		builder = t.Client.DB().Repository.Query()
 	)
 	switch targetType {
-	case entity.PR:
+	case entity.TargetTypePullRequest:
 		builder = builder.Where(repository.GetPullRequest(status)).Order(ent.Asc(repository.FieldTotalPr))
-	case entity.Issue:
+	case entity.TargetTypeIssue:
 		builder = builder.Where(repository.GetIssue(status)).Order(ent.Asc(repository.FieldTotalIssue))
 	default:
 		return res, nil
