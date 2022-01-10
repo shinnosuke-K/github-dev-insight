@@ -24,31 +24,32 @@ func NewCommitService(ad *adapter.Adapter) *commitService {
 }
 
 func (s *commitService) ImportCommit(ctx context.Context) error {
-	offset := 0
-	prs, err := s.DataStore().PullRequest().GetByStatusWithPaging(ctx, &datastoreParams.GetByStatusWithPaging{
-		Status: false,
-		Limit:  100,
-		Offset: offset,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to get pull request. %w", err)
-	}
-	if len(prs) == 0 {
-		return nil
-	}
-
-	for _, p := range prs {
-		if p.TotalCommits == 0 {
-			continue
-		}
-		cm, err := s.GitHub().GetCommitsByGitHubID(ctx, &params.GetCommitsByGitHubID{
-			GitHubID:      p.GitHubID,
-			PullRequestID: p.ID,
+	for offset := 0; offset < 100000; offset += 100 {
+		prs, err := s.DataStore().PullRequest().GetByStatusWithPaging(ctx, &datastoreParams.GetByStatusWithPaging{
+			Status: false,
+			Limit:  100,
+			Offset: offset,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to get commit by id:[%s]. %w", prs[0].GitHubID, err)
+			return fmt.Errorf("failed to get pull request. %w", err)
 		}
-		fmt.Println(cm)
+		if len(prs) == 0 {
+			break
+		}
+
+		for _, p := range prs {
+			if p.TotalCommits == 0 {
+				continue
+			}
+			cm, err := s.GitHub().GetCommitsByGitHubID(ctx, &params.GetCommitsByGitHubID{
+				GitHubID:      p.GitHubID,
+				PullRequestID: p.ID,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to get commit by id:[%s]. %w", prs[0].GitHubID, err)
+			}
+			fmt.Println(cm)
+		}
 	}
 	return nil
 }
