@@ -33,3 +33,10 @@ func (t *PullRequest) Create(ctx context.Context, ents ...*entity.PullRequest) e
 	}
 	return nil
 }
+
+func (t *PullRequest) Update(ctx context.Context, ent *entity.PullRequest) error {
+	if _, err := t.Client.DB().PullRequest.UpdateOneID(uuid.MustParse(string(ent.ID))).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}

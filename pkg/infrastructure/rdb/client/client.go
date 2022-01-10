@@ -9,7 +9,7 @@ import (
 
 type Client struct {
 	tx *ent.Tx
-	*ent.Client
+	db *ent.Client
 }
 
 type Config struct {
@@ -21,19 +21,25 @@ type Config struct {
 	Name   string
 }
 
+func NewClient(db *ent.Client) *Client {
+	return &Client{
+		db: db,
+	}
+}
+
 func (c *Client) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
 	if err := c.begin(ctx); err != nil {
 		return fmt.Errorf("failed to begin. %w", err)
 	}
 	if err := fn(ctx); err != nil {
 		if rollBackErr := c.rollBack(); rollBackErr != nil {
-			return fmt.Errorf("failed to rollback in fn. %w", err)
+			return fmt.Errorf("failed to rollback in fn. %w", rollBackErr)
 		}
 		return err
 	}
 	if err := c.commit(); err != nil {
 		if rollBackErr := c.rollBack(); rollBackErr != nil {
-			return fmt.Errorf("failed to rollback in commit. %w", err)
+			return fmt.Errorf("failed to rollback in commit. %w", rollBackErr)
 		}
 		return err
 	}
@@ -41,7 +47,7 @@ func (c *Client) Transaction(ctx context.Context, fn func(ctx context.Context) e
 }
 
 func (c *Client) begin(ctx context.Context) error {
-	t, err := c.BeginTx(ctx, nil)
+	t, err := c.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction. %w", err)
 	}
@@ -73,5 +79,5 @@ func (c *Client) DB() *ent.Client {
 	if c.tx != nil {
 		return c.tx.Client()
 	}
-	return c.Client
+	return c.db
 }

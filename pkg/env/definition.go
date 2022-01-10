@@ -20,10 +20,14 @@ type AWS struct {
 }
 
 type RDB struct {
-	Driver   string `envconfig:"RDB_DRIVER"`
-	User     string `envconfig:"RDB_USER"`
-	Password string `envconfig:"RDB_PASSWORD"`
-	Host     string `envconfig:"RDB_HOST"`
-	Port     string `envconfig:"RDB_PORT"`
-	Name     string `envconfig:"RDB_NAME"`
+	Driver      string `envconfig:"RDB_DRIVER"`
+	User        string `envconfig:"RDB_USER"`
+	Password    string `envconfig:"RDB_PASSWORD"`
+	Host        string `envconfig:"RDB_HOST"`
+	Port        string `envconfig:"RDB_PORT"`
+	Name        string `envconfig:"RDB_NAME"`
+	MaxIdleConn string `envconfig:"RDB_MAX_IDLE_CONN" default:"10"`
+	MaxOpenConn string `envconfig:"RDB_MAX_OPEN_CONN" default:"10"`
+	MaxIdleTime string `envconfig:"RDB_MAX_IDLE_TIME" default:"100000"`
+	MaxLifeTime string `envconfig:"RDB_MAX_LIFE_TIME" default:"100000"`
 }

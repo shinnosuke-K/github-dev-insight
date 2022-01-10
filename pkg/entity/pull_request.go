@@ -7,13 +7,14 @@ import (
 type PullRequestID string
 
 type PullRequest struct {
-	ID           PullRequestID
-	RepositoryID RepositoryID
-	GitHubID     GitHubID
-	Title        string
-	TotalCommit  int64
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	ClosedAt     *time.Time
-	MergedAt     *time.Time
+	ID           PullRequestID `json:"id"`
+	RepositoryID RepositoryID  `json:"repository_id"`
+	GitHubID     GitHubID      `json:"github_id"`
+	Title        string        `json:"title"`
+	TotalCommit  int64         `json:"total_commit"`
+	GetCommit    bool          `json:"get_commit"`
+	CreatedAt    time.Time     `json:"created_at"`
+	UpdatedAt    time.Time     `json:"updated_at"`
+	ClosedAt     *time.Time    `json:"closed_at"`
+	MergedAt     *time.Time    `json:"merged_at"`
 }
