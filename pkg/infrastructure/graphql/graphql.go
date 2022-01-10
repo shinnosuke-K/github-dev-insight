@@ -96,3 +96,34 @@ func (c *Client) GetPullRequestsByGitHubID(ctx context.Context, params *github.G
 	}
 	return res, nil
 }
+
+func (c *Client) GetCommitsByGitHubID(ctx context.Context, params *github.GetCommitsByGitHubIDParams) ([]*entity.Commit, error) {
+	var (
+		res   []*entity.Commit
+		after *string
+		total = 100
+	)
+	for i := 0; i < total; i++ {
+		commits, err := c.Commits(ctx, 100, string(params.GitHubID), after)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get commits. %w", err)
+		}
+		for _, n := range commits.Node.Commits.Nodes {
+			res = append(res, &entity.Commit{
+				GitHubID:      entity.GitHubID(n.Commit.ID),
+				Message:       n.Commit.Message,
+				Additions:     n.Commit.Additions,
+				Deletions:     n.Commit.Deletions,
+				ChangeFiles:   n.Commit.ChangedFiles,
+				CommittedAt:   strconvert.ToTime(n.Commit.CommittedDate),
+				PushedAt:      strconvert.ToTimePtr(strconvert.StringOrDefault(n.Commit.PushedDate)),
+				PullRequestID: params.PullRequestID,
+			})
+		}
+		if !commits.Node.Commits.PageInfo.HasNextPage {
+			break
+		}
+		after = commits.Node.Commits.PageInfo.EndCursor
+	}
+	return res, nil
+}

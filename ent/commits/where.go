@@ -108,6 +108,27 @@ func Message(v string) predicate.Commits {
 	})
 }
 
+// Additions applies equality check predicate on the "additions" field. It's identical to AdditionsEQ.
+func Additions(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdditions), v))
+	})
+}
+
+// Deletions applies equality check predicate on the "deletions" field. It's identical to DeletionsEQ.
+func Deletions(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeletions), v))
+	})
+}
+
+// ChangeFiles applies equality check predicate on the "change_files" field. It's identical to ChangeFilesEQ.
+func ChangeFiles(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldChangeFiles), v))
+	})
+}
+
 // CommittedAt applies equality check predicate on the "committed_at" field. It's identical to CommittedAtEQ.
 func CommittedAt(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
@@ -115,10 +136,10 @@ func CommittedAt(v time.Time) predicate.Commits {
 	})
 }
 
-// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.Commits {
+// PushedAt applies equality check predicate on the "pushed_at" field. It's identical to PushedAtEQ.
+func PushedAt(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
+		s.Where(sql.EQ(s.C(FieldPushedAt), v))
 	})
 }
 
@@ -344,6 +365,234 @@ func MessageContainsFold(v string) predicate.Commits {
 	})
 }
 
+// AdditionsEQ applies the EQ predicate on the "additions" field.
+func AdditionsEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdditions), v))
+	})
+}
+
+// AdditionsNEQ applies the NEQ predicate on the "additions" field.
+func AdditionsNEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAdditions), v))
+	})
+}
+
+// AdditionsIn applies the In predicate on the "additions" field.
+func AdditionsIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAdditions), v...))
+	})
+}
+
+// AdditionsNotIn applies the NotIn predicate on the "additions" field.
+func AdditionsNotIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAdditions), v...))
+	})
+}
+
+// AdditionsGT applies the GT predicate on the "additions" field.
+func AdditionsGT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAdditions), v))
+	})
+}
+
+// AdditionsGTE applies the GTE predicate on the "additions" field.
+func AdditionsGTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAdditions), v))
+	})
+}
+
+// AdditionsLT applies the LT predicate on the "additions" field.
+func AdditionsLT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAdditions), v))
+	})
+}
+
+// AdditionsLTE applies the LTE predicate on the "additions" field.
+func AdditionsLTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAdditions), v))
+	})
+}
+
+// DeletionsEQ applies the EQ predicate on the "deletions" field.
+func DeletionsEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeletions), v))
+	})
+}
+
+// DeletionsNEQ applies the NEQ predicate on the "deletions" field.
+func DeletionsNEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDeletions), v))
+	})
+}
+
+// DeletionsIn applies the In predicate on the "deletions" field.
+func DeletionsIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDeletions), v...))
+	})
+}
+
+// DeletionsNotIn applies the NotIn predicate on the "deletions" field.
+func DeletionsNotIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDeletions), v...))
+	})
+}
+
+// DeletionsGT applies the GT predicate on the "deletions" field.
+func DeletionsGT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDeletions), v))
+	})
+}
+
+// DeletionsGTE applies the GTE predicate on the "deletions" field.
+func DeletionsGTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDeletions), v))
+	})
+}
+
+// DeletionsLT applies the LT predicate on the "deletions" field.
+func DeletionsLT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDeletions), v))
+	})
+}
+
+// DeletionsLTE applies the LTE predicate on the "deletions" field.
+func DeletionsLTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDeletions), v))
+	})
+}
+
+// ChangeFilesEQ applies the EQ predicate on the "change_files" field.
+func ChangeFilesEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldChangeFiles), v))
+	})
+}
+
+// ChangeFilesNEQ applies the NEQ predicate on the "change_files" field.
+func ChangeFilesNEQ(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldChangeFiles), v))
+	})
+}
+
+// ChangeFilesIn applies the In predicate on the "change_files" field.
+func ChangeFilesIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldChangeFiles), v...))
+	})
+}
+
+// ChangeFilesNotIn applies the NotIn predicate on the "change_files" field.
+func ChangeFilesNotIn(vs ...int64) predicate.Commits {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commits(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldChangeFiles), v...))
+	})
+}
+
+// ChangeFilesGT applies the GT predicate on the "change_files" field.
+func ChangeFilesGT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldChangeFiles), v))
+	})
+}
+
+// ChangeFilesGTE applies the GTE predicate on the "change_files" field.
+func ChangeFilesGTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldChangeFiles), v))
+	})
+}
+
+// ChangeFilesLT applies the LT predicate on the "change_files" field.
+func ChangeFilesLT(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldChangeFiles), v))
+	})
+}
+
+// ChangeFilesLTE applies the LTE predicate on the "change_files" field.
+func ChangeFilesLTE(v int64) predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldChangeFiles), v))
+	})
+}
+
 // CommittedAtEQ applies the EQ predicate on the "committed_at" field.
 func CommittedAtEQ(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
@@ -420,22 +669,22 @@ func CommittedAtLTE(v time.Time) predicate.Commits {
 	})
 }
 
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.Commits {
+// PushedAtEQ applies the EQ predicate on the "pushed_at" field.
+func PushedAtEQ(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
+		s.Where(sql.EQ(s.C(FieldPushedAt), v))
 	})
 }
 
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.Commits {
+// PushedAtNEQ applies the NEQ predicate on the "pushed_at" field.
+func PushedAtNEQ(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCreatedAt), v))
+		s.Where(sql.NEQ(s.C(FieldPushedAt), v))
 	})
 }
 
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.Commits {
+// PushedAtIn applies the In predicate on the "pushed_at" field.
+func PushedAtIn(vs ...time.Time) predicate.Commits {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -447,12 +696,12 @@ func CreatedAtIn(vs ...time.Time) predicate.Commits {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldCreatedAt), v...))
+		s.Where(sql.In(s.C(FieldPushedAt), v...))
 	})
 }
 
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.Commits {
+// PushedAtNotIn applies the NotIn predicate on the "pushed_at" field.
+func PushedAtNotIn(vs ...time.Time) predicate.Commits {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -464,35 +713,49 @@ func CreatedAtNotIn(vs ...time.Time) predicate.Commits {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldCreatedAt), v...))
+		s.Where(sql.NotIn(s.C(FieldPushedAt), v...))
 	})
 }
 
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.Commits {
+// PushedAtGT applies the GT predicate on the "pushed_at" field.
+func PushedAtGT(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCreatedAt), v))
+		s.Where(sql.GT(s.C(FieldPushedAt), v))
 	})
 }
 
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.Commits {
+// PushedAtGTE applies the GTE predicate on the "pushed_at" field.
+func PushedAtGTE(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCreatedAt), v))
+		s.Where(sql.GTE(s.C(FieldPushedAt), v))
 	})
 }
 
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.Commits {
+// PushedAtLT applies the LT predicate on the "pushed_at" field.
+func PushedAtLT(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCreatedAt), v))
+		s.Where(sql.LT(s.C(FieldPushedAt), v))
 	})
 }
 
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.Commits {
+// PushedAtLTE applies the LTE predicate on the "pushed_at" field.
+func PushedAtLTE(v time.Time) predicate.Commits {
 	return predicate.Commits(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
+		s.Where(sql.LTE(s.C(FieldPushedAt), v))
+	})
+}
+
+// PushedAtIsNil applies the IsNil predicate on the "pushed_at" field.
+func PushedAtIsNil() predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPushedAt)))
+	})
+}
+
+// PushedAtNotNil applies the NotNil predicate on the "pushed_at" field.
+func PushedAtNotNil() predicate.Commits {
+	return predicate.Commits(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPushedAt)))
 	})
 }
 

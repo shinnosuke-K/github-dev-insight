@@ -17,10 +17,16 @@ const (
 	FieldGithubID = "github_id"
 	// FieldMessage holds the string denoting the message field in the database.
 	FieldMessage = "message"
+	// FieldAdditions holds the string denoting the additions field in the database.
+	FieldAdditions = "additions"
+	// FieldDeletions holds the string denoting the deletions field in the database.
+	FieldDeletions = "deletions"
+	// FieldChangeFiles holds the string denoting the change_files field in the database.
+	FieldChangeFiles = "change_files"
 	// FieldCommittedAt holds the string denoting the committed_at field in the database.
 	FieldCommittedAt = "committed_at"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
+	// FieldPushedAt holds the string denoting the pushed_at field in the database.
+	FieldPushedAt = "pushed_at"
 	// EdgePullRequest holds the string denoting the pull_request edge name in mutations.
 	EdgePullRequest = "pull_request"
 	// Table holds the table name of the commits in the database.
@@ -39,8 +45,11 @@ var Columns = []string{
 	FieldID,
 	FieldGithubID,
 	FieldMessage,
+	FieldAdditions,
+	FieldDeletions,
+	FieldChangeFiles,
 	FieldCommittedAt,
-	FieldCreatedAt,
+	FieldPushedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "commits"
@@ -69,8 +78,6 @@ var (
 	GithubIDValidator func(string) error
 	// DefaultCommittedAt holds the default value on creation for the "committed_at" field.
 	DefaultCommittedAt func() time.Time
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

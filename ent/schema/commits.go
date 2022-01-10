@@ -20,8 +20,11 @@ func (Commits) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).Default(func() uuid.UUID { return uuid.Must(uuid.NewRandom()) }),
 		field.String("github_id").MaxLen(255).NotEmpty(),
 		field.Text("message"),
+		field.Int64("additions"),
+		field.Int64("deletions"),
+		field.Int64("change_files"),
 		field.Time("committed_at").Default(time.Now),
-		field.Time("created_at").Default(time.Now),
+		field.Time("pushed_at").Optional(),
 	}
 }
 

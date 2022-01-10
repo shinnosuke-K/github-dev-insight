@@ -59,6 +59,10 @@ query commits($number_of_commits: Int!, $pr_id: ID!, $after: String) {
                 nodes {
                     commit {
                         committedDate
+                        additions
+                        changedFiles
+                        deletions
+                        pushedDate
                         message
                         id
                     }

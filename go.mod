@@ -15,6 +15,14 @@ require (
 )
 
 require (
+	github.com/99designs/gqlgen v0.14.0 // indirect
+	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0 // indirect
+	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
+	golang.org/x/tools v0.1.5 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

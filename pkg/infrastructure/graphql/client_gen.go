@@ -34,7 +34,7 @@ type Query struct {
 	Nodes                                    []Node                             "json:\"nodes\" graphql:\"nodes\""
 	Organization                             *Organization                      "json:\"organization\" graphql:\"organization\""
 	RateLimit                                *RateLimit                         "json:\"rateLimit\" graphql:\"rateLimit\""
-	Relay                                    **Query                            "json:\"relay\" graphql:\"relay\""
+	Relay                                    *Query                             "json:\"relay\" graphql:\"relay\""
 	Repository                               *Repository                        "json:\"repository\" graphql:\"repository\""
 	RepositoryOwner                          RepositoryOwner                    "json:\"repositoryOwner\" graphql:\"repositoryOwner\""
 	Resource                                 UniformResourceLocatable           "json:\"resource\" graphql:\"resource\""
@@ -273,9 +273,13 @@ type Commits struct {
 			} "json:\"pageInfo\" graphql:\"pageInfo\""
 			Nodes []*struct {
 				Commit struct {
-					CommittedDate string "json:\"committedDate\" graphql:\"committedDate\""
-					Message       string "json:\"message\" graphql:\"message\""
-					ID            string "json:\"id\" graphql:\"id\""
+					CommittedDate string  "json:\"committedDate\" graphql:\"committedDate\""
+					Additions     int64   "json:\"additions\" graphql:\"additions\""
+					ChangedFiles  int64   "json:\"changedFiles\" graphql:\"changedFiles\""
+					Deletions     int64   "json:\"deletions\" graphql:\"deletions\""
+					PushedDate    *string "json:\"pushedDate\" graphql:\"pushedDate\""
+					Message       string  "json:\"message\" graphql:\"message\""
+					ID            string  "json:\"id\" graphql:\"id\""
 				} "json:\"commit\" graphql:\"commit\""
 			} "json:\"nodes\" graphql:\"nodes\""
 		} "json:\"commits\" graphql:\"commits\""
@@ -393,6 +397,10 @@ const CommitsDocument = `query commits ($number_of_commits: Int!, $pr_id: ID!, $
 				nodes {
 					commit {
 						committedDate
+						additions
+						changedFiles
+						deletions
+						pushedDate
 						message
 						id
 					}

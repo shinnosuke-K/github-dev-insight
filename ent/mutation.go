@@ -41,8 +41,14 @@ type CommitsMutation struct {
 	id                  *uuid.UUID
 	github_id           *string
 	message             *string
+	additions           *int64
+	addadditions        *int64
+	deletions           *int64
+	adddeletions        *int64
+	change_files        *int64
+	addchange_files     *int64
 	committed_at        *time.Time
-	created_at          *time.Time
+	pushed_at           *time.Time
 	clearedFields       map[string]struct{}
 	pull_request        *uuid.UUID
 	clearedpull_request bool
@@ -208,6 +214,174 @@ func (m *CommitsMutation) ResetMessage() {
 	m.message = nil
 }
 
+// SetAdditions sets the "additions" field.
+func (m *CommitsMutation) SetAdditions(i int64) {
+	m.additions = &i
+	m.addadditions = nil
+}
+
+// Additions returns the value of the "additions" field in the mutation.
+func (m *CommitsMutation) Additions() (r int64, exists bool) {
+	v := m.additions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdditions returns the old "additions" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommitsMutation) OldAdditions(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAdditions is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAdditions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdditions: %w", err)
+	}
+	return oldValue.Additions, nil
+}
+
+// AddAdditions adds i to the "additions" field.
+func (m *CommitsMutation) AddAdditions(i int64) {
+	if m.addadditions != nil {
+		*m.addadditions += i
+	} else {
+		m.addadditions = &i
+	}
+}
+
+// AddedAdditions returns the value that was added to the "additions" field in this mutation.
+func (m *CommitsMutation) AddedAdditions() (r int64, exists bool) {
+	v := m.addadditions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAdditions resets all changes to the "additions" field.
+func (m *CommitsMutation) ResetAdditions() {
+	m.additions = nil
+	m.addadditions = nil
+}
+
+// SetDeletions sets the "deletions" field.
+func (m *CommitsMutation) SetDeletions(i int64) {
+	m.deletions = &i
+	m.adddeletions = nil
+}
+
+// Deletions returns the value of the "deletions" field in the mutation.
+func (m *CommitsMutation) Deletions() (r int64, exists bool) {
+	v := m.deletions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletions returns the old "deletions" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommitsMutation) OldDeletions(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeletions is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeletions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletions: %w", err)
+	}
+	return oldValue.Deletions, nil
+}
+
+// AddDeletions adds i to the "deletions" field.
+func (m *CommitsMutation) AddDeletions(i int64) {
+	if m.adddeletions != nil {
+		*m.adddeletions += i
+	} else {
+		m.adddeletions = &i
+	}
+}
+
+// AddedDeletions returns the value that was added to the "deletions" field in this mutation.
+func (m *CommitsMutation) AddedDeletions() (r int64, exists bool) {
+	v := m.adddeletions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletions resets all changes to the "deletions" field.
+func (m *CommitsMutation) ResetDeletions() {
+	m.deletions = nil
+	m.adddeletions = nil
+}
+
+// SetChangeFiles sets the "change_files" field.
+func (m *CommitsMutation) SetChangeFiles(i int64) {
+	m.change_files = &i
+	m.addchange_files = nil
+}
+
+// ChangeFiles returns the value of the "change_files" field in the mutation.
+func (m *CommitsMutation) ChangeFiles() (r int64, exists bool) {
+	v := m.change_files
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChangeFiles returns the old "change_files" field's value of the Commits entity.
+// If the Commits object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommitsMutation) OldChangeFiles(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldChangeFiles is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldChangeFiles requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChangeFiles: %w", err)
+	}
+	return oldValue.ChangeFiles, nil
+}
+
+// AddChangeFiles adds i to the "change_files" field.
+func (m *CommitsMutation) AddChangeFiles(i int64) {
+	if m.addchange_files != nil {
+		*m.addchange_files += i
+	} else {
+		m.addchange_files = &i
+	}
+}
+
+// AddedChangeFiles returns the value that was added to the "change_files" field in this mutation.
+func (m *CommitsMutation) AddedChangeFiles() (r int64, exists bool) {
+	v := m.addchange_files
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetChangeFiles resets all changes to the "change_files" field.
+func (m *CommitsMutation) ResetChangeFiles() {
+	m.change_files = nil
+	m.addchange_files = nil
+}
+
 // SetCommittedAt sets the "committed_at" field.
 func (m *CommitsMutation) SetCommittedAt(t time.Time) {
 	m.committed_at = &t
@@ -244,40 +418,53 @@ func (m *CommitsMutation) ResetCommittedAt() {
 	m.committed_at = nil
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *CommitsMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
+// SetPushedAt sets the "pushed_at" field.
+func (m *CommitsMutation) SetPushedAt(t time.Time) {
+	m.pushed_at = &t
 }
 
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *CommitsMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
+// PushedAt returns the value of the "pushed_at" field in the mutation.
+func (m *CommitsMutation) PushedAt() (r time.Time, exists bool) {
+	v := m.pushed_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Commits entity.
+// OldPushedAt returns the old "pushed_at" field's value of the Commits entity.
 // If the Commits object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommitsMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *CommitsMutation) OldPushedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldPushedAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+		return v, fmt.Errorf("OldPushedAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldPushedAt: %w", err)
 	}
-	return oldValue.CreatedAt, nil
+	return oldValue.PushedAt, nil
 }
 
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *CommitsMutation) ResetCreatedAt() {
-	m.created_at = nil
+// ClearPushedAt clears the value of the "pushed_at" field.
+func (m *CommitsMutation) ClearPushedAt() {
+	m.pushed_at = nil
+	m.clearedFields[commits.FieldPushedAt] = struct{}{}
+}
+
+// PushedAtCleared returns if the "pushed_at" field was cleared in this mutation.
+func (m *CommitsMutation) PushedAtCleared() bool {
+	_, ok := m.clearedFields[commits.FieldPushedAt]
+	return ok
+}
+
+// ResetPushedAt resets all changes to the "pushed_at" field.
+func (m *CommitsMutation) ResetPushedAt() {
+	m.pushed_at = nil
+	delete(m.clearedFields, commits.FieldPushedAt)
 }
 
 // SetPullRequestID sets the "pull_request" edge to the PullRequest entity by id.
@@ -338,18 +525,27 @@ func (m *CommitsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommitsMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 7)
 	if m.github_id != nil {
 		fields = append(fields, commits.FieldGithubID)
 	}
 	if m.message != nil {
 		fields = append(fields, commits.FieldMessage)
 	}
+	if m.additions != nil {
+		fields = append(fields, commits.FieldAdditions)
+	}
+	if m.deletions != nil {
+		fields = append(fields, commits.FieldDeletions)
+	}
+	if m.change_files != nil {
+		fields = append(fields, commits.FieldChangeFiles)
+	}
 	if m.committed_at != nil {
 		fields = append(fields, commits.FieldCommittedAt)
 	}
-	if m.created_at != nil {
-		fields = append(fields, commits.FieldCreatedAt)
+	if m.pushed_at != nil {
+		fields = append(fields, commits.FieldPushedAt)
 	}
 	return fields
 }
@@ -363,10 +559,16 @@ func (m *CommitsMutation) Field(name string) (ent.Value, bool) {
 		return m.GithubID()
 	case commits.FieldMessage:
 		return m.Message()
+	case commits.FieldAdditions:
+		return m.Additions()
+	case commits.FieldDeletions:
+		return m.Deletions()
+	case commits.FieldChangeFiles:
+		return m.ChangeFiles()
 	case commits.FieldCommittedAt:
 		return m.CommittedAt()
-	case commits.FieldCreatedAt:
-		return m.CreatedAt()
+	case commits.FieldPushedAt:
+		return m.PushedAt()
 	}
 	return nil, false
 }
@@ -380,10 +582,16 @@ func (m *CommitsMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldGithubID(ctx)
 	case commits.FieldMessage:
 		return m.OldMessage(ctx)
+	case commits.FieldAdditions:
+		return m.OldAdditions(ctx)
+	case commits.FieldDeletions:
+		return m.OldDeletions(ctx)
+	case commits.FieldChangeFiles:
+		return m.OldChangeFiles(ctx)
 	case commits.FieldCommittedAt:
 		return m.OldCommittedAt(ctx)
-	case commits.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
+	case commits.FieldPushedAt:
+		return m.OldPushedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Commits field %s", name)
 }
@@ -407,6 +615,27 @@ func (m *CommitsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMessage(v)
 		return nil
+	case commits.FieldAdditions:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdditions(v)
+		return nil
+	case commits.FieldDeletions:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletions(v)
+		return nil
+	case commits.FieldChangeFiles:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChangeFiles(v)
+		return nil
 	case commits.FieldCommittedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -414,12 +643,12 @@ func (m *CommitsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCommittedAt(v)
 		return nil
-	case commits.FieldCreatedAt:
+	case commits.FieldPushedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCreatedAt(v)
+		m.SetPushedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Commits field %s", name)
@@ -428,13 +657,31 @@ func (m *CommitsMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *CommitsMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addadditions != nil {
+		fields = append(fields, commits.FieldAdditions)
+	}
+	if m.adddeletions != nil {
+		fields = append(fields, commits.FieldDeletions)
+	}
+	if m.addchange_files != nil {
+		fields = append(fields, commits.FieldChangeFiles)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *CommitsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case commits.FieldAdditions:
+		return m.AddedAdditions()
+	case commits.FieldDeletions:
+		return m.AddedDeletions()
+	case commits.FieldChangeFiles:
+		return m.AddedChangeFiles()
+	}
 	return nil, false
 }
 
@@ -443,6 +690,27 @@ func (m *CommitsMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CommitsMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case commits.FieldAdditions:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAdditions(v)
+		return nil
+	case commits.FieldDeletions:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletions(v)
+		return nil
+	case commits.FieldChangeFiles:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddChangeFiles(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Commits numeric field %s", name)
 }
@@ -450,7 +718,11 @@ func (m *CommitsMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *CommitsMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(commits.FieldPushedAt) {
+		fields = append(fields, commits.FieldPushedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -463,6 +735,11 @@ func (m *CommitsMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *CommitsMutation) ClearField(name string) error {
+	switch name {
+	case commits.FieldPushedAt:
+		m.ClearPushedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown Commits nullable field %s", name)
 }
 
@@ -476,11 +753,20 @@ func (m *CommitsMutation) ResetField(name string) error {
 	case commits.FieldMessage:
 		m.ResetMessage()
 		return nil
+	case commits.FieldAdditions:
+		m.ResetAdditions()
+		return nil
+	case commits.FieldDeletions:
+		m.ResetDeletions()
+		return nil
+	case commits.FieldChangeFiles:
+		m.ResetChangeFiles()
+		return nil
 	case commits.FieldCommittedAt:
 		m.ResetCommittedAt()
 		return nil
-	case commits.FieldCreatedAt:
-		m.ResetCreatedAt()
+	case commits.FieldPushedAt:
+		m.ResetPushedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Commits field %s", name)
