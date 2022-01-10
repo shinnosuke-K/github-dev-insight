@@ -33,13 +33,13 @@ func (c *Client) Transaction(ctx context.Context, fn func(ctx context.Context) e
 	}
 	if err := fn(ctx); err != nil {
 		if rollBackErr := c.rollBack(); rollBackErr != nil {
-			return fmt.Errorf("failed to rollback in fn. %w", err)
+			return fmt.Errorf("failed to rollback in fn. %w", rollBackErr)
 		}
 		return err
 	}
 	if err := c.commit(); err != nil {
 		if rollBackErr := c.rollBack(); rollBackErr != nil {
-			return fmt.Errorf("failed to rollback in commit. %w", err)
+			return fmt.Errorf("failed to rollback in commit. %w", rollBackErr)
 		}
 		return err
 	}
