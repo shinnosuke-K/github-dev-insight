@@ -22,10 +22,16 @@ type Commits struct {
 	GithubID string `json:"github_id,omitempty"`
 	// Message holds the value of the "message" field.
 	Message string `json:"message,omitempty"`
+	// Additions holds the value of the "additions" field.
+	Additions int64 `json:"additions,omitempty"`
+	// Deletions holds the value of the "deletions" field.
+	Deletions int64 `json:"deletions,omitempty"`
+	// ChangeFiles holds the value of the "change_files" field.
+	ChangeFiles int64 `json:"change_files,omitempty"`
 	// CommittedAt holds the value of the "committed_at" field.
 	CommittedAt time.Time `json:"committed_at,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	// PushedAt holds the value of the "pushed_at" field.
+	PushedAt time.Time `json:"pushed_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CommitsQuery when eager-loading is set.
 	Edges           CommitsEdges `json:"edges"`
@@ -60,9 +66,11 @@ func (*Commits) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case commits.FieldAdditions, commits.FieldDeletions, commits.FieldChangeFiles:
+			values[i] = new(sql.NullInt64)
 		case commits.FieldGithubID, commits.FieldMessage:
 			values[i] = new(sql.NullString)
-		case commits.FieldCommittedAt, commits.FieldCreatedAt:
+		case commits.FieldCommittedAt, commits.FieldPushedAt:
 			values[i] = new(sql.NullTime)
 		case commits.FieldID:
 			values[i] = new(uuid.UUID)
@@ -101,17 +109,35 @@ func (c *Commits) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.Message = value.String
 			}
+		case commits.FieldAdditions:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field additions", values[i])
+			} else if value.Valid {
+				c.Additions = value.Int64
+			}
+		case commits.FieldDeletions:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deletions", values[i])
+			} else if value.Valid {
+				c.Deletions = value.Int64
+			}
+		case commits.FieldChangeFiles:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field change_files", values[i])
+			} else if value.Valid {
+				c.ChangeFiles = value.Int64
+			}
 		case commits.FieldCommittedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field committed_at", values[i])
 			} else if value.Valid {
 				c.CommittedAt = value.Time
 			}
-		case commits.FieldCreatedAt:
+		case commits.FieldPushedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+				return fmt.Errorf("unexpected type %T for field pushed_at", values[i])
 			} else if value.Valid {
-				c.CreatedAt = value.Time
+				c.PushedAt = value.Time
 			}
 		case commits.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -157,10 +183,16 @@ func (c *Commits) String() string {
 	builder.WriteString(c.GithubID)
 	builder.WriteString(", message=")
 	builder.WriteString(c.Message)
+	builder.WriteString(", additions=")
+	builder.WriteString(fmt.Sprintf("%v", c.Additions))
+	builder.WriteString(", deletions=")
+	builder.WriteString(fmt.Sprintf("%v", c.Deletions))
+	builder.WriteString(", change_files=")
+	builder.WriteString(fmt.Sprintf("%v", c.ChangeFiles))
 	builder.WriteString(", committed_at=")
 	builder.WriteString(c.CommittedAt.Format(time.ANSIC))
-	builder.WriteString(", created_at=")
-	builder.WriteString(c.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", pushed_at=")
+	builder.WriteString(c.PushedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -41,6 +41,45 @@ func (cu *CommitsUpdate) SetMessage(s string) *CommitsUpdate {
 	return cu
 }
 
+// SetAdditions sets the "additions" field.
+func (cu *CommitsUpdate) SetAdditions(i int64) *CommitsUpdate {
+	cu.mutation.ResetAdditions()
+	cu.mutation.SetAdditions(i)
+	return cu
+}
+
+// AddAdditions adds i to the "additions" field.
+func (cu *CommitsUpdate) AddAdditions(i int64) *CommitsUpdate {
+	cu.mutation.AddAdditions(i)
+	return cu
+}
+
+// SetDeletions sets the "deletions" field.
+func (cu *CommitsUpdate) SetDeletions(i int64) *CommitsUpdate {
+	cu.mutation.ResetDeletions()
+	cu.mutation.SetDeletions(i)
+	return cu
+}
+
+// AddDeletions adds i to the "deletions" field.
+func (cu *CommitsUpdate) AddDeletions(i int64) *CommitsUpdate {
+	cu.mutation.AddDeletions(i)
+	return cu
+}
+
+// SetChangeFiles sets the "change_files" field.
+func (cu *CommitsUpdate) SetChangeFiles(i int64) *CommitsUpdate {
+	cu.mutation.ResetChangeFiles()
+	cu.mutation.SetChangeFiles(i)
+	return cu
+}
+
+// AddChangeFiles adds i to the "change_files" field.
+func (cu *CommitsUpdate) AddChangeFiles(i int64) *CommitsUpdate {
+	cu.mutation.AddChangeFiles(i)
+	return cu
+}
+
 // SetCommittedAt sets the "committed_at" field.
 func (cu *CommitsUpdate) SetCommittedAt(t time.Time) *CommitsUpdate {
 	cu.mutation.SetCommittedAt(t)
@@ -55,17 +94,23 @@ func (cu *CommitsUpdate) SetNillableCommittedAt(t *time.Time) *CommitsUpdate {
 	return cu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (cu *CommitsUpdate) SetCreatedAt(t time.Time) *CommitsUpdate {
-	cu.mutation.SetCreatedAt(t)
+// SetPushedAt sets the "pushed_at" field.
+func (cu *CommitsUpdate) SetPushedAt(t time.Time) *CommitsUpdate {
+	cu.mutation.SetPushedAt(t)
 	return cu
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cu *CommitsUpdate) SetNillableCreatedAt(t *time.Time) *CommitsUpdate {
+// SetNillablePushedAt sets the "pushed_at" field if the given value is not nil.
+func (cu *CommitsUpdate) SetNillablePushedAt(t *time.Time) *CommitsUpdate {
 	if t != nil {
-		cu.SetCreatedAt(*t)
+		cu.SetPushedAt(*t)
 	}
+	return cu
+}
+
+// ClearPushedAt clears the value of the "pushed_at" field.
+func (cu *CommitsUpdate) ClearPushedAt() *CommitsUpdate {
+	cu.mutation.ClearPushedAt()
 	return cu
 }
 
@@ -201,6 +246,48 @@ func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commits.FieldMessage,
 		})
 	}
+	if value, ok := cu.mutation.Additions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldAdditions,
+		})
+	}
+	if value, ok := cu.mutation.AddedAdditions(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldAdditions,
+		})
+	}
+	if value, ok := cu.mutation.Deletions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldDeletions,
+		})
+	}
+	if value, ok := cu.mutation.AddedDeletions(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldDeletions,
+		})
+	}
+	if value, ok := cu.mutation.ChangeFiles(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldChangeFiles,
+		})
+	}
+	if value, ok := cu.mutation.AddedChangeFiles(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldChangeFiles,
+		})
+	}
 	if value, ok := cu.mutation.CommittedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -208,11 +295,17 @@ func (cu *CommitsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commits.FieldCommittedAt,
 		})
 	}
-	if value, ok := cu.mutation.CreatedAt(); ok {
+	if value, ok := cu.mutation.PushedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commits.FieldCreatedAt,
+			Column: commits.FieldPushedAt,
+		})
+	}
+	if cu.mutation.PushedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: commits.FieldPushedAt,
 		})
 	}
 	if cu.mutation.PullRequestCleared() {
@@ -281,6 +374,45 @@ func (cuo *CommitsUpdateOne) SetMessage(s string) *CommitsUpdateOne {
 	return cuo
 }
 
+// SetAdditions sets the "additions" field.
+func (cuo *CommitsUpdateOne) SetAdditions(i int64) *CommitsUpdateOne {
+	cuo.mutation.ResetAdditions()
+	cuo.mutation.SetAdditions(i)
+	return cuo
+}
+
+// AddAdditions adds i to the "additions" field.
+func (cuo *CommitsUpdateOne) AddAdditions(i int64) *CommitsUpdateOne {
+	cuo.mutation.AddAdditions(i)
+	return cuo
+}
+
+// SetDeletions sets the "deletions" field.
+func (cuo *CommitsUpdateOne) SetDeletions(i int64) *CommitsUpdateOne {
+	cuo.mutation.ResetDeletions()
+	cuo.mutation.SetDeletions(i)
+	return cuo
+}
+
+// AddDeletions adds i to the "deletions" field.
+func (cuo *CommitsUpdateOne) AddDeletions(i int64) *CommitsUpdateOne {
+	cuo.mutation.AddDeletions(i)
+	return cuo
+}
+
+// SetChangeFiles sets the "change_files" field.
+func (cuo *CommitsUpdateOne) SetChangeFiles(i int64) *CommitsUpdateOne {
+	cuo.mutation.ResetChangeFiles()
+	cuo.mutation.SetChangeFiles(i)
+	return cuo
+}
+
+// AddChangeFiles adds i to the "change_files" field.
+func (cuo *CommitsUpdateOne) AddChangeFiles(i int64) *CommitsUpdateOne {
+	cuo.mutation.AddChangeFiles(i)
+	return cuo
+}
+
 // SetCommittedAt sets the "committed_at" field.
 func (cuo *CommitsUpdateOne) SetCommittedAt(t time.Time) *CommitsUpdateOne {
 	cuo.mutation.SetCommittedAt(t)
@@ -295,17 +427,23 @@ func (cuo *CommitsUpdateOne) SetNillableCommittedAt(t *time.Time) *CommitsUpdate
 	return cuo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (cuo *CommitsUpdateOne) SetCreatedAt(t time.Time) *CommitsUpdateOne {
-	cuo.mutation.SetCreatedAt(t)
+// SetPushedAt sets the "pushed_at" field.
+func (cuo *CommitsUpdateOne) SetPushedAt(t time.Time) *CommitsUpdateOne {
+	cuo.mutation.SetPushedAt(t)
 	return cuo
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cuo *CommitsUpdateOne) SetNillableCreatedAt(t *time.Time) *CommitsUpdateOne {
+// SetNillablePushedAt sets the "pushed_at" field if the given value is not nil.
+func (cuo *CommitsUpdateOne) SetNillablePushedAt(t *time.Time) *CommitsUpdateOne {
 	if t != nil {
-		cuo.SetCreatedAt(*t)
+		cuo.SetPushedAt(*t)
 	}
+	return cuo
+}
+
+// ClearPushedAt clears the value of the "pushed_at" field.
+func (cuo *CommitsUpdateOne) ClearPushedAt() *CommitsUpdateOne {
+	cuo.mutation.ClearPushedAt()
 	return cuo
 }
 
@@ -465,6 +603,48 @@ func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err e
 			Column: commits.FieldMessage,
 		})
 	}
+	if value, ok := cuo.mutation.Additions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldAdditions,
+		})
+	}
+	if value, ok := cuo.mutation.AddedAdditions(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldAdditions,
+		})
+	}
+	if value, ok := cuo.mutation.Deletions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldDeletions,
+		})
+	}
+	if value, ok := cuo.mutation.AddedDeletions(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldDeletions,
+		})
+	}
+	if value, ok := cuo.mutation.ChangeFiles(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldChangeFiles,
+		})
+	}
+	if value, ok := cuo.mutation.AddedChangeFiles(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldChangeFiles,
+		})
+	}
 	if value, ok := cuo.mutation.CommittedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -472,11 +652,17 @@ func (cuo *CommitsUpdateOne) sqlSave(ctx context.Context) (_node *Commits, err e
 			Column: commits.FieldCommittedAt,
 		})
 	}
-	if value, ok := cuo.mutation.CreatedAt(); ok {
+	if value, ok := cuo.mutation.PushedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commits.FieldCreatedAt,
+			Column: commits.FieldPushedAt,
+		})
+	}
+	if cuo.mutation.PushedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: commits.FieldPushedAt,
 		})
 	}
 	if cuo.mutation.PullRequestCleared() {

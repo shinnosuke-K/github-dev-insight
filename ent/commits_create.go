@@ -34,6 +34,24 @@ func (cc *CommitsCreate) SetMessage(s string) *CommitsCreate {
 	return cc
 }
 
+// SetAdditions sets the "additions" field.
+func (cc *CommitsCreate) SetAdditions(i int64) *CommitsCreate {
+	cc.mutation.SetAdditions(i)
+	return cc
+}
+
+// SetDeletions sets the "deletions" field.
+func (cc *CommitsCreate) SetDeletions(i int64) *CommitsCreate {
+	cc.mutation.SetDeletions(i)
+	return cc
+}
+
+// SetChangeFiles sets the "change_files" field.
+func (cc *CommitsCreate) SetChangeFiles(i int64) *CommitsCreate {
+	cc.mutation.SetChangeFiles(i)
+	return cc
+}
+
 // SetCommittedAt sets the "committed_at" field.
 func (cc *CommitsCreate) SetCommittedAt(t time.Time) *CommitsCreate {
 	cc.mutation.SetCommittedAt(t)
@@ -48,16 +66,16 @@ func (cc *CommitsCreate) SetNillableCommittedAt(t *time.Time) *CommitsCreate {
 	return cc
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (cc *CommitsCreate) SetCreatedAt(t time.Time) *CommitsCreate {
-	cc.mutation.SetCreatedAt(t)
+// SetPushedAt sets the "pushed_at" field.
+func (cc *CommitsCreate) SetPushedAt(t time.Time) *CommitsCreate {
+	cc.mutation.SetPushedAt(t)
 	return cc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cc *CommitsCreate) SetNillableCreatedAt(t *time.Time) *CommitsCreate {
+// SetNillablePushedAt sets the "pushed_at" field if the given value is not nil.
+func (cc *CommitsCreate) SetNillablePushedAt(t *time.Time) *CommitsCreate {
 	if t != nil {
-		cc.SetCreatedAt(*t)
+		cc.SetPushedAt(*t)
 	}
 	return cc
 }
@@ -162,10 +180,6 @@ func (cc *CommitsCreate) defaults() {
 		v := commits.DefaultCommittedAt()
 		cc.mutation.SetCommittedAt(v)
 	}
-	if _, ok := cc.mutation.CreatedAt(); !ok {
-		v := commits.DefaultCreatedAt()
-		cc.mutation.SetCreatedAt(v)
-	}
 	if _, ok := cc.mutation.ID(); !ok {
 		v := commits.DefaultID()
 		cc.mutation.SetID(v)
@@ -185,11 +199,17 @@ func (cc *CommitsCreate) check() error {
 	if _, ok := cc.mutation.Message(); !ok {
 		return &ValidationError{Name: "message", err: errors.New(`ent: missing required field "message"`)}
 	}
+	if _, ok := cc.mutation.Additions(); !ok {
+		return &ValidationError{Name: "additions", err: errors.New(`ent: missing required field "additions"`)}
+	}
+	if _, ok := cc.mutation.Deletions(); !ok {
+		return &ValidationError{Name: "deletions", err: errors.New(`ent: missing required field "deletions"`)}
+	}
+	if _, ok := cc.mutation.ChangeFiles(); !ok {
+		return &ValidationError{Name: "change_files", err: errors.New(`ent: missing required field "change_files"`)}
+	}
 	if _, ok := cc.mutation.CommittedAt(); !ok {
 		return &ValidationError{Name: "committed_at", err: errors.New(`ent: missing required field "committed_at"`)}
-	}
-	if _, ok := cc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
 	return nil
 }
@@ -239,6 +259,30 @@ func (cc *CommitsCreate) createSpec() (*Commits, *sqlgraph.CreateSpec) {
 		})
 		_node.Message = value
 	}
+	if value, ok := cc.mutation.Additions(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldAdditions,
+		})
+		_node.Additions = value
+	}
+	if value, ok := cc.mutation.Deletions(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldDeletions,
+		})
+		_node.Deletions = value
+	}
+	if value, ok := cc.mutation.ChangeFiles(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: commits.FieldChangeFiles,
+		})
+		_node.ChangeFiles = value
+	}
 	if value, ok := cc.mutation.CommittedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -247,13 +291,13 @@ func (cc *CommitsCreate) createSpec() (*Commits, *sqlgraph.CreateSpec) {
 		})
 		_node.CommittedAt = value
 	}
-	if value, ok := cc.mutation.CreatedAt(); ok {
+	if value, ok := cc.mutation.PushedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: commits.FieldCreatedAt,
+			Column: commits.FieldPushedAt,
 		})
-		_node.CreatedAt = value
+		_node.PushedAt = value
 	}
 	if nodes := cc.mutation.PullRequestIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

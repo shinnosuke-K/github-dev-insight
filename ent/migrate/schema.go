@@ -13,8 +13,11 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "github_id", Type: field.TypeString, Size: 255},
 		{Name: "message", Type: field.TypeString, Size: 2147483647},
+		{Name: "additions", Type: field.TypeInt64},
+		{Name: "deletions", Type: field.TypeInt64},
+		{Name: "change_files", Type: field.TypeInt64},
 		{Name: "committed_at", Type: field.TypeTime},
-		{Name: "created_at", Type: field.TypeTime},
+		{Name: "pushed_at", Type: field.TypeTime, Nullable: true},
 		{Name: "pull_request_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// CommitsTable holds the schema information for the "commits" table.
@@ -25,7 +28,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "commits_pull_requests_commits",
-				Columns:    []*schema.Column{CommitsColumns[5]},
+				Columns:    []*schema.Column{CommitsColumns[8]},
 				RefColumns: []*schema.Column{PullRequestsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

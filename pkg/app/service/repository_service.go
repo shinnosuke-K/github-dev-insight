@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter"
-	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
+	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/env"
 )
 
@@ -24,7 +24,7 @@ func NewRepositoryService(ad *adapter.Adapter) *repositoryService {
 }
 
 func (s *repositoryService) ImportRepositories(ctx context.Context) error {
-	repos, err := s.GitHub().GetRepositories(ctx, &github.GetRepositoriesParams{UserName: env.Get().GitHub.LoginUser})
+	repos, err := s.GitHub().GetRepositories(ctx, &params.GetRepositories{UserName: env.Get().GitHub.LoginUser})
 	if err != nil {
 		return fmt.Errorf("failed to get repositories. %w", err)
 	}

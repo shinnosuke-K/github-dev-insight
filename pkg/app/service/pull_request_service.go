@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter"
-	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
+	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
@@ -26,7 +26,7 @@ func NewPullRequestService(ad *adapter.Adapter) *pullRequestService {
 }
 
 func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
-	repos, err := s.DataStore().Repository().GetByTargetTypeAndStatus(ctx, entity.PR, false)
+	repos, err := s.DataStore().Repository().GetByTargetTypeAndStatus(ctx, entity.TargetTypePullRequest, false)
 	if err != nil {
 		return fmt.Errorf("failed to get repository. %w", err)
 	}
@@ -48,7 +48,7 @@ func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
 		eg.Go(func() error {
 			defer sem.Release(1)
 			if err := s.DataStore().Transaction(ctx, func(ctx context.Context) error {
-				prs, err := s.GitHub().GetPullRequestsByGitHubID(ctx, &github.GetPullRequestsByGitHubIDParams{
+				prs, err := s.GitHub().GetPullRequestsByGitHubID(ctx, &params.GetPullRequestsByGitHubID{
 					GitHubID:     r.GitHubID,
 					RepositoryID: r.ID,
 				})
@@ -58,7 +58,7 @@ func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
 				if err := s.DataStore().PullRequest().Create(ctx, prs...); err != nil {
 					return fmt.Errorf("failed to create prs. %w", err)
 				}
-				if err := s.DataStore().Repository().UpdateStatusByID(ctx, r.ID, entity.PR, true); err != nil {
+				if err := s.DataStore().Repository().UpdateStatusByID(ctx, r.ID, entity.TargetTypePullRequest, true); err != nil {
 					return fmt.Errorf("failed to update repository by id:[%s]. %w", r.ID, err)
 				}
 				return nil

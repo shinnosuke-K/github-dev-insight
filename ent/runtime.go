@@ -38,13 +38,9 @@ func init() {
 		}
 	}()
 	// commitsDescCommittedAt is the schema descriptor for committed_at field.
-	commitsDescCommittedAt := commitsFields[3].Descriptor()
+	commitsDescCommittedAt := commitsFields[6].Descriptor()
 	// commits.DefaultCommittedAt holds the default value on creation for the committed_at field.
 	commits.DefaultCommittedAt = commitsDescCommittedAt.Default.(func() time.Time)
-	// commitsDescCreatedAt is the schema descriptor for created_at field.
-	commitsDescCreatedAt := commitsFields[4].Descriptor()
-	// commits.DefaultCreatedAt holds the default value on creation for the created_at field.
-	commits.DefaultCreatedAt = commitsDescCreatedAt.Default.(func() time.Time)
 	// commitsDescID is the schema descriptor for id field.
 	commitsDescID := commitsFields[0].Descriptor()
 	// commits.DefaultID holds the default value on creation for the id field.
