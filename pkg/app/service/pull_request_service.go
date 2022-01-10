@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
+	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
 )
@@ -26,23 +26,28 @@ func NewPullRequestService(ad *adapter.Adapter) *pullRequestService {
 }
 
 func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
-	repos, err := s.DataStore().Repository().GetAll(ctx)
+	repos, err := s.DataStore().Repository().GetByTargetTypeAndStatus(ctx, entity.PR, false)
 	if err != nil {
 		return fmt.Errorf("failed to get repository. %w", err)
 	}
 
-	sem := semaphore.NewWeighted(10)
+	if len(repos) == 0 {
+		return nil
+	}
+
+	sem := semaphore.NewWeighted(5)
 	eg, ctx := errgroup.WithContext(ctx)
 
-	if err := s.DataStore().Transaction(ctx, func(ctx context.Context) error {
-		for _, r := range repos {
-			if err := sem.Acquire(ctx, 1); err != nil {
-				fmt.Printf("failed to acquire semaphore: %v\n", err)
-				break
-			}
-			r := r
-			eg.Go(func() error {
-				defer sem.Release(1)
+	for _, r := range repos {
+		if err := sem.Acquire(ctx, 1); err != nil {
+			fmt.Printf("failed to acquire semaphore: %v\n", err)
+			break
+		}
+
+		r := r
+		eg.Go(func() error {
+			defer sem.Release(1)
+			if err := s.DataStore().Transaction(ctx, func(ctx context.Context) error {
 				prs, err := s.GitHub().GetPullRequestsByGitHubID(ctx, &github.GetPullRequestsByGitHubIDParams{
 					GitHubID:     r.GitHubID,
 					RepositoryID: r.ID,
@@ -53,16 +58,19 @@ func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
 				if err := s.DataStore().PullRequest().Create(ctx, prs...); err != nil {
 					return fmt.Errorf("failed to create prs. %w", err)
 				}
-				time.Sleep(500 * time.Millisecond)
+				if err := s.DataStore().Repository().UpdateStatusByID(ctx, r.ID, entity.PR, true); err != nil {
+					return fmt.Errorf("failed to update repository by id:[%s]. %w", r.ID, err)
+				}
 				return nil
-			})
-		}
-		if err := eg.Wait(); err != nil {
-			return fmt.Errorf("error occurred in groutines. %w", err)
-		}
-		return nil
-	}); err != nil {
-		return fmt.Errorf("error occurred in transaction. %w", err)
+			}); err != nil {
+				return fmt.Errorf("error occurred in transaction. %w", err)
+			}
+			fmt.Printf("[info] repo:[%s] done\n", r.Name)
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return fmt.Errorf("error occurred in goroutine. %w", err)
 	}
 	return nil
 }

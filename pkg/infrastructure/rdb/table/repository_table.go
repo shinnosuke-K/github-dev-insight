@@ -36,8 +36,18 @@ func (t *Repository) Create(ctx context.Context, ents ...*entity.Repository) err
 	return nil
 }
 
-func (t *Repository) Update(ctx context.Context, ent *entity.Repository) error {
-	if _, err := t.Client.DB().Repository.UpdateOneID(uuid.MustParse(string(ent.ID))).Save(ctx); err != nil {
+func (t *Repository) UpdateStatusByID(ctx context.Context, id entity.RepositoryID, targetType entity.TargetType, status bool) error {
+	builder := t.Client.DB().Repository.UpdateOneID(uuid.MustParse(string(id)))
+	switch targetType {
+	case entity.PR:
+		builder = builder.SetGetPullRequest(status)
+	case entity.Issue:
+		builder = builder.SetGetIssue(status)
+	default:
+		return nil
+	}
+
+	if _, err := builder.Save(ctx); err != nil {
 		return err
 	}
 	return nil
@@ -46,6 +56,25 @@ func (t *Repository) Update(ctx context.Context, ent *entity.Repository) error {
 func (t *Repository) GetAll(ctx context.Context) ([]*entity.Repository, error) {
 	res := []*entity.Repository{}
 	if err := t.Client.DB().Repository.Query().Select(repository.Columns...).Scan(ctx, &res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (t *Repository) GetByTargetTypeAndStatus(ctx context.Context, targetType entity.TargetType, status bool) ([]*entity.Repository, error) {
+	var (
+		res     = []*entity.Repository{}
+		builder = t.Client.DB().Repository.Query()
+	)
+	switch targetType {
+	case entity.PR:
+		builder = builder.Where(repository.GetPullRequest(status)).Order(ent.Asc(repository.FieldTotalPr))
+	case entity.Issue:
+		builder = builder.Where(repository.GetIssue(status)).Order(ent.Asc(repository.FieldTotalIssue))
+	default:
+		return res, nil
+	}
+	if err := builder.Select(repository.Columns...).Scan(ctx, &res); err != nil {
 		return nil, err
 	}
 	return res, nil
