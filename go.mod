@@ -5,7 +5,7 @@ go 1.17
 require (
 	entgo.io/ent v0.9.1
 	github.com/Yamashou/gqlgenc v0.0.2
-	github.com/aws/aws-sdk-go v1.42.30
+	github.com/aws/aws-sdk-go v1.42.35
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
