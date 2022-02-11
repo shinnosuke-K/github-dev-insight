@@ -44,21 +44,25 @@ func (s *pullRequestService) ImportPullRequest(ctx context.Context) error {
 			break
 		}
 
+		ad, err := adapter.NewAdapter()
+		if err != nil {
+			return fmt.Errorf("failed to init adapter. %w", err)
+		}
 		r := r
 		eg.Go(func() error {
 			defer sem.Release(1)
-			if err := s.DataStore().Transaction(ctx, func(ctx context.Context) error {
-				prs, err := s.GitHub().GetPullRequestsByGitHubID(ctx, &params.GetPullRequestsByGitHubID{
+			if err := ad.DataStore().Transaction(ctx, func(ctx context.Context) error {
+				prs, err := ad.GitHub().GetPullRequestsByGitHubID(ctx, &params.GetPullRequestsByGitHubID{
 					GitHubID:     r.GitHubID,
 					RepositoryID: r.ID,
 				})
 				if err != nil {
 					return fmt.Errorf("failed to get prs by id:[%s]. %w", r.GitHubID, err)
 				}
-				if err := s.DataStore().PullRequest().Create(ctx, prs...); err != nil {
+				if err := ad.DataStore().PullRequest().Create(ctx, prs...); err != nil {
 					return fmt.Errorf("failed to create prs. %w", err)
 				}
-				if err := s.DataStore().Repository().UpdateStatusByID(ctx, r.ID, entity.TargetTypePullRequest, true); err != nil {
+				if err := ad.DataStore().Repository().UpdateStatusByID(ctx, r.ID, entity.TargetTypePullRequest, true); err != nil {
 					return fmt.Errorf("failed to update repository by id:[%s]. %w", r.ID, err)
 				}
 				return nil
