@@ -15,6 +15,7 @@ type DataStore interface {
 	Transaction(ctx context.Context, fn func(ctx context.Context) error) error
 	Repository() Repository
 	PullRequest() PullRequest
+	Commit() Commit
 }
 
 type Repository interface {
@@ -30,10 +31,15 @@ type PullRequest interface {
 	GetByStatusWithPaging(ctx context.Context, params *params.GetByStatusWithPaging) ([]*entity.PullRequest, error)
 }
 
+type Commit interface {
+	Create(ctx context.Context, ents ...*entity.Commit) error
+}
+
 type dataStore struct {
 	db          *client.Client
 	repository  *table.Repository
 	pullRequest *table.PullRequest
+	commit      *table.Commit
 }
 
 func NewDataStore(cfg rdb.Config) (DataStore, error) {
@@ -45,6 +51,7 @@ func NewDataStore(cfg rdb.Config) (DataStore, error) {
 		db:          db,
 		repository:  &table.Repository{Client: db},
 		pullRequest: &table.PullRequest{Client: db},
+		commit:      &table.Commit{Client: db},
 	}, nil
 }
 
@@ -58,4 +65,8 @@ func (d *dataStore) Repository() Repository {
 
 func (d *dataStore) PullRequest() PullRequest {
 	return d.pullRequest
+}
+
+func (d *dataStore) Commit() Commit {
+	return d.commit
 }

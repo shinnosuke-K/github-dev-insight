@@ -62,6 +62,7 @@ func (c *Client) commit() error {
 	if err := c.tx.Commit(); err != nil {
 		return fmt.Errorf("failed to commit tx. %w", err)
 	}
+	c.tx = nil
 	return nil
 }
 
