@@ -11,4 +11,5 @@ type GitHub interface {
 	GetRepositories(ctx context.Context, params *params.GetRepositories) ([]*entity.Repository, error)
 	GetPullRequestsByGitHubID(ctx context.Context, params *params.GetPullRequestsByGitHubID) ([]*entity.PullRequest, error)
 	GetCommitsByGitHubID(ctx context.Context, params *params.GetCommitsByGitHubID) ([]*entity.Commit, error)
+	GetIssuesByGitHubID(ctx context.Context, params *params.GetIssuesByGitHubID) ([]*entity.Issue, error)
 }

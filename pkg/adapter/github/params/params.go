@@ -15,3 +15,8 @@ type GetCommitsByGitHubID struct {
 	GitHubID      entity.GitHubID
 	PullRequestID entity.PullRequestID
 }
+
+type GetIssuesByGitHubID struct {
+	GitHubID     entity.GitHubID
+	RepositoryID entity.RepositoryID
+}
