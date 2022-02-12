@@ -145,8 +145,8 @@ func (c *Client) GetIssuesByGitHubID(ctx context.Context, params *params.GetIssu
 				Title:        n.Title,
 				CreatedAt:    strconvert.ToTime(n.CreatedAt),
 				UpdatedAt:    strconvert.ToTime(n.UpdatedAt),
-				LastEditedAt: strconvert.ToTime(strconvert.StringOrDefault(n.LastEditedAt)),
-				ClosedAt:     strconvert.ToTime(strconvert.StringOrDefault(n.ClosedAt)),
+				LastEditedAt: strconvert.ToTimePtr(strconvert.StringOrDefault(n.LastEditedAt)),
+				ClosedAt:     strconvert.ToTimePtr(strconvert.StringOrDefault(n.ClosedAt)),
 				RepositoryID: params.RepositoryID,
 			})
 		}
