@@ -150,6 +150,10 @@ func (c *Client) GetIssuesByGitHubID(ctx context.Context, params *params.GetIssu
 				RepositoryID: params.RepositoryID,
 			})
 		}
+		if !issues.Node.Issues.PageInfo.HasNextPage {
+			break
+		}
+		after = issues.Node.Issues.PageInfo.EndCursor
 	}
 	return res, nil
 }

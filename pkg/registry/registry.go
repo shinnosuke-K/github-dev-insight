@@ -30,3 +30,11 @@ func RegisterCommitService() (service.CommitService, error) {
 	}
 	return service.NewCommitService(ad), nil
 }
+
+func RegisterIssueService() (service.IssueService, error) {
+	ad, err := adapter.NewAdapter()
+	if err != nil {
+		return nil, fmt.Errorf("faild to create adapter. %w", err)
+	}
+	return service.NewIssueService(ad), nil
+}
