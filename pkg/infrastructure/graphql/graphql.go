@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
-
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/util/strconvert"
+	"net/http"
 )
 
 type Config struct {
@@ -125,6 +124,32 @@ func (c *Client) GetCommitsByGitHubID(ctx context.Context, params *params.GetCom
 			break
 		}
 		after = commits.Node.Commits.PageInfo.EndCursor
+	}
+	return res, nil
+}
+
+func (c *Client) GetIssuesByGitHubID(ctx context.Context, params *params.GetIssuesByGitHubID) ([]*entity.Issue, error) {
+	var (
+		res   []*entity.Issue
+		after *string
+		total = 100
+	)
+	for i := 0; i < total; i++ {
+		issues, err := c.Issues(ctx, 100, string(params.GitHubID), after)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get issues. %w", err)
+		}
+		for _, n := range issues.Node.Issues.Nodes {
+			res = append(res, &entity.Issue{
+				GitHubID:     entity.GitHubID(n.ID),
+				Title:        n.Title,
+				CreatedAt:    strconvert.ToTime(n.CreatedAt),
+				UpdatedAt:    strconvert.ToTime(n.UpdatedAt),
+				LastEditedAt: strconvert.ToTime(strconvert.StringOrDefault(n.LastEditedAt)),
+				ClosedAt:     strconvert.ToTime(strconvert.StringOrDefault(n.ClosedAt)),
+				RepositoryID: params.RepositoryID,
+			})
+		}
 	}
 	return res, nil
 }
