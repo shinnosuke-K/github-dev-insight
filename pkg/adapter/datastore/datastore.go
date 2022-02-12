@@ -16,6 +16,7 @@ type DataStore interface {
 	Repository() Repository
 	PullRequest() PullRequest
 	Commit() Commit
+	Issue() Issue
 }
 
 type Repository interface {
@@ -35,11 +36,16 @@ type Commit interface {
 	Create(ctx context.Context, ents ...*entity.Commit) error
 }
 
+type Issue interface {
+	Create(ctx context.Context, ents ...*entity.Issue) error
+}
+
 type dataStore struct {
 	db          *client.Client
 	repository  *table.Repository
 	pullRequest *table.PullRequest
 	commit      *table.Commit
+	issue       *table.Issue
 }
 
 func NewDataStore(cfg rdb.Config) (DataStore, error) {
@@ -52,6 +58,7 @@ func NewDataStore(cfg rdb.Config) (DataStore, error) {
 		repository:  &table.Repository{Client: db},
 		pullRequest: &table.PullRequest{Client: db},
 		commit:      &table.Commit{Client: db},
+		issue:       &table.Issue{Client: db},
 	}, nil
 }
 
@@ -69,4 +76,8 @@ func (d *dataStore) PullRequest() PullRequest {
 
 func (d *dataStore) Commit() Commit {
 	return d.commit
+}
+
+func (d *dataStore) Issue() Issue {
+	return d.issue
 }

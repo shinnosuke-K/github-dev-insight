@@ -29,13 +29,35 @@ func (s *issueService) ImportIssue(ctx context.Context) error {
 		return nil
 	}
 
+	for _, repo := range repos {
+		if err := s.DataStore().Transaction(ctx, func(ctx context.Context) error {
+			if repo.TotalIssue != 0 {
+				if err := s.store(ctx, repo); err != nil {
+					return fmt.Errorf("failed to store. %w", err)
+				}
+			}
+			if err := s.DataStore().Repository().UpdateStatusByID(ctx, repo.ID, entity.TargetTypeIssue, true); err != nil {
+				return fmt.Errorf("failed to update repository by id:[%s]. %w", repo.ID, err)
+			}
+			return nil
+		}); err != nil {
+			return fmt.Errorf("error occurred in transaction. %w", err)
+		}
+		fmt.Printf("[info] repo:[%s] done\n", repo.Name)
+	}
+	return nil
+}
+
+func (s *issueService) store(ctx context.Context, ent *entity.Repository) error {
 	issues, err := s.GitHub().GetIssuesByGitHubID(ctx, &params.GetIssuesByGitHubID{
-		GitHubID:     repos[0].GitHubID,
-		RepositoryID: repos[0].ID,
+		GitHubID:     ent.GitHubID,
+		RepositoryID: ent.ID,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to get issue by id:[%s]. %w", repos[0].GitHubID, err)
+		return fmt.Errorf("failed to get issue by id:[%s]. %w", ent.GitHubID, err)
 	}
-	fmt.Println(issues)
+	if err := s.DataStore().Issue().Create(ctx, issues...); err != nil {
+		return fmt.Errorf("failed to create. %w", err)
+	}
 	return nil
 }
