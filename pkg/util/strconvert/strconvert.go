@@ -12,14 +12,17 @@ func StringOrDefault(s *string) string {
 
 // ToTime は s をtime型に変換する
 func ToTime(s string) time.Time {
-	t, _ := time.Parse(time.RFC3339, s)
+	t, err := time.Parse(time.DateTime, s)
+	if err != nil {
+		return time.Time{}
+	}
 	return t
 }
 
 func ToTimePtr(s string) *time.Time {
 	t := ToTime(s)
 	if t.IsZero() {
-		return nil
+		return &time.Time{}
 	}
 	return &t
 }

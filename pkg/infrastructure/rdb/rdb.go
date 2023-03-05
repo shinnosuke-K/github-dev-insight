@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	entsql "entgo.io/ent/dialect/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/shinnosuke-K/github-dev-insight/ent"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/infrastructure/rdb/client"
+
+	entsql "entgo.io/ent/dialect/sql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
