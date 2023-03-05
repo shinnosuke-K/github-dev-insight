@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/adapter/github/params"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/entity"
 	"github.com/shinnosuke-K/github-dev-insight/pkg/util/strconvert"
-	"net/http"
 )
 
 type Config struct {
