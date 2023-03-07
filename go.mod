@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.214
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/google/uuid v1.3.0
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/spf13/cobra v1.6.1
 	golang.org/x/sync v0.1.0
