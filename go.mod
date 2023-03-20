@@ -3,7 +3,7 @@ module github.com/shinnosuke-K/github-dev-insight
 go 1.20
 
 require (
-	entgo.io/ent v0.11.9
+	entgo.io/ent v0.11.10
 	github.com/Yamashou/gqlgenc v0.11.4
 	github.com/aws/aws-sdk-go v1.44.214
 	github.com/go-sql-driver/mysql v1.7.0
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.9.1 // indirect
+	ariga.io/atlas v0.9.2-0.20230303073438-03a4779a6338 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
