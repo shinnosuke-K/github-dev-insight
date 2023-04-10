@@ -3,19 +3,19 @@ module github.com/shinnosuke-K/github-dev-insight
 go 1.20
 
 require (
-	entgo.io/ent v0.11.10
+	entgo.io/ent v0.12.0
 	github.com/Yamashou/gqlgenc v0.12.0
 	github.com/aws/aws-sdk-go v1.44.224
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	golang.org/x/sync v0.1.0
 )
 
 require (
-	ariga.io/atlas v0.9.2-0.20230303073438-03a4779a6338 // indirect
+	ariga.io/atlas v0.10.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
@@ -28,5 +28,5 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.1 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
 )
