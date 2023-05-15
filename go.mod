@@ -5,7 +5,7 @@ go 1.20
 require (
 	entgo.io/ent v0.11.10
 	github.com/Yamashou/gqlgenc v0.12.0
-	github.com/aws/aws-sdk-go v1.44.224
+	github.com/aws/aws-sdk-go v1.44.262
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
