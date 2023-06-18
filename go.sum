@@ -3,8 +3,8 @@ ariga.io/atlas v0.9.2-0.20230303073438-03a4779a6338/go.mod h1:T230JFcENj4ZZzMkZr
 entgo.io/ent v0.11.10 h1:iqn32ybY5HRW3xSAyMNdNKpZhKgMf1Zunsej9yPKUI8=
 entgo.io/ent v0.11.10/go.mod h1:mzTZ0trE+jCQw/fnzijbm5Mck/l8Gbg7gC/+L1COyzM=
 github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
-github.com/Yamashou/gqlgenc v0.12.0 h1:HoKs8HH0UK58TZ/XA/J4tUeI/zLFu5nLnENxTsLV23M=
-github.com/Yamashou/gqlgenc v0.12.0/go.mod h1:+z+FRCtGrNmgTxweAUiCodOmQJLTCNtnRNAqhewf1Q8=
+github.com/Yamashou/gqlgenc v0.14.0 h1:KVzUuVQKfl4Phm5Cw4yeFThDAxZoIBR9XLoK/4O1O6U=
+github.com/Yamashou/gqlgenc v0.14.0/go.mod h1:+z+FRCtGrNmgTxweAUiCodOmQJLTCNtnRNAqhewf1Q8=
 github.com/agext/levenshtein v1.2.1 h1:QmvMAjj2aEICytGiWzmxoE0x2KZvE0fvmqMOfy2tjT8=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
