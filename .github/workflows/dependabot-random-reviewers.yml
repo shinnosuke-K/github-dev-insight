@@ -13,13 +13,19 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Check if PR already has reviewers
+      - name: Check if PR already has assigned reviewers or review requests
         id: check-reviewers
         run: |
-          CURRENT_REVIEWERS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewers --jq '.reviewers | map(.login) | join("\n")')
-          if [[ -n "$CURRENT_REVIEWERS" ]]; then
+          # 現在のレビュアーを取得
+          CURRENT_REVIEWERS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewers --jq '.reviewers[].login' | tr '\n' ' ')
+          
+          # 現在のレビューリクエストを取得
+          CURRENT_REQUESTS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewRequests --jq '.reviewRequests[].login' | tr '\n' ' ')
+
+          if [[ -n "$CURRENT_REVIEWERS" || -n "$CURRENT_REQUESTS" ]]; then
             echo "HAS_REVIEWERS=true" >> $GITHUB_ENV
           else
             echo "HAS_REVIEWERS=false" >> $GITHUB_ENV
