@@ -4,7 +4,6 @@ go 1.24
 
 require (
 	entgo.io/ent v0.14.3
-	github.com/Yamashou/gqlgenc v0.12.0
 	github.com/aws/aws-sdk-go v1.55.6
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/google/uuid v1.6.0
@@ -27,8 +26,9 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
+	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.1 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	golang.org/x/mod v0.23.0 // indirect
