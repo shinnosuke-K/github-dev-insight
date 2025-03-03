@@ -15,15 +15,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if PR already has reviewers
+        id: check-reviewers
+        run: |
+          CURRENT_REVIEWERS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewers --jq '.reviewers | map(.login) | join("\n")')
+          if [[ -n "$CURRENT_REVIEWERS" ]]; then
+            echo "HAS_REVIEWERS=true" >> $GITHUB_ENV
+          else
+            echo "HAS_REVIEWERS=false" >> $GITHUB_ENV
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Select a random reviewer
+        if: env.HAS_REVIEWERS == 'false'
         env:
           REVIEWERS: ${{ vars.REVIEWERS }}
         run: |
-          RANDOM_REVIEWER=$(echo "$REVIEWERS" | tr ',' '\n' | shuf -n 1)
+          RANDOM_REVIEWER=$(echo "$REVIEWERS" | shuf -n 1)
           echo "Selected reviewer: $RANDOM_REVIEWER"
           echo "REVIEWER=$RANDOM_REVIEWER" >> $GITHUB_ENV
 
       - name: Assign reviewer
+        if: env.HAS_REVIEWERS == 'false'
         run: gh pr edit ${{ github.event.pull_request.number }} --add-reviewer $REVIEWER
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
