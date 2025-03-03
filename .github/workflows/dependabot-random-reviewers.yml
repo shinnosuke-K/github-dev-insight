@@ -36,7 +36,7 @@ jobs:
       - name: Select a random reviewer
         if: env.HAS_REVIEWERS == 'false'
         env:
-          REVIEWERS: ${{ vars.REVIEWERS }}
+          REVIEWERS: ${{ vars.DEPENDABOT_RANDOM_REVIEWERS }}
         run: |
           RANDOM_REVIEWER=$(echo "$REVIEWERS" | shuf -n 1)
           echo "Selected reviewer: $RANDOM_REVIEWER"
