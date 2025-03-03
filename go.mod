@@ -1,6 +1,6 @@
 module github.com/shinnosuke-K/github-dev-insight
 
-go 1.20
+go 1.24
 
 require (
 	entgo.io/ent v0.14.3
