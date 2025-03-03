@@ -20,7 +20,7 @@ jobs:
         id: check-reviewers
         run: |
           # 現在のレビュアーを取得
-          CURRENT_REVIEWERS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewers --jq '.reviewers[].login' | tr '\n' ' ')
+          CURRENT_REVIEWERS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews --jq '.reviews[].login' | tr '\n' ' ')
           
           # 現在のレビューリクエストを取得
           CURRENT_REQUESTS=$(gh pr view ${{ github.event.pull_request.number }} --json reviewRequests --jq '.reviewRequests[].login' | tr '\n' ' ')
