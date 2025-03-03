@@ -10,13 +10,17 @@ jobs:
   assign-reviewer:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]' && vars.REVIEWERS != ''
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - name: Select a random reviewer from environment variable
+
+      - name: Select a random reviewer
         env:
-          REVIEWERS: ${{ vars.REVIEWERS }}  # GitHub Actionsのリポジトリ変数から取得
+          REVIEWERS: ${{ vars.REVIEWERS }}
         run: |
           RANDOM_REVIEWER=$(echo "$REVIEWERS" | tr ',' '\n' | shuf -n 1)
+          echo "Selected reviewer: $RANDOM_REVIEWER"
           echo "REVIEWER=$RANDOM_REVIEWER" >> $GITHUB_ENV
 
       - name: Assign reviewer
