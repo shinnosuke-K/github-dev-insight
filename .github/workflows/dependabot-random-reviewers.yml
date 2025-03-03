@@ -9,7 +9,7 @@ on:
 jobs:
   assign-reviewer:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]' && vars.REVIEWERS != ''
+    if: github.actor == 'dependabot[bot]' && vars.DEPENDABOT_RANDOM_REVIEWERS != ''
     permissions:
       pull-requests: write
     steps:
