@@ -3,7 +3,7 @@ module github.com/shinnosuke-K/github-dev-insight
 go 1.24
 
 require (
-	entgo.io/ent v0.14.3
+	entgo.io/ent v0.14.4
 	github.com/aws/aws-sdk-go v1.55.6
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/google/uuid v1.6.0
